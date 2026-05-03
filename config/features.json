@@ -1,0 +1,92 @@
+﻿{
+  "Southern American English": {
+    "needs_linguist_review": true,
+    "allowed_lexical_features": ["y'all", "fixin' to"],
+    "allowed_syntactic_features": ["might could", "used to could"],
+    "allowed_orthographic_features": ["'cause"],
+    "allowed_discourse_features": ["I reckon"],
+    "disallowed_features": ["eye-dialect spellings used for mockery", "exaggerated rural caricature", "unsupported slang"],
+    "usage_notes": ["Use lightly and only when it preserves the anchor meaning and plausible student voice."],
+    "safety_notes": ["Do not make the student sound less intelligent or less educated."],
+    "source_references": [
+      "Labov, Ash, and Boberg (2006), Atlas of North American English",
+      "Dictionary of American Regional English (DARE)",
+      "Montgomery and Hall, Dictionary of Smoky Mountain English; modal stacking discussions overlap Southern/Appalachian varieties"
+    ]
+  },
+  "Midwestern/North Central": {
+    "needs_linguist_review": true,
+    "allowed_lexical_features": ["pop", "you guys"],
+    "allowed_syntactic_features": [],
+    "allowed_orthographic_features": [],
+    "allowed_discourse_features": ["ope"],
+    "disallowed_features": ["comic overuse of ope", "fake Scandinavianized spelling", "unsupported rural caricature"],
+    "usage_notes": ["Prefer lexical/discourse substitutions because many North Central features are phonological and hard to represent safely in writing."],
+    "safety_notes": ["Avoid turning regional features into parody."],
+    "source_references": [
+      "Labov, Ash, and Boberg (2006), Atlas of North American English",
+      "Dictionary of American Regional English (DARE)",
+      "University of Wisconsin DARE resources on regional American vocabulary"
+    ]
+  },
+  "Northeastern/New England": {
+    "needs_linguist_review": true,
+    "allowed_lexical_features": ["wicked", "rotary"],
+    "allowed_syntactic_features": [],
+    "allowed_orthographic_features": [],
+    "allowed_discourse_features": [],
+    "disallowed_features": ["non-rhotic accent spellings like pahk the cah", "Boston caricature", "unsupported local slang"],
+    "usage_notes": ["Prefer lexical items and intensifiers; avoid phonetic spelling of accent features."],
+    "safety_notes": ["Do not represent accent through mocking spellings."],
+    "source_references": [
+      "Labov, Ash, and Boberg (2006), Atlas of North American English",
+      "Dictionary of American Regional English (DARE)",
+      "Kurath (1949), A Word Geography of the Eastern United States"
+    ]
+  },
+  "Western American English": {
+    "needs_linguist_review": true,
+    "allowed_lexical_features": ["you guys", "for sure"],
+    "allowed_syntactic_features": [],
+    "allowed_orthographic_features": [],
+    "allowed_discourse_features": ["like"],
+    "disallowed_features": ["valley-girl caricature", "surfer stereotype", "excessive filler"],
+    "usage_notes": ["Use only subtle lexical or discourse features; many Western features are vowel-system features not suitable for written anchors."],
+    "safety_notes": ["Avoid making the response sound unserious or less capable."],
+    "source_references": [
+      "Labov, Ash, and Boberg (2006), Atlas of North American English",
+      "Dictionary of American Regional English (DARE)",
+      "Stanford Voices of California project resources"
+    ]
+  },
+  "Appalachian English": {
+    "needs_linguist_review": true,
+    "allowed_lexical_features": ["y'all", "right"],
+    "allowed_syntactic_features": ["a-prefixing with -ing verbs", "perfective done", "double modals such as might could"],
+    "allowed_orthographic_features": ["a-"],
+    "allowed_discourse_features": [],
+    "disallowed_features": ["hillbilly caricature", "heavy eye-dialect", "unsupported phonetic spellings", "poverty stereotypes"],
+    "usage_notes": ["Apply grammatical features sparingly and only where they preserve exact meaning."],
+    "safety_notes": ["Do not signal social class or intelligence through the rewrite."],
+    "source_references": [
+      "Wolfram and Christian (1975/1976), Appalachian Speech",
+      "Montgomery and Hall, Dictionary of Smoky Mountain English",
+      "Appalachian English Archive, University of South Carolina"
+    ]
+  },
+  "African American Vernacular English (AAVE)": {
+    "needs_linguist_review": true,
+    "allowed_lexical_features": ["finna"],
+    "allowed_syntactic_features": ["habitual be", "stressed BIN for remote past where meaning requires it", "negative concord", "perfective done"],
+    "allowed_orthographic_features": [],
+    "allowed_discourse_features": [],
+    "disallowed_features": ["racial caricature", "random slang insertion", "mocking eye-dialect", "features not licensed by the inventory"],
+    "usage_notes": ["Use AAVE grammatical features only where their meaning is appropriate; habitual be must mark habitual aspect, not replace every form of is or are."],
+    "safety_notes": ["Do not make the response sound less intelligent, less academic, or stereotyped."],
+    "source_references": [
+      "Rickford (1999), African American Vernacular English",
+      "Green (2002), African American English: A Linguistic Introduction",
+      "Spears (2020), updated list of AAE grammatical features"
+    ]
+  }
+}

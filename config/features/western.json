@@ -1,0 +1,16 @@
+{
+  "dialect_family": "Western American English",
+  "review_status": "paper_appendix_draft",
+  "primary_references": ["Eckert, 2001"],
+  "features": [
+    {"id": "western_hella", "category": "lexical", "feature": "hella", "description": "Regional intensifier associated with Northern California and Western varieties.", "safe_example": "The evidence is hella clear.", "blocked_context": "Avoid if it lowers academic register too much for the anchor.", "risk_level": "medium", "source_reference": "Eckert, 2001", "allowed_for_generation": true},
+    {"id": "western_totally", "category": "lexical", "feature": "totally", "description": "Intensifier or agreement marker listed in Appendix A.", "safe_example": "The character is totally affected by the setting.", "blocked_context": "Do not add certainty or emphasis that changes the argument.", "risk_level": "low", "source_reference": "Eckert, 2001", "allowed_for_generation": true},
+    {"id": "western_gonna", "category": "lexical", "feature": "gonna", "description": "Informal future form listed in Appendix A.", "safe_example": "She is gonna try again.", "blocked_context": "Use only where future meaning exists.", "risk_level": "low", "source_reference": "Eckert, 2001", "allowed_for_generation": true},
+    {"id": "western_quotative_like", "category": "syntactic", "feature": "quotative like", "description": "Quotative construction such as He was like.", "safe_example": "The character was like, he needed to keep going.", "blocked_context": "Use only for reported speech/thought and avoid making writing sound unserious.", "risk_level": "medium", "source_reference": "Eckert, 2001", "allowed_for_generation": true},
+    {"id": "western_california_vowel_shift_spelling", "category": "orthographic", "feature": "California Vowel Shift spelling", "description": "Orthographic representation listed in Appendix A.", "safe_example": "", "blocked_context": "Avoid phonetic spelling unless team approves orthographic perturbations.", "risk_level": "high", "source_reference": "Eckert, 2001", "allowed_for_generation": false},
+    {"id": "western_discourse_like", "category": "discourse", "feature": "discourse marker like", "description": "Discourse marker like used for approximation, focus, or planning.", "safe_example": "The setting, like, makes him feel lost.", "blocked_context": "Avoid excessive filler or changing the response's seriousness.", "risk_level": "medium", "source_reference": "Eckert, 2001", "allowed_for_generation": true}
+  ],
+  "disallowed_features": ["valley-girl caricature", "surfer stereotype", "excessive filler"],
+  "safety_notes": ["Avoid making the response sound unserious or less capable."],
+  "appendix_source": "DART_EMNLP Appendix A"
+}

@@ -1,0 +1,12 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Generated DART pipeline outputs
+data/assignments/
+data/generated/
+
+# Local extracted docs / scratch outputs
+*.log
+.DS_Store
+Thumbs.db

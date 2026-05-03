@@ -1,0 +1,16 @@
+{
+  "dialect_family": "Northeastern/New England",
+  "review_status": "paper_appendix_draft",
+  "primary_references": ["Labov, 1998", "Labov, Ash, and Boberg, 2006"],
+  "features": [
+    {"id": "northeastern_wicked", "category": "lexical", "feature": "wicked", "description": "Regional intensifier.", "safe_example": "The setting is wicked important to the story.", "blocked_context": "Do not overuse or make the response sound unserious.", "risk_level": "medium", "source_reference": "Labov, 1998", "allowed_for_generation": true},
+    {"id": "northeastern_pissah", "category": "lexical", "feature": "pissah", "description": "Regional lexical item for excellent listed in Appendix A.", "safe_example": "", "blocked_context": "Avoid in student benchmark generation unless team approves because register may be inappropriate.", "risk_level": "high", "source_reference": "Labov, 1998", "allowed_for_generation": false},
+    {"id": "northeastern_down_the_shore", "category": "syntactic", "feature": "down the shore", "description": "Regional prepositional phrase pattern.", "safe_example": "", "blocked_context": "Use only when the anchor already describes going to a shore/coastal place.", "risk_level": "medium", "source_reference": "Labov, Ash, and Boberg, 2006", "allowed_for_generation": true},
+    {"id": "northeastern_non_rhotic_spelling", "category": "orthographic", "feature": "non-rhotic spelling", "description": "Orthographic representation such as cah for car.", "safe_example": "", "blocked_context": "Avoid accent spelling unless team approves orthographic perturbations.", "risk_level": "high", "source_reference": "Labov, 1998", "allowed_for_generation": false},
+    {"id": "northeastern_broad_a_spelling", "category": "orthographic", "feature": "broad a spelling", "description": "Orthographic representation such as Bahston listed in Appendix A.", "safe_example": "", "blocked_context": "Avoid phonetic spelling because it can read as caricature.", "risk_level": "high", "source_reference": "Labov, 1998", "allowed_for_generation": false},
+    {"id": "northeastern_pragmatic_deletion", "category": "discourse", "feature": "pragmatic deletion", "description": "Omission in contextually recoverable utterances such as Need milk?", "safe_example": "Need more evidence?", "blocked_context": "Do not remove rubric-relevant content or make the sentence ambiguous.", "risk_level": "medium", "source_reference": "Labov, Ash, and Boberg, 2006", "allowed_for_generation": true}
+  ],
+  "disallowed_features": ["Boston caricature", "mocking non-rhotic spellings", "unsupported local slang"],
+  "safety_notes": ["Do not represent accent through mocking spellings."],
+  "appendix_source": "DART_EMNLP Appendix A"
+}

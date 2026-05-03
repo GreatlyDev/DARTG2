@@ -1,0 +1,17 @@
+{
+  "dialect_family": "Midwestern/North Central",
+  "review_status": "paper_appendix_draft",
+  "primary_references": ["Labov, Ash, and Boberg, 2006", "Labov, 1998", "Wolfram and Schilling, 2016"],
+  "features": [
+    {"id": "midwestern_ope", "category": "lexical", "feature": "ope", "description": "Regional discourse/lexical marker often used for small surprise or interruption.", "safe_example": "Ope, the author shows another reason.", "blocked_context": "Avoid comic overuse or insertion where it disrupts academic writing.", "risk_level": "medium", "source_reference": "Labov, Ash, and Boberg, 2006", "allowed_for_generation": true},
+    {"id": "midwestern_bubbler", "category": "lexical", "feature": "bubbler", "description": "Regional lexical item for water fountain.", "safe_example": "", "blocked_context": "Use only if the anchor mentions a water fountain.", "risk_level": "low", "source_reference": "Labov, Ash, and Boberg, 2006", "allowed_for_generation": true},
+    {"id": "midwestern_pop", "category": "lexical", "feature": "pop", "description": "Regional lexical item for soda/soft drink.", "safe_example": "", "blocked_context": "Use only if the anchor mentions soda or soft drinks.", "risk_level": "low", "source_reference": "Labov, Ash, and Boberg, 2006", "allowed_for_generation": true},
+    {"id": "midwestern_needs_cleaned", "category": "syntactic", "feature": "needs cleaned", "description": "Need + past participle construction without to be.", "safe_example": "The argument needs explained more clearly.", "blocked_context": "Do not use if it changes what needs to happen.", "risk_level": "medium", "source_reference": "Labov, 1998", "allowed_for_generation": true},
+    {"id": "midwestern_northern_cities_vowel_shift", "category": "orthographic", "feature": "Northern Cities Vowel Shift spelling", "description": "Orthographic representation of vowel shift listed in Appendix A.", "safe_example": "", "blocked_context": "Avoid phonetic spelling unless team approves orthographic perturbations.", "risk_level": "high", "source_reference": "Labov, Ash, and Boberg, 2006", "allowed_for_generation": false},
+    {"id": "midwestern_tag_right", "category": "discourse", "feature": "tag question right", "description": "Tag question marker such as right.", "safe_example": "The author wants the reader to see the connection, right?", "blocked_context": "Do not change certainty or make the student sound flippant.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "allowed_for_generation": true},
+    {"id": "midwestern_dont_you_know", "category": "discourse", "feature": "don't you know", "description": "Regional tag/discourse marker listed in Appendix A.", "safe_example": "", "blocked_context": "High risk of caricature; use only after team approval.", "risk_level": "high", "source_reference": "Wolfram and Schilling, 2016", "allowed_for_generation": false}
+  ],
+  "disallowed_features": ["comic overuse of ope", "fake Scandinavianized spelling", "unsupported rural caricature"],
+  "safety_notes": ["Avoid turning regional features into parody."],
+  "appendix_source": "DART_EMNLP Appendix A"
+}

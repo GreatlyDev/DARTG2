@@ -1,0 +1,18 @@
+{
+  "dialect_family": "Southern American English",
+  "review_status": "paper_appendix_draft",
+  "primary_references": ["Labov, 1998", "Wolfram, 2004", "Labov, Ash, and Boberg, 2006", "Wolfram and Schilling, 2016"],
+  "features": [
+    {"id": "southern_yall", "category": "lexical", "feature": "y'all", "description": "Second-person plural pronoun or address form.", "safe_example": "Y'all can see why the character returns.", "blocked_context": "Do not insert when no second-person reference exists.", "risk_level": "low", "source_reference": "Wolfram, 2004", "allowed_for_generation": true},
+    {"id": "southern_fixin_to", "category": "lexical", "feature": "fixin' to", "description": "Near-future marker roughly meaning about to.", "safe_example": "She is fixin' to try again.", "blocked_context": "Do not use unless the anchor expresses an upcoming action.", "risk_level": "medium", "source_reference": "Wolfram, 2004", "allowed_for_generation": true},
+    {"id": "southern_reckon", "category": "lexical", "feature": "reckon", "description": "Regional verb meaning think or suppose.", "safe_example": "I reckon the author wanted to show hope.", "blocked_context": "Avoid overuse or forced insertion.", "risk_level": "medium", "source_reference": "Wolfram, 2004", "allowed_for_generation": true},
+    {"id": "southern_bless_your_heart", "category": "lexical", "feature": "bless your heart", "description": "Regional expression with context-dependent pragmatic meaning.", "safe_example": "", "blocked_context": "Avoid in benchmark generation unless the team explicitly approves the pragmatic context.", "risk_level": "high", "source_reference": "Wolfram, 2004", "allowed_for_generation": false},
+    {"id": "southern_perfective_done", "category": "syntactic", "feature": "perfective done", "description": "Marks completed action.", "safe_example": "I done finished the answer.", "blocked_context": "Do not use if completion is not part of the original meaning.", "risk_level": "medium", "source_reference": "Labov, 1998", "allowed_for_generation": true},
+    {"id": "southern_double_modal", "category": "syntactic", "feature": "double modals", "description": "Stacked modal construction such as might could.", "safe_example": "She might could take the test again.", "blocked_context": "Do not add uncertainty if the anchor states certainty.", "risk_level": "medium", "source_reference": "Labov, 1998", "allowed_for_generation": true},
+    {"id": "southern_positive_anymore", "category": "discourse", "feature": "positive anymore", "description": "Use of anymore in non-negative contexts.", "safe_example": "People use computers for many things anymore.", "blocked_context": "Use only when it does not change time/aspect meaning.", "risk_level": "high", "source_reference": "Labov, Ash, and Boberg, 2006", "allowed_for_generation": false},
+    {"id": "southern_pin_pen_spelling", "category": "orthographic", "feature": "pin-pen merger spelling", "description": "Orthographic representation of vowel merger.", "safe_example": "", "blocked_context": "Avoid phonetic spelling unless team approves an orthographic perturbation condition.", "risk_level": "high", "source_reference": "Wolfram and Schilling, 2016", "allowed_for_generation": false}
+  ],
+  "disallowed_features": ["eye-dialect spellings used for mockery", "exaggerated rural caricature", "unsupported slang"],
+  "safety_notes": ["Do not make the student sound less intelligent or less educated."],
+  "appendix_source": "DART_EMNLP Appendix A"
+}

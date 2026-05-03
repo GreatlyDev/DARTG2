@@ -1,0 +1,19 @@
+{
+  "dialect_family": "Appalachian English",
+  "review_status": "paper_appendix_draft",
+  "primary_references": ["Wolfram and Schilling, 2016", "Williams, 1992", "Labov, Ash, and Boberg, 2006"],
+  "features": [
+    {"id": "appalachian_afeared", "category": "lexical", "feature": "afeared", "description": "Lexical item meaning afraid.", "safe_example": "He was afeared he would fail.", "blocked_context": "Use only when fear is already present in the anchor.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "allowed_for_generation": true},
+    {"id": "appalachian_younse", "category": "lexical", "feature": "younse", "description": "Second-person plural form.", "safe_example": "Younse can see why she tried again.", "blocked_context": "Do not insert when no second-person reference exists.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "allowed_for_generation": true},
+    {"id": "appalachian_hollow", "category": "lexical", "feature": "hollow", "description": "Regional term referring to a small valley or holler/hollow.", "safe_example": "", "blocked_context": "Do not add setting details absent from the anchor.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "allowed_for_generation": false},
+    {"id": "appalachian_poke", "category": "lexical", "feature": "poke", "description": "Regional lexical item for bag.", "safe_example": "She put it in a poke.", "blocked_context": "Use only where the anchor already mentions a bag.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "allowed_for_generation": true},
+    {"id": "appalachian_a_prefixing", "category": "syntactic", "feature": "a-prefixing", "description": "A-prefix before certain -ing verb forms.", "safe_example": "He went a-running down the road.", "blocked_context": "Use only with compatible -ing verbs; avoid excessive use.", "risk_level": "medium", "source_reference": "Williams, 1992", "allowed_for_generation": true},
+    {"id": "appalachian_used_to_could", "category": "syntactic", "feature": "buffered modal used to could", "description": "Modal-like construction listed in Appendix A.", "safe_example": "She used to could pass that test.", "blocked_context": "Do not add ability or past habitual meaning absent from the anchor.", "risk_level": "high", "source_reference": "Williams, 1992", "allowed_for_generation": false},
+    {"id": "appalachian_hit_generic", "category": "orthographic", "feature": "hit generic object", "description": "Form listed as generic object in Appendix A.", "safe_example": "", "blocked_context": "Requires linguistic review before generation.", "risk_level": "high", "source_reference": "Wolfram and Schilling, 2016", "allowed_for_generation": false},
+    {"id": "appalachian_em", "category": "orthographic", "feature": "'em", "description": "Reduced written form of them.", "safe_example": "She helped 'em understand.", "blocked_context": "Use only where them already appears or is clearly implied.", "risk_level": "low", "source_reference": "Wolfram and Schilling, 2016", "allowed_for_generation": true},
+    {"id": "appalachian_narrative_present", "category": "discourse", "feature": "narrative present", "description": "Present-tense narration for past events.", "safe_example": "He comes in and says he will try again.", "blocked_context": "Do not shift time reference if it changes meaning.", "risk_level": "high", "source_reference": "Labov, Ash, and Boberg, 2006", "allowed_for_generation": false}
+  ],
+  "disallowed_features": ["hillbilly caricature", "heavy eye-dialect", "unsupported phonetic spellings", "poverty stereotypes"],
+  "safety_notes": ["Do not signal social class or intelligence through the rewrite."],
+  "appendix_source": "DART_EMNLP Appendix A"
+}

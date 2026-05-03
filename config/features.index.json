@@ -1,0 +1,8 @@
+{
+  "Southern American English": "features/southern.json",
+  "Midwestern/North Central": "features/midwestern_north_central.json",
+  "Northeastern/New England": "features/northeastern_new_england.json",
+  "Western American English": "features/western.json",
+  "Appalachian English": "features/appalachian.json",
+  "African American Vernacular English (AAVE)": "features/aave.json"
+}
