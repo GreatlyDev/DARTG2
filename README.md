@@ -1,18 +1,19 @@
-# DART Student 2 Pipeline
+# DART Generation Pipeline
 
-This workspace contains the first version of the Student 2 generation and pre-filtering pipeline.
+This repository contains the first version of the DART generation and pre-filtering pipeline I started building for the Student 2 work.
 
-Student 2 owns:
+The main goal is to turn an approved anchor response into controlled generation jobs by combining:
 
-- controlled generation prompt structure
-- dialect feature inventory input
-- anchor-to-dialect assignment files
-- prompt jobs for candidate generation
+- the agreed generation prompt template
+- a target dialect family
+- that dialect family's feature inventory
+- anchor-to-dialect assignments
+- repeatable candidate-generation jobs
 - lightweight pre-filter checks before human validation
 
 ## Current Scope
 
-This version does not call an LLM API yet. It prepares reproducible prompt jobs that can be fed into a model once the team confirms the anchors, feature inventories, and model access.
+This version does not call an LLM API yet. It prepares reproducible prompt jobs that can be fed into a model once the team confirms the anchors, feature inventories, and model access. That keeps the first generation run controlled instead of producing candidate variants before the pipeline has been reviewed.
 
 ## Current Working Strategy: Stage 1 Greedy
 
@@ -25,7 +26,7 @@ three candidate generations per anchor-dialect pair
 
 That means 40 anchors produce 40 anchor-dialect assignments and 120 prompt jobs. This is a pilot/iteration strategy: use the best current anchors and Appendix A feature inventories, generate prompt jobs quickly, inspect failures, and improve.
 
-Balanced assignment support exists in the code, but it is not the current working path. It is reserved for later cleanup/final benchmark balancing once Student 1 provides complete metadata such as `source_corpus`, `domain`, `prompt`, and `rubric_dimensions`.
+Balanced assignment support exists in the code, but it is not the current working path. It is reserved for later cleanup/final benchmark balancing once the anchor set has complete metadata such as `source_corpus`, `domain`, `prompt`, and `rubric_dimensions`.
 
 ## Main Files
 
@@ -43,7 +44,7 @@ The greedy strategy uses anchors in the order provided and cycles through the di
 
 Use greedy for:
 
-- current Student 2 pilot work
+- the current pilot work
 - prompt pipeline testing
 - early generation runs
 - quick failure inspection
@@ -80,7 +81,7 @@ python -m unittest discover -s tests
 
 ## Required Anchor Fields
 
-The pipeline can work with either `anchor_id` or `essay_id`, but Student 2-ready anchors should eventually include:
+The pipeline can work with either `anchor_id` or `essay_id`, but generation-ready anchors should eventually include:
 
 - `anchor_id`
 - `prompt`
