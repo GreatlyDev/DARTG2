@@ -85,6 +85,12 @@ Run a small 3-candidate smoke test before generating the full file:
 python scripts/generate_candidates.py --jobs data/generated/stage1_greedy_prompt_jobs.jsonl --output data/generated/stage1_demo_candidates.jsonl --model gpt-5.2 --limit 3 --resume
 ```
 
+Run the six-dialect 18-candidate demo:
+
+```powershell
+python scripts/generate_candidates.py --jobs data/generated/stage1_greedy_prompt_jobs.jsonl --output data/generated/stage1_demo_candidates.jsonl --model gpt-5.2 --limit 18 --resume --print-output
+```
+
 Run the full Stage 1 demo generation:
 
 ```powershell
