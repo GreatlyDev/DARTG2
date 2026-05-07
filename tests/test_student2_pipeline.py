@@ -1,10 +1,13 @@
 import json
-import tempfile
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 
 from dart_pipeline.assignments import make_balanced_assignments, make_greedy_assignments
+from dart_pipeline.generation import extract_output_text, generation_input
 from dart_pipeline.inventories import flatten_allowed_features, load_feature_inventory
+from dart_pipeline.io_utils import write_jsonl
 from dart_pipeline.prompts import render_generation_prompt
 
 
@@ -79,6 +82,89 @@ class AssignmentTests(unittest.TestCase):
         self.assertEqual(assignments[2]['anchor_id'], 'C1')
         self.assertEqual(assignments[3]['anchor_id'], 'A2')
         self.assertTrue(all(row['assignment_strategy'] == 'balanced' for row in assignments))
+
+
+class GenerationTests(unittest.TestCase):
+    def test_extract_output_text_uses_response_shortcut_when_available(self):
+        response = {'output_text': '  Candidate text.  '}
+
+        self.assertEqual(extract_output_text(response), 'Candidate text.')
+
+    def test_extract_output_text_falls_back_to_output_content(self):
+        response = {
+            'output': [
+                {
+                    'type': 'message',
+                    'content': [
+                        {'type': 'output_text', 'text': 'First part.'},
+                        {'type': 'output_text', 'text': 'Second part.'},
+                    ],
+                }
+            ]
+        }
+
+        self.assertEqual(extract_output_text(response), 'First part.\nSecond part.')
+
+    def test_generation_input_adds_candidate_attempt_note(self):
+        job = {'generation_prompt': 'Base prompt.', 'candidate_index': 2}
+
+        rendered = generation_input(job, total_candidates=3)
+
+        self.assertIn('Base prompt.', rendered)
+        self.assertIn('Candidate attempt: 2 of 3.', rendered)
+
+
+class CandidateReportTests(unittest.TestCase):
+    def test_render_candidate_report_groups_candidates_with_anchor_text(self):
+        root = Path('data/test_tmp/candidate_report')
+        anchors_path = root / 'anchors.jsonl'
+        candidates_path = root / 'candidates.jsonl'
+        output_path = root / 'report.md'
+        write_jsonl(
+            anchors_path,
+            [
+                {
+                    'anchor_id': 'A1',
+                    'anchor_response': 'Original student response.',
+                    'score_band': 'low',
+                    'normalized_score': '2.2',
+                }
+            ],
+        )
+        write_jsonl(
+            candidates_path,
+            [
+                {
+                    'candidate_id': 'A1_Southern_1',
+                    'anchor_id': 'A1',
+                    'dialect_family': 'Southern American English',
+                    'candidate_index': 1,
+                    'generation_status': 'demo_unvalidated',
+                    'model': 'test-model',
+                    'candidate_response': 'Generated candidate response.',
+                }
+            ],
+        )
+
+        subprocess.run(
+            [
+                sys.executable,
+                'scripts/render_candidate_report.py',
+                '--anchors',
+                str(anchors_path),
+                '--candidates',
+                str(candidates_path),
+                '--output',
+                str(output_path),
+            ],
+            check=True,
+        )
+
+        report = output_path.read_text(encoding='utf-8')
+        self.assertIn('# Stage 1 Demo Candidates', report)
+        self.assertIn('Original student response.', report)
+        self.assertIn('Generated candidate response.', report)
+        self.assertIn('demo_unvalidated', report)
 
 
 if __name__ == '__main__':

@@ -13,7 +13,7 @@ The main goal is to turn an approved anchor response into controlled generation 
 
 ## Current Scope
 
-This version does not call an LLM API yet. It prepares reproducible prompt jobs that can be fed into a model once the team confirms the anchors, feature inventories, and model access. That keeps the first generation run controlled instead of producing candidate variants before the pipeline has been reviewed.
+This version prepares reproducible prompt jobs and includes a command-line generator for producing demo candidate variants through the OpenAI Responses API. Generated candidates should be treated as `demo_unvalidated` until they pass semantic-equivalence review, dialect-feature review, and human validation.
 
 ## Current Working Strategy: Stage 1 Greedy
 
@@ -73,6 +73,30 @@ Render Stage 1 greedy prompt jobs:
 python scripts/render_prompt_jobs.py --anchors "C:\Users\great\Downloads\final_anchors.csv" --assignments data/assignments/stage1_greedy_assignments.jsonl --output data/generated/stage1_greedy_prompt_jobs.jsonl
 ```
 
+Set an OpenAI API key for candidate generation:
+
+```powershell
+$env:OPENAI_API_KEY="your_api_key_here"
+```
+
+Run a small 3-candidate smoke test before generating the full file:
+
+```powershell
+python scripts/generate_candidates.py --jobs data/generated/stage1_greedy_prompt_jobs.jsonl --output data/generated/stage1_demo_candidates.jsonl --model gpt-5.2 --limit 3 --resume
+```
+
+Run the full Stage 1 demo generation:
+
+```powershell
+python scripts/generate_candidates.py --jobs data/generated/stage1_greedy_prompt_jobs.jsonl --output data/generated/stage1_demo_candidates.jsonl --model gpt-5.2 --resume
+```
+
+Render a readable Markdown report from generated candidates:
+
+```powershell
+python scripts/render_candidate_report.py --anchors "C:\Users\great\Downloads\final_anchors.csv" --candidates data/generated/stage1_demo_candidates.jsonl --output docs/stage1_demo_candidates.md
+```
+
 Run tests:
 
 ```powershell
@@ -97,3 +121,5 @@ If `prompt` is missing, prompt jobs will render `[PROMPT NOT PROVIDED]`, which i
 ## Important Research Caution
 
 The feature inventories are Appendix A drafts, not final linguistic authority. The team should review them before real benchmark generation. The pipeline is designed so the team can update individual files under `config/features/` without rewriting the rest of the workflow.
+
+Generated demo candidates are useful for showing what the pipeline does, but they are not final benchmark variants. They must still be reviewed for semantic equivalence, dialect authenticity, feature safety, and stereotyping risk.
