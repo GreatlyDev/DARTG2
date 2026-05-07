@@ -97,6 +97,26 @@ Render a readable Markdown report from generated candidates:
 python scripts/render_candidate_report.py --anchors "C:\Users\great\Downloads\final_anchors.csv" --candidates data/generated/stage1_demo_candidates.jsonl --output docs/stage1_demo_candidates.md
 ```
 
+## Local Generated Outputs
+
+Generated candidate files are local run artifacts. By default, the generation commands write to:
+
+```text
+data/generated/
+docs/stage1_demo_candidates*.md
+```
+
+These paths are ignored by Git, so collaborators can run generation without accidentally committing their local outputs or API-generated candidate files.
+
+The repo includes one intentional curated example under:
+
+```text
+data/examples/
+docs/examples/
+```
+
+Use `data/generated/` for local experiments. Use `data/examples/` and `docs/examples/` only for curated examples that the team intentionally wants to commit.
+
 Run tests:
 
 ```powershell
