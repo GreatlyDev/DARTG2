@@ -14,6 +14,10 @@ def index_by_anchor_id(rows: list[dict]) -> dict[str, dict]:
     return {anchor_identifier(row): row for row in rows}
 
 
+def anchor_text(anchor: dict) -> str:
+    return anchor.get("anchor_response") or anchor.get("essay") or anchor.get("text") or ""
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Render generation prompt jobs for DART Student 2.")
     parser.add_argument("--anchors", required=True, type=Path, help="Input anchor JSONL file.")
@@ -34,7 +38,7 @@ def main() -> None:
         dialect_family = assignment["dialect_family"]
         feature_config = inventory[dialect_family]
         assignment_prompt = anchor.get("prompt", "[PROMPT NOT PROVIDED]")
-        anchor_response = anchor.get("anchor_response", anchor.get("essay", ""))
+        anchor_response = anchor_text(anchor)
         rendered = render_generation_prompt(
             args.template,
             assignment_prompt,

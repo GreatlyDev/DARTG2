@@ -13,6 +13,10 @@ def index_by_anchor_id(rows: list[dict]) -> dict[str, dict]:
     return {anchor_identifier(row): row for row in rows}
 
 
+def anchor_text(anchor: dict) -> str:
+    return anchor.get("anchor_response") or anchor.get("essay") or anchor.get("text") or ""
+
+
 def write_block(lines: list[str], title: str, text: str) -> None:
     lines.append(title)
     lines.append("")
@@ -47,7 +51,7 @@ def main() -> None:
 
     for anchor_id in sorted(grouped):
         anchor = anchors.get(anchor_id, {})
-        anchor_response = anchor.get("anchor_response", anchor.get("essay", ""))
+        anchor_response = anchor_text(anchor)
         rows = sorted(grouped[anchor_id], key=lambda row: (row.get("dialect_family", ""), int(row.get("candidate_index", 0))))
         dialects = sorted({str(row.get("dialect_family", "")) for row in rows})
 

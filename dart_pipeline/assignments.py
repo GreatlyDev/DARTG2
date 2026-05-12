@@ -14,13 +14,17 @@ def anchor_identifier(anchor: dict) -> str:
     raise ValueError("Anchor is missing anchor_id, essay_id, or id.")
 
 
+def anchor_source_corpus(anchor: dict) -> str | None:
+    return anchor.get("source_corpus") or anchor.get("dataset")
+
+
 def _assignment_row(anchor: dict, dialect: str, candidates_per_pair: int, strategy: str) -> dict:
     return {
         "anchor_id": anchor_identifier(anchor),
         "dialect_family": dialect,
         "target_candidates": candidates_per_pair,
         "assignment_strategy": strategy,
-        "source_corpus": anchor.get("source_corpus"),
+        "source_corpus": anchor_source_corpus(anchor),
         "score_band": anchor.get("score_band"),
         "domain": anchor.get("domain"),
     }

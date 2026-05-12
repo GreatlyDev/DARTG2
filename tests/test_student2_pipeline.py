@@ -114,6 +114,22 @@ class GenerationTests(unittest.TestCase):
         self.assertIn('Candidate attempt: 2 of 3.', rendered)
 
 
+class FinalAnchorFormatTests(unittest.TestCase):
+    def test_final_student1_csv_shape_uses_essay_id_text_and_dataset(self):
+        anchors = [
+            {
+                'essay_id': '764',
+                'dataset': 'ASAP-AES',
+                'text': 'Student 1 final anchor text.',
+                'score_band': 'HIGH',
+            }
+        ]
+        assignments = make_greedy_assignments(anchors, ['Southern American English'], candidates_per_pair=3)
+
+        self.assertEqual(assignments[0]['anchor_id'], '764')
+        self.assertEqual(assignments[0]['source_corpus'], 'ASAP-AES')
+
+
 class CandidateReportTests(unittest.TestCase):
     def test_render_candidate_report_groups_candidates_with_anchor_text(self):
         root = Path('data/test_tmp/candidate_report')

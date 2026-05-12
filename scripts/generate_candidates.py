@@ -26,7 +26,11 @@ def main() -> None:
     parser.add_argument("--max-output-tokens", type=int, default=900, help="Maximum output tokens per candidate.")
     parser.add_argument("--status", default="demo_unvalidated", help="Generation status label to store with each candidate.")
     parser.add_argument("--resume", action="store_true", help="Skip candidate IDs already present in the output file.")
-    parser.add_argument("--print-output", action="store_true", help="Print each generated candidate response to the terminal.")
+    parser.add_argument(
+        "--print-output",
+        action="store_true",
+        help="Print each generated candidate response to the terminal. Best for small demo/smoke runs, not full dataset runs.",
+    )
     args = parser.parse_args()
 
     load_env_file(args.env_file)

@@ -1,151 +1,226 @@
 # DART Generation Pipeline
 
-This repository contains the first version of the DART generation and pre-filtering pipeline I started building for the Student 2 work.
+This repository contains the current Student 2 generation pipeline for DART. The pipeline takes approved anchor responses, assigns each anchor to a target U.S. English dialect family, renders controlled generation prompts from the dialect feature inventory, and generates candidate dialect variants for later filtering and human validation.
 
-The main goal is to turn an approved anchor response into controlled generation jobs by combining:
-
-- the agreed generation prompt template
-- a target dialect family
-- that dialect family's feature inventory
-- anchor-to-dialect assignments
-- repeatable candidate-generation jobs
-- lightweight pre-filter checks before human validation
+The current working dataset is the final 80-anchor set from Student 1.
 
 ## Current Scope
 
-This version prepares reproducible prompt jobs and includes a command-line generator for producing demo candidate variants through the OpenAI Responses API. Generated candidates should be treated as `demo_unvalidated` until they pass semantic-equivalence review, dialect-feature review, and human validation.
+This repo currently supports:
 
-## Current Working Strategy: Stage 1 Greedy
+- source-backed dialect feature inventories under `config/features/`
+- greedy and balanced anchor-to-dialect assignment generation
+- a curated final-80 demo assignment set
+- prompt-job rendering for OpenAI generation
+- candidate generation through the OpenAI Responses API
+- readable Markdown candidate reports
+- lightweight prefilter scaffolding
 
-For the current research workflow, we are using **Stage 1 greedy**:
+Generated candidates are **not final DART variants**. They should stay marked as `demo_unvalidated` until they pass semantic-equivalence review, dialect-feature review, and human validation.
+
+## Current Working Strategy
+
+The current Stage 1 strategy is:
 
 ```text
 one dialect assignment per anchor
 three candidate generations per anchor-dialect pair
 ```
 
-That means 40 anchors produce 40 anchor-dialect assignments and 120 prompt jobs. This is a pilot/iteration strategy: use the best current anchors and Appendix A feature inventories, generate prompt jobs quickly, inspect failures, and improve.
+For the final 80-anchor dataset, that gives:
 
-Balanced assignment support exists in the code, but it is not the current working path. It is reserved for later cleanup/final benchmark balancing once the anchor set has complete metadata such as `source_corpus`, `domain`, `prompt`, and `rubric_dimensions`.
-
-## Main Files
-
-- `config/features.index.json`: maps each dialect family to its own feature file under `config/features/`. The per-dialect files are populated from Appendix A and marked for team review.
-- `prompts/generation_v1.txt`: agreed controlled rewrite prompt template.
-- `scripts/build_assignments.py`: creates greedy or balanced anchor-to-dialect assignments.
-- `scripts/render_prompt_jobs.py`: renders one prompt job per candidate generation attempt.
-- `scripts/prefilter_candidates.py`: runs lightweight length and feature-presence checks on generated candidates.
-
-## Strategies
-
-### Greedy
-
-The greedy strategy uses anchors in the order provided and cycles through the dialect families. In Stage 1, each anchor receives exactly one dialect family assignment and three candidate generation prompts.
-
-Use greedy for:
-
-- the current pilot work
-- prompt pipeline testing
-- early generation runs
-- quick failure inspection
-
-### Balanced
-
-The balanced strategy interleaves anchors across available `source_corpus`, `score_band`, and `domain` strata before assigning dialects. This is closer to final benchmark balancing, but it requires complete anchor metadata to be meaningful.
-
-Use balanced later for:
-
-- final dataset cleanup
-- checking underrepresented slices
-- stratified benchmark construction
-
-## Example Commands
-
-Build Stage 1 greedy assignments from the current CSV anchor file:
-
-```powershell
-python scripts/build_assignments.py --anchors "C:\Users\great\Downloads\final_anchors.csv" --strategy greedy --output data/assignments/stage1_greedy_assignments.jsonl --candidates 3
+```text
+80 anchors x 1 dialect assignment x 3 candidates = 240 prompt jobs
 ```
 
-Render Stage 1 greedy prompt jobs:
+We also keep a smaller curated demo:
 
-```powershell
-python scripts/render_prompt_jobs.py --anchors "C:\Users\great\Downloads\final_anchors.csv" --assignments data/assignments/stage1_greedy_assignments.jsonl --output data/generated/stage1_greedy_prompt_jobs.jsonl
+```text
+6 anchor-dialect pairs x 3 candidates = 18 demo candidates
 ```
 
-Set an OpenAI API key for candidate generation:
+The curated demo intentionally covers all six dialect families, all three score bands, and all three source datasets.
+
+## Repository Structure
+
+- `config/features.index.json`: maps each dialect family to its feature file.
+- `config/features/`: one paper-source-backed feature inventory per dialect family.
+- `data/raw/`: final Student 1 anchor files committed for the current pipeline.
+- `data/examples/`: curated candidate examples that the team intentionally commits.
+- `data/generated/`: local generated outputs; ignored by Git.
+- `data/assignments/`: local assignment files; ignored by Git.
+- `docs/examples/`: readable committed demo reports.
+- `docs/`: progress/update docs and team-facing notes.
+- `prompts/generation_v1.txt`: controlled rewrite prompt template.
+- `scripts/build_assignments.py`: creates greedy or balanced assignments.
+- `scripts/build_demo_assignments.py`: creates the curated final-80 demo assignment file.
+- `scripts/render_prompt_jobs.py`: renders candidate-generation prompt jobs.
+- `scripts/generate_candidates.py`: calls the OpenAI Responses API and writes generated candidates.
+- `scripts/render_candidate_report.py`: renders generated JSONL candidates into readable Markdown.
+- `scripts/prefilter_candidates.py`: lightweight prefilter checks.
+- `tests/`: unit tests for the Student 2 pipeline.
+
+## Committed Data
+
+The current committed anchor files are:
+
+```text
+data/raw/DART_FINAL_80_ANCHORS.csv
+data/raw/DART_ANCHOR_SUMMARY.csv
+```
+
+The current committed demo outputs are:
+
+```text
+data/examples/final80_demo_candidates_expanded_inventory.jsonl
+docs/examples/final80_demo_candidates_expanded_inventory.md
+```
+
+These examples are intentionally committed so collaborators can inspect what the pipeline produces without needing to run the OpenAI API first.
+
+## Environment Setup
+
+Set your OpenAI API key before running generation:
 
 ```powershell
 $env:OPENAI_API_KEY="your_api_key_here"
 ```
 
-Run a small 3-candidate smoke test before generating the full file:
-
-```powershell
-python scripts/generate_candidates.py --jobs data/generated/stage1_greedy_prompt_jobs.jsonl --output data/generated/stage1_demo_candidates.jsonl --model gpt-5.2 --limit 3 --resume
-```
-
-Run the six-dialect 18-candidate demo:
-
-```powershell
-python scripts/generate_candidates.py --jobs data/generated/stage1_greedy_prompt_jobs.jsonl --output data/generated/stage1_demo_candidates.jsonl --model gpt-5.2 --limit 18 --resume --print-output
-```
-
-Run the full Stage 1 demo generation:
-
-```powershell
-python scripts/generate_candidates.py --jobs data/generated/stage1_greedy_prompt_jobs.jsonl --output data/generated/stage1_demo_candidates.jsonl --model gpt-5.2 --resume
-```
-
-Render a readable Markdown report from generated candidates:
-
-```powershell
-python scripts/render_candidate_report.py --anchors "C:\Users\great\Downloads\final_anchors.csv" --candidates data/generated/stage1_demo_candidates.jsonl --output docs/stage1_demo_candidates.md
-```
-
-## Local Generated Outputs
-
-Generated candidate files are local run artifacts. By default, the generation commands write to:
+You can also create a local `.env` file in the repo root:
 
 ```text
-data/generated/
-docs/stage1_demo_candidates*.md
+OPENAI_API_KEY=your_api_key_here
 ```
 
-These paths are ignored by Git, so collaborators can run generation without accidentally committing their local outputs or API-generated candidate files.
+The `.env` file is ignored by Git.
 
-The repo includes one intentional curated example under:
+## Final 80 Workflow
+
+Build the full final-80 greedy assignment file:
+
+```powershell
+python scripts/build_assignments.py --anchors data/raw/DART_FINAL_80_ANCHORS.csv --features config/features.index.json --strategy greedy --candidates 3 --output data/assignments/final80_greedy_assignments.jsonl
+```
+
+Render the full 240 prompt jobs:
+
+```powershell
+python scripts/render_prompt_jobs.py --anchors data/raw/DART_FINAL_80_ANCHORS.csv --assignments data/assignments/final80_greedy_assignments.jsonl --features config/features.index.json --template prompts/generation_v1.txt --output data/generated/final80_greedy_prompt_jobs.jsonl
+```
+
+Generate all 240 candidate responses:
+
+```powershell
+python scripts/generate_candidates.py --jobs data/generated/final80_greedy_prompt_jobs.jsonl --output data/generated/final80_candidates_expanded_inventory.jsonl --model gpt-5.2 --resume
+```
+
+Render a readable full-run report:
+
+```powershell
+python scripts/render_candidate_report.py --anchors data/raw/DART_FINAL_80_ANCHORS.csv --candidates data/generated/final80_candidates_expanded_inventory.jsonl --output docs/final80_candidates_expanded_inventory.md
+```
+
+The full 240-candidate run can take time and API budget. For quick review, use the curated demo below.
+
+For full runs, leave off `--print-output`. The terminal will show normal progress lines like `[1/240] Generating ...` and the final output path, but it will not print all 240 candidate responses into the terminal. The full generated records are written to the JSONL file passed with `--output`.
+
+## Curated 18-Candidate Demo
+
+Build the curated six-pair demo assignment file:
+
+```powershell
+python scripts/build_demo_assignments.py --anchors data/raw/DART_FINAL_80_ANCHORS.csv --output data/assignments/final80_demo_assignments.jsonl --candidates 3
+```
+
+Render the 18 demo prompt jobs:
+
+```powershell
+python scripts/render_prompt_jobs.py --anchors data/raw/DART_FINAL_80_ANCHORS.csv --assignments data/assignments/final80_demo_assignments.jsonl --features config/features.index.json --template prompts/generation_v1.txt --output data/generated/final80_demo_prompt_jobs.jsonl
+```
+
+Run the 18-candidate demo:
+
+```powershell
+python scripts/generate_candidates.py --jobs data/generated/final80_demo_prompt_jobs.jsonl --output data/generated/final80_demo_candidates_expanded_inventory.jsonl --model gpt-5.2 --limit 18 --resume --print-output
+```
+
+The demo command keeps `--print-output` on purpose so reviewers can immediately see the generated candidate responses in the terminal. The same records are still written to the JSONL output file.
+
+Render the readable demo report:
+
+```powershell
+python scripts/render_candidate_report.py --anchors data/raw/DART_FINAL_80_ANCHORS.csv --candidates data/generated/final80_demo_candidates_expanded_inventory.jsonl --output docs/final80_demo_candidates_expanded_inventory.md
+```
+
+Generated files in `data/generated/` and generated reports matching `docs/final80_demo_candidates*.md` are local run artifacts and ignored by Git. If the team wants to commit a curated example, copy it into:
 
 ```text
 data/examples/
 docs/examples/
 ```
 
-Use `data/generated/` for local experiments. Use `data/examples/` and `docs/examples/` only for curated examples that the team intentionally wants to commit.
+## Older Stage 1 Commands
 
-Run tests:
+The repo still supports the earlier draft-anchor workflow. For the current research workflow, prefer the final-80 commands above.
+
+Build draft Stage 1 greedy assignments:
+
+```powershell
+python scripts/build_assignments.py --anchors "C:\Users\great\Downloads\final_anchors.csv" --strategy greedy --output data/assignments/stage1_greedy_assignments.jsonl --candidates 3
+```
+
+Render draft Stage 1 prompt jobs:
+
+```powershell
+python scripts/render_prompt_jobs.py --anchors "C:\Users\great\Downloads\final_anchors.csv" --assignments data/assignments/stage1_greedy_assignments.jsonl --output data/generated/stage1_greedy_prompt_jobs.jsonl
+```
+
+## Local Generated Outputs
+
+Local generation outputs are ignored by Git:
+
+```text
+data/assignments/
+data/generated/
+data/test_tmp/
+docs/stage1_demo_candidates*.md
+docs/final80_demo_candidates*.md
+```
+
+This keeps collaborators from accidentally committing their own generated candidate files.
+
+## Required Anchor Fields
+
+The pipeline now supports the final Student 1 CSV format:
+
+- `essay_id`
+- `dataset`
+- `text`
+- `score`
+- `normalized_score`
+- `score_band`
+
+The pipeline also remains compatible with earlier anchor formats that use:
+
+- `anchor_id`
+- `source_corpus`
+- `anchor_response`
+- `essay`
+- `prompt`
+- `domain`
+
+If `prompt` is missing, prompt jobs render `[PROMPT NOT PROVIDED]`. That is acceptable for plumbing tests, but final benchmark generation should eventually include prompt/rubric context when available.
+
+## Feature Inventory Caution
+
+The active feature inventories are paper-source-backed drafts. Each feature points to Appendix A of the DART paper or to a source already cited in the paper. Some features are allowed for generation, while higher-risk features are kept as blocked or review-only.
+
+Generated demo candidates are useful for showing the pipeline, but they are not final benchmark variants. They still need semantic-equivalence review, dialect authenticity review, feature safety checks, and stereotyping-risk review.
+
+## Tests
+
+Run tests with:
 
 ```powershell
 python -m unittest discover -s tests
 ```
-
-## Required Anchor Fields
-
-The pipeline can work with either `anchor_id` or `essay_id`, but generation-ready anchors should eventually include:
-
-- `anchor_id`
-- `prompt`
-- `anchor_response`
-- `human_score` normalized to the DART 1-5 scale
-- `score_band`
-- `domain`
-- `source_corpus`
-- `rubric_dimensions`
-
-If `prompt` is missing, prompt jobs will render `[PROMPT NOT PROVIDED]`, which is acceptable for plumbing tests but not final generation.
-
-## Important Research Caution
-
-The feature inventories are Appendix A drafts, not final linguistic authority. The team should review them before real benchmark generation. The pipeline is designed so the team can update individual files under `config/features/` without rewriting the rest of the workflow.
-
-Generated demo candidates are useful for showing what the pipeline does, but they are not final benchmark variants. They must still be reviewed for semantic equivalence, dialect authenticity, feature safety, and stereotyping risk.
