@@ -36,7 +36,7 @@ DEMO_PLAN = [
     },
     {
         "essay_id": "AAAOPP13416000037047",
-        "dialect_family": "African American Vernacular English (AAVE)",
+        "dialect_family": "African American English (AAE)",
         "demo_reason": "HIGH score band from ASAP_2.0",
     },
 ]

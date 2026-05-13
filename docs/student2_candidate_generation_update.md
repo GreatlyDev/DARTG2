@@ -58,7 +58,7 @@ For the demo, I generated one anchor set for each dialect family:
 | A3 | Northeastern/New England | 3 |
 | A4 | Western American English | 3 |
 | A5 | Appalachian English | 3 |
-| A6 | African American Vernacular English (AAVE) | 3 |
+| A6 | African American English (AAE) | 3 |
 | **Total** | **6 dialect families** | **18** |
 
 The committed example is intentionally small. I did not commit every local generation run. The repo now has one clean example that people can inspect, while future local runs stay ignored under `data/generated/`.
@@ -98,7 +98,7 @@ Specific issues I noticed:
 - some dialect features feel forced or inserted
 - some candidates are too similar to each other
 - some rewrites change the academic tone too much
-- AAVE outputs need especially careful review because the feature inventory is not robust enough yet
+- AAE outputs need especially careful review because the feature inventory is not robust enough yet
 
 This confirms that generation alone is not enough. We need filtering and validation.
 

@@ -1,4 +1,4 @@
-﻿{
+{
   "Southern American English": {
     "needs_linguist_review": true,
     "allowed_lexical_features": ["y'all", "fixin' to"],
@@ -74,14 +74,14 @@
       "Appalachian English Archive, University of South Carolina"
     ]
   },
-  "African American Vernacular English (AAVE)": {
+  "African American English (AAE)": {
     "needs_linguist_review": true,
     "allowed_lexical_features": ["finna"],
     "allowed_syntactic_features": ["habitual be", "stressed BIN for remote past where meaning requires it", "negative concord", "perfective done"],
     "allowed_orthographic_features": [],
     "allowed_discourse_features": [],
     "disallowed_features": ["racial caricature", "random slang insertion", "mocking eye-dialect", "features not licensed by the inventory"],
-    "usage_notes": ["Use AAVE grammatical features only where their meaning is appropriate; habitual be must mark habitual aspect, not replace every form of is or are."],
+    "usage_notes": ["Use AAE grammatical features only where their meaning is appropriate; habitual be must mark habitual aspect, not replace every form of is or are."],
     "safety_notes": ["Do not make the response sound less intelligent, less academic, or stereotyped."],
     "source_references": [
       "Rickford (1999), African American Vernacular English",

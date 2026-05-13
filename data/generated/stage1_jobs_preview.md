@@ -86,7 +86,7 @@ Prepared candidate-generation jobs:
 - `A5_Appalachian_English_3` (candidate prompt 3)
 
 ## Anchor A6
-- Assigned dialect: African American Vernacular English (AAVE)
+- Assigned dialect: African American English (AAE)
 - Score band: low
 - Normalized score: 2.33
 
@@ -97,9 +97,9 @@ The features of the setting affect the cyclist in many ways, they ware heat, lac
 ```
 
 Prepared candidate-generation jobs:
-- `A6_African_American_Vernacular_English_(AAVE)_1` (candidate prompt 1)
-- `A6_African_American_Vernacular_English_(AAVE)_2` (candidate prompt 2)
-- `A6_African_American_Vernacular_English_(AAVE)_3` (candidate prompt 3)
+- `A6_African_American_English_(AAE)_1` (candidate prompt 1)
+- `A6_African_American_English_(AAE)_2` (candidate prompt 2)
+- `A6_African_American_English_(AAE)_3` (candidate prompt 3)
 
 ## Anchor A7
 - Assigned dialect: Southern American English
@@ -182,7 +182,7 @@ Prepared candidate-generation jobs:
 - `A11_Appalachian_English_3` (candidate prompt 3)
 
 ## Anchor A12
-- Assigned dialect: African American Vernacular English (AAVE)
+- Assigned dialect: African American English (AAE)
 - Score band: low
 - Normalized score: 1.8
 
@@ -193,9 +193,9 @@ The books, magazines, music, and movies shouldn't be removed from the shelves. T
 ```
 
 Prepared candidate-generation jobs:
-- `A12_African_American_Vernacular_English_(AAVE)_1` (candidate prompt 1)
-- `A12_African_American_Vernacular_English_(AAVE)_2` (candidate prompt 2)
-- `A12_African_American_Vernacular_English_(AAVE)_3` (candidate prompt 3)
+- `A12_African_American_English_(AAE)_1` (candidate prompt 1)
+- `A12_African_American_English_(AAE)_2` (candidate prompt 2)
+- `A12_African_American_English_(AAE)_3` (candidate prompt 3)
 
 ## Anchor A13
 - Assigned dialect: Southern American English
@@ -278,7 +278,7 @@ Prepared candidate-generation jobs:
 - `A17_Appalachian_English_3` (candidate prompt 3)
 
 ## Anchor A18
-- Assigned dialect: African American Vernacular English (AAVE)
+- Assigned dialect: African American English (AAE)
 - Score band: mid
 - Normalized score: 3.0
 
@@ -289,9 +289,9 @@ The feeling in this article when it talks about family is love, peace, happiness
 ```
 
 Prepared candidate-generation jobs:
-- `A18_African_American_Vernacular_English_(AAVE)_1` (candidate prompt 1)
-- `A18_African_American_Vernacular_English_(AAVE)_2` (candidate prompt 2)
-- `A18_African_American_Vernacular_English_(AAVE)_3` (candidate prompt 3)
+- `A18_African_American_English_(AAE)_1` (candidate prompt 1)
+- `A18_African_American_English_(AAE)_2` (candidate prompt 2)
+- `A18_African_American_English_(AAE)_3` (candidate prompt 3)
 
 ## Anchor A19
 - Assigned dialect: Southern American English
@@ -374,7 +374,7 @@ Prepared candidate-generation jobs:
 - `A23_Appalachian_English_3` (candidate prompt 3)
 
 ## Anchor A24
-- Assigned dialect: African American Vernacular English (AAVE)
+- Assigned dialect: African American English (AAE)
 - Score band: mid
 - Normalized score: 3.0
 
@@ -385,9 +385,9 @@ The author mood in the memoir sound gratefun and very happy. This @CAPS2 that he
 ```
 
 Prepared candidate-generation jobs:
-- `A24_African_American_Vernacular_English_(AAVE)_1` (candidate prompt 1)
-- `A24_African_American_Vernacular_English_(AAVE)_2` (candidate prompt 2)
-- `A24_African_American_Vernacular_English_(AAVE)_3` (candidate prompt 3)
+- `A24_African_American_English_(AAE)_1` (candidate prompt 1)
+- `A24_African_American_English_(AAE)_2` (candidate prompt 2)
+- `A24_African_American_English_(AAE)_3` (candidate prompt 3)
 
 ## Anchor A25
 - Assigned dialect: Southern American English
@@ -470,7 +470,7 @@ Prepared candidate-generation jobs:
 - `A29_Appalachian_English_3` (candidate prompt 3)
 
 ## Anchor A30
-- Assigned dialect: African American Vernacular English (AAVE)
+- Assigned dialect: African American English (AAE)
 - Score band: high
 - Normalized score: 5.0
 
@@ -481,9 +481,9 @@ Whenever architectural work is put in act, thoughts of the potential consequence
 ```
 
 Prepared candidate-generation jobs:
-- `A30_African_American_Vernacular_English_(AAVE)_1` (candidate prompt 1)
-- `A30_African_American_Vernacular_English_(AAVE)_2` (candidate prompt 2)
-- `A30_African_American_Vernacular_English_(AAVE)_3` (candidate prompt 3)
+- `A30_African_American_English_(AAE)_1` (candidate prompt 1)
+- `A30_African_American_English_(AAE)_2` (candidate prompt 2)
+- `A30_African_American_English_(AAE)_3` (candidate prompt 3)
 
 ## Anchor A31
 - Assigned dialect: Southern American English
@@ -566,7 +566,7 @@ Prepared candidate-generation jobs:
 - `A35_Appalachian_English_3` (candidate prompt 3)
 
 ## Anchor A36
-- Assigned dialect: African American Vernacular English (AAVE)
+- Assigned dialect: African American English (AAE)
 - Score band: high
 - Normalized score: 3.8
 
@@ -577,9 +577,9 @@ Original anchor response:
 ```
 
 Prepared candidate-generation jobs:
-- `A36_African_American_Vernacular_English_(AAVE)_1` (candidate prompt 1)
-- `A36_African_American_Vernacular_English_(AAVE)_2` (candidate prompt 2)
-- `A36_African_American_Vernacular_English_(AAVE)_3` (candidate prompt 3)
+- `A36_African_American_English_(AAE)_1` (candidate prompt 1)
+- `A36_African_American_English_(AAE)_2` (candidate prompt 2)
+- `A36_African_American_English_(AAE)_3` (candidate prompt 3)
 
 ## Anchor A37
 - Assigned dialect: Southern American English

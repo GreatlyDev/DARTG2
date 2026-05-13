@@ -23,7 +23,7 @@ class FeatureInventoryTests(unittest.TestCase):
                 'Northeastern/New England',
                 'Western American English',
                 'Appalachian English',
-                'African American Vernacular English (AAVE)',
+                'African American English (AAE)',
             },
         )
         for family, config in inventory.items():

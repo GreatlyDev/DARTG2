@@ -1,4 +1,4 @@
-﻿# Student 2 Progress Update: Generation Pipeline
+# Student 2 Progress Update: Generation Pipeline
 
 ## Quick Summary
 
@@ -42,7 +42,7 @@ The current dialect files are:
 - Northeastern/New England
 - Western American English
 - Appalachian English
-- African American Vernacular English (AAVE)
+- African American English (AAE)
 
 The current inventory is based on Appendix A from the DART EMNLP paper draft. I treated that appendix as the starting point, but I still think the inventory should be reviewed before real generation. Some features are also marked as blocked or review-only because they could be risky for generation, especially phonetic spellings or anything that could turn into a stereotype.
 
@@ -55,7 +55,7 @@ Current inventory counts:
 | Northeastern/New England | 6 | 3 | 3 |
 | Western American English | 6 | 5 | 1 |
 | Appalachian English | 9 | 5 | 4 |
-| AAVE | 9 | 5 | 4 |
+| AAE | 9 | 5 | 4 |
 | **Total** | **45** | **28** | **17** |
 
 This gives us a structured starting point, but it is not a complete extraction from every source in the references yet.
@@ -79,7 +79,7 @@ Anchor A2 -> Midwestern/North Central
 Anchor A3 -> Northeastern/New England
 Anchor A4 -> Western American English
 Anchor A5 -> Appalachian English
-Anchor A6 -> AAVE
+Anchor A6 -> AAE
 Anchor A7 -> Southern American English
 ```
 
@@ -145,7 +145,7 @@ Dialect assignment counts:
 | Northeastern/New England | 7 | 21 |
 | Western American English | 7 | 21 |
 | Appalachian English | 6 | 18 |
-| AAVE | 6 | 18 |
+| AAE | 6 | 18 |
 | **Total** | **40** | **120** |
 
 Candidate prompt counts:

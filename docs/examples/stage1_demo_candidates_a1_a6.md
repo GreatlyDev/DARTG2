@@ -1,4 +1,4 @@
-Ôªø# Stage 1 Demo Candidates
+# Stage 1 Demo Candidates
 
 Total anchors with candidates: 6
 Total candidate records: 18
@@ -24,7 +24,7 @@ I think that computers have a good effect on people. When people are on the comp
 Candidate response:
 
 ```text
-I reckon computers have a good effect on people. When folks are on the computer, they aren‚Äôt on it for very long. I also reckon computers have a good effect on people because of the new technology. Computers are positive, and they can help you when you‚Äôre stuck or need to look something up. To me, computers are positive. When people get on the computer, they‚Äôre not on for @NUM1 hours straight. Sure, they might be on @NUM1 hours in a day, but they do other stuff in between like school, meals, and activities. Some people need computers for their @CAPS1. News @CAPS2 companies need computers for editing and printing out the paper. They also put the news on their website. What would most people do without a computer? Computers are positive because of the new technology! The new technology is helping people interact over the.
+I reckon computers have a good effect on people. When folks are on the computer, they arenít on it for very long. I also reckon computers have a good effect on people because of the new technology. Computers are positive, and they can help you when youíre stuck or need to look something up. To me, computers are positive. When people get on the computer, theyíre not on for @NUM1 hours straight. Sure, they might be on @NUM1 hours in a day, but they do other stuff in between like school, meals, and activities. Some people need computers for their @CAPS1. News @CAPS2 companies need computers for editing and printing out the paper. They also put the news on their website. What would most people do without a computer? Computers are positive because of the new technology! The new technology is helping people interact over the.
 ```
 
 ### Candidate 2 - Southern American English
@@ -35,7 +35,7 @@ I reckon computers have a good effect on people. When folks are on the computer,
 Candidate response:
 
 ```text
-I reckon computers have a good effect on people. When folks are on the computer, they usually aren‚Äôt on it for very long. I also reckon computers are good for people because of the new technology. Computers are positive, and they can help you when you‚Äôre stuck or need to look something up. To me, computers are positive. When people get on the computer, they aren‚Äôt on for @NUM1 hours straight. Sure, they might be on @NUM1 hours in a day, but they do other stuff in between like school, meals, and activities. Some people need computers for their @CAPS1. News @CAPS2 companies need computers for editing and printing out the paper. They also put the news on their website. What would most people do without a computer? Computers are positive because of the new technology! The new technology is helping people interact over the internet.
+I reckon computers have a good effect on people. When folks are on the computer, they usually arenít on it for very long. I also reckon computers are good for people because of the new technology. Computers are positive, and they can help you when youíre stuck or need to look something up. To me, computers are positive. When people get on the computer, they arenít on for @NUM1 hours straight. Sure, they might be on @NUM1 hours in a day, but they do other stuff in between like school, meals, and activities. Some people need computers for their @CAPS1. News @CAPS2 companies need computers for editing and printing out the paper. They also put the news on their website. What would most people do without a computer? Computers are positive because of the new technology! The new technology is helping people interact over the internet.
 ```
 
 ### Candidate 3 - Southern American English
@@ -46,7 +46,7 @@ I reckon computers have a good effect on people. When folks are on the computer,
 Candidate response:
 
 ```text
-I reckon computers have a good effect on people. When folks are on the computer, they aren‚Äôt on it for very long. I also reckon computers have a good effect on people because of the new technology. Computers are positive, and they can help you when you‚Äôre stuck or need to look something up. To me, computers are positive. When people get on the computer, they are not on for @NUM1 hours straight. Sure, they might be on @NUM1 hours in a day, but they do other stuff in between like school, meals, and activities. Some people need computers for their @CAPS1. News @CAPS2 companies need computers for editing and printing out the paper. They also put the news on their website. What would most people do without a computer? Computers are positive because of the new technology! The new technology is helping people interact over the.
+I reckon computers have a good effect on people. When folks are on the computer, they arenít on it for very long. I also reckon computers have a good effect on people because of the new technology. Computers are positive, and they can help you when youíre stuck or need to look something up. To me, computers are positive. When people get on the computer, they are not on for @NUM1 hours straight. Sure, they might be on @NUM1 hours in a day, but they do other stuff in between like school, meals, and activities. Some people need computers for their @CAPS1. News @CAPS2 companies need computers for editing and printing out the paper. They also put the news on their website. What would most people do without a computer? Computers are positive because of the new technology! The new technology is helping people interact over the.
 ```
 
 ## Anchor A2
@@ -68,7 +68,7 @@ Some books are not suitable for kids. They could make a section for adults that 
 Candidate response:
 
 ```text
-Some books just aren‚Äôt suitable for kids. Ope, they could make an adults-only section that has books that aren‚Äôt censored. Those books need checked out only by adults, and kids under the age of @NUM1 shouldn‚Äôt be allowed to check them out unless their parent or guardian says it‚Äôs okay. Some adults don‚Äôt care what their kids read, but the library should, right. I‚Äôve read books at school that were adult books at school. Back in elementary school, I remember checking out a lot of books, but I don‚Äôt think they were adult books. Some kids do like reading adult books. It can help their reading skills, but the content in the book isn‚Äôt suitable for them. Making a section for adults would help stop kids from reading adult material. I believe this should happen at every library around the world.
+Some books just arenít suitable for kids. Ope, they could make an adults-only section that has books that arenít censored. Those books need checked out only by adults, and kids under the age of @NUM1 shouldnít be allowed to check them out unless their parent or guardian says itís okay. Some adults donít care what their kids read, but the library should, right. Iíve read books at school that were adult books at school. Back in elementary school, I remember checking out a lot of books, but I donít think they were adult books. Some kids do like reading adult books. It can help their reading skills, but the content in the book isnít suitable for them. Making a section for adults would help stop kids from reading adult material. I believe this should happen at every library around the world.
 ```
 
 ### Candidate 2 - Midwestern/North Central
@@ -79,7 +79,7 @@ Some books just aren‚Äôt suitable for kids. Ope, they could make an adults-only 
 Candidate response:
 
 ```text
-Some books just aren‚Äôt suitable for kids. Libraries could make an adults-only section that has books that aren‚Äôt censored. Those books need checked out only by adults, and kids under the age of @NUM1 shouldn‚Äôt be allowed to check them out unless their parent or guardian says it‚Äôs okay, right? Some adults don‚Äôt care what their kids read, but the library should. I‚Äôve read books at school that were adult books at school. Back in elementary school, I remember checking out a lot of books, but I don‚Äôt think any of them were adult books. Some kids like reading adult books. It can help their reading skills, but the stuff in the book isn‚Äôt suitable for them. Having a separate adult section would help stop kids from reading adult material. Ope, I really believe this should happen at every library around the world.
+Some books just arenít suitable for kids. Libraries could make an adults-only section that has books that arenít censored. Those books need checked out only by adults, and kids under the age of @NUM1 shouldnít be allowed to check them out unless their parent or guardian says itís okay, right? Some adults donít care what their kids read, but the library should. Iíve read books at school that were adult books at school. Back in elementary school, I remember checking out a lot of books, but I donít think any of them were adult books. Some kids like reading adult books. It can help their reading skills, but the stuff in the book isnít suitable for them. Having a separate adult section would help stop kids from reading adult material. Ope, I really believe this should happen at every library around the world.
 ```
 
 ### Candidate 3 - Midwestern/North Central
@@ -90,7 +90,7 @@ Some books just aren‚Äôt suitable for kids. Libraries could make an adults-only 
 Candidate response:
 
 ```text
-Some books aren‚Äôt appropriate for kids. Libraries could make an adults-only section that includes books that aren‚Äôt censored. Those books shouldn‚Äôt be allowed to be checked out by kids under the age of @NUM1 unless their parent or guardian says it‚Äôs okay, right. Some adults don‚Äôt care what their kids read, but the library should. I‚Äôve read books at school that were adult books. Back in elementary school, I remember checking out a lot of books, but I don‚Äôt think any of them were adult books. Some kids like reading adult books. It can help their reading skills, but the content in the book isn‚Äôt suitable for them. Ope, having an adults section would help stop kids from reading adult material. I believe this should happen at every library around the world.
+Some books arenít appropriate for kids. Libraries could make an adults-only section that includes books that arenít censored. Those books shouldnít be allowed to be checked out by kids under the age of @NUM1 unless their parent or guardian says itís okay, right. Some adults donít care what their kids read, but the library should. Iíve read books at school that were adult books. Back in elementary school, I remember checking out a lot of books, but I donít think any of them were adult books. Some kids like reading adult books. It can help their reading skills, but the content in the book isnít suitable for them. Ope, having an adults section would help stop kids from reading adult material. I believe this should happen at every library around the world.
 ```
 
 ## Anchor A3
@@ -112,7 +112,7 @@ In the excerpt "The Mooring Mast" by @ORGANIZATION2, the builders of the Empire 
 Candidate response:
 
 ```text
-In the excerpt ‚ÄúThe Mooring Mast‚Äù by @ORGANIZATION2, the builders of the Empire State Building ran into some obstacles when they tried to make it so dirigibles could dock there. Sounded like a wicked good idea and seemed possible at first, but it wasn‚Äôt. The mooring mast idea for the @CAPS1 State Building was not practical or safe. In paragraph fourteen, Marcia explains why this dirigible idea wasn‚Äôt so safe: ‚ÄúThe winds on top of the building were constantly shifting due to violent air currents.‚Äù In the last sentence of paragraph fourteen, the author gives another reason it wasn‚Äôt safe or practical: ‚Äúthey would be dangling high above pedestrians on the street,‚Äù
+In the excerpt ìThe Mooring Mastî by @ORGANIZATION2, the builders of the Empire State Building ran into some obstacles when they tried to make it so dirigibles could dock there. Sounded like a wicked good idea and seemed possible at first, but it wasnít. The mooring mast idea for the @CAPS1 State Building was not practical or safe. In paragraph fourteen, Marcia explains why this dirigible idea wasnít so safe: ìThe winds on top of the building were constantly shifting due to violent air currents.î In the last sentence of paragraph fourteen, the author gives another reason it wasnít safe or practical: ìthey would be dangling high above pedestrians on the street,î
 ```
 
 ### Candidate 2 - Northeastern/New England
@@ -123,7 +123,7 @@ In the excerpt ‚ÄúThe Mooring Mast‚Äù by @ORGANIZATION2, the builders of the Emp
 Candidate response:
 
 ```text
-In the excerpt ‚ÄúThe Mooring Mast‚Äù by @ORGANIZATION2, the builders of the Empire State Building ran into some obstacles when they tried to make it possible for dirigibles to dock there. At first it sounded like a wicked good idea and seemed like it could work, but it really didn‚Äôt. The whole mooring mast idea for the @CAPS1 State Building wasn‚Äôt practical or safe. In paragraph fourteen, Marcia explains why the dirigible plan wasn‚Äôt so safe: ‚ÄúThe winds on top of the building were constantly shifting due to violent air currents.‚Äù And in the last sentence of paragraph fourteen, the author gives another reason it wasn‚Äôt safe or practical: ‚Äúthey would be dangling high above pedestrians on the street,‚Äù
+In the excerpt ìThe Mooring Mastî by @ORGANIZATION2, the builders of the Empire State Building ran into some obstacles when they tried to make it possible for dirigibles to dock there. At first it sounded like a wicked good idea and seemed like it could work, but it really didnít. The whole mooring mast idea for the @CAPS1 State Building wasnít practical or safe. In paragraph fourteen, Marcia explains why the dirigible plan wasnít so safe: ìThe winds on top of the building were constantly shifting due to violent air currents.î And in the last sentence of paragraph fourteen, the author gives another reason it wasnít safe or practical: ìthey would be dangling high above pedestrians on the street,î
 ```
 
 ### Candidate 3 - Northeastern/New England
@@ -134,7 +134,7 @@ In the excerpt ‚ÄúThe Mooring Mast‚Äù by @ORGANIZATION2, the builders of the Emp
 Candidate response:
 
 ```text
-In the excerpt ‚ÄúThe Mooring Mast‚Äù by @ORGANIZATION2, the builders of the Empire State Building ran into some obstacles when they tried to make it so dirigibles could dock there. It sounded like a wicked good idea and seemed possible at first, but it really wasn‚Äôt. The whole mooring mast idea for the @CAPS1 State Building was not practical or safe. In paragraph fourteen, Marcia explains why the dirigible plan wasn‚Äôt so safe: ‚ÄúThe winds on top of the building were constantly shifting due to violent air currents.‚Äù And in the last sentence of paragraph fourteen, the author gives another reason it wasn‚Äôt safe or practical: ‚Äúthey would be dangling high above pedestrians on the street,‚Äù
+In the excerpt ìThe Mooring Mastî by @ORGANIZATION2, the builders of the Empire State Building ran into some obstacles when they tried to make it so dirigibles could dock there. It sounded like a wicked good idea and seemed possible at first, but it really wasnít. The whole mooring mast idea for the @CAPS1 State Building was not practical or safe. In paragraph fourteen, Marcia explains why the dirigible plan wasnít so safe: ìThe winds on top of the building were constantly shifting due to violent air currents.î And in the last sentence of paragraph fourteen, the author gives another reason it wasnít safe or practical: ìthey would be dangling high above pedestrians on the street,î
 ```
 
 ## Anchor A4
@@ -145,7 +145,7 @@ In the excerpt ‚ÄúThe Mooring Mast‚Äù by @ORGANIZATION2, the builders of the Emp
 Original anchor response:
 
 ```text
-In the essay ¬ìDo Not Exceed posted Speed Limit¬î the setting affected the cyclist sense of direction. The cyclist knew where he was going and how to get there but the old men told him their ¬ìshort-cut.¬î It ruined his own sense of direction because he was taking out-dated directions from ¬ìold-timers that hadn¬ít left their porches since Carter was in office.¬î That is how the setting affected the cyclist in the's essay.
+In the essay ?Do Not Exceed posted Speed Limit? the setting affected the cyclist sense of direction. The cyclist knew where he was going and how to get there but the old men told him their ?short-cut.? It ruined his own sense of direction because he was taking out-dated directions from ?old-timers that hadn?t left their porches since Carter was in office.? That is how the setting affected the cyclist in the's essay.
 ```
 
 ### Candidate 1 - Western American English
@@ -156,7 +156,7 @@ In the essay ¬ìDo Not Exceed posted Speed Limit¬î the setting affected the cycli
 Candidate response:
 
 ```text
-In the essay ‚ÄúDo Not Exceed posted Speed Limit,‚Äù the setting messed with the cyclist‚Äôs sense of direction. He knew where he was headed and how to get there, but the old men were like, ‚Äútake our short-cut.‚Äù It threw off his own sense of direction because he was using out-dated directions from ‚Äúold-timers that hadn‚Äôt left their porches since Carter was in office.‚Äù That‚Äôs how the setting affected the cyclist in the essay.
+In the essay ìDo Not Exceed posted Speed Limit,î the setting messed with the cyclistís sense of direction. He knew where he was headed and how to get there, but the old men were like, ìtake our short-cut.î It threw off his own sense of direction because he was using out-dated directions from ìold-timers that hadnít left their porches since Carter was in office.î Thatís how the setting affected the cyclist in the essay.
 ```
 
 ### Candidate 2 - Western American English
@@ -167,7 +167,7 @@ In the essay ‚ÄúDo Not Exceed posted Speed Limit,‚Äù the setting messed with the
 Candidate response:
 
 ```text
-In the essay ‚ÄúDo Not Exceed posted Speed Limit,‚Äù the setting messed with the cyclist‚Äôs sense of direction. He totally knew where he was headed and how to get there, but the old men were like, here‚Äôs our ‚Äúshort-cut.‚Äù It threw off his own sense of direction because he was taking out-dated directions from ‚Äúold-timers that hadn‚Äôt left their porches since Carter was in office.‚Äù That‚Äôs how the setting affected the cyclist in the essay.
+In the essay ìDo Not Exceed posted Speed Limit,î the setting messed with the cyclistís sense of direction. He totally knew where he was headed and how to get there, but the old men were like, hereís our ìshort-cut.î It threw off his own sense of direction because he was taking out-dated directions from ìold-timers that hadnít left their porches since Carter was in office.î Thatís how the setting affected the cyclist in the essay.
 ```
 
 ### Candidate 3 - Western American English
@@ -178,7 +178,7 @@ In the essay ‚ÄúDo Not Exceed posted Speed Limit,‚Äù the setting messed with the
 Candidate response:
 
 ```text
-In the essay ‚ÄúDo Not Exceed posted Speed Limit,‚Äù the setting messed with the cyclist‚Äôs sense of direction. He knew where he was going and how to get there, but the old men were like, ‚ÄúTake our short-cut.‚Äù That threw off his own sense of direction because he was taking out-dated directions from ‚Äúold-timers that hadn‚Äôt left their porches since Carter was in office.‚Äù That‚Äôs like how the setting affected the cyclist in the essay.
+In the essay ìDo Not Exceed posted Speed Limit,î the setting messed with the cyclistís sense of direction. He knew where he was going and how to get there, but the old men were like, ìTake our short-cut.î That threw off his own sense of direction because he was taking out-dated directions from ìold-timers that hadnít left their porches since Carter was in office.î Thatís like how the setting affected the cyclist in the essay.
 ```
 
 ## Anchor A5
@@ -200,7 +200,7 @@ I personally dont think there should be any censorship in books coming into a @C
 Candidate response:
 
 ```text
-I honestly don‚Äôt think there ought to be any censorship of books coming into a @CAPS1. I think it‚Äôs wrong to do that, because any book should be read no matter what‚Äôs said in it. Anybody that‚Äôs got a problem with something should just not read it and leave it alone. Now I ain‚Äôt really seen anything that I‚Äôd find offensive, but I‚Äôve read some things with words I was kinda surprised to see, a-comin‚Äô across. But nothing I found offensive personally. Books are there for their own purpose, and that‚Äôs another reason why authors put ‚Äôem out there for the public to think what they want of it.
+I honestly donít think there ought to be any censorship of books coming into a @CAPS1. I think itís wrong to do that, because any book should be read no matter whatís said in it. Anybody thatís got a problem with something should just not read it and leave it alone. Now I ainít really seen anything that Iíd find offensive, but Iíve read some things with words I was kinda surprised to see, a-cominí across. But nothing I found offensive personally. Books are there for their own purpose, and thatís another reason why authors put íem out there for the public to think what they want of it.
 ```
 
 ### Candidate 2 - Appalachian English
@@ -211,7 +211,7 @@ I honestly don‚Äôt think there ought to be any censorship of books coming into a
 Candidate response:
 
 ```text
-I personally don‚Äôt think there oughta be any censorship in books coming into a @CAPS1. I think it‚Äôs wrong to do that, because any book should be read no matter what is said in it. Anybody that has a problem with something should just not read it and leave it alone. Now I ain‚Äôt really seen anything that I‚Äôd find offensive, but I‚Äôve read some things with words I was kind of surprised to see. But nothing that I found offensive personally. Books are there for their own purpose, and that‚Äôs another reason why authors put ‚Äôem out there for the public to think what they want of it.
+I personally donít think there oughta be any censorship in books coming into a @CAPS1. I think itís wrong to do that, because any book should be read no matter what is said in it. Anybody that has a problem with something should just not read it and leave it alone. Now I ainít really seen anything that Iíd find offensive, but Iíve read some things with words I was kind of surprised to see. But nothing that I found offensive personally. Books are there for their own purpose, and thatís another reason why authors put íem out there for the public to think what they want of it.
 ```
 
 ### Candidate 3 - Appalachian English
@@ -222,49 +222,49 @@ I personally don‚Äôt think there oughta be any censorship in books coming into a
 Candidate response:
 
 ```text
-I personally don‚Äôt think there ought to be any censorship of books coming into a @CAPS1. I think it‚Äôs wrong to do that, because any book should be read no matter what‚Äôs said in it. Folks that have a problem with somethin‚Äô should just not read it and leave it alone. Now I‚Äôve not really seen anything that I‚Äôd find offensive, but I‚Äôve read some things with words I was kinda surprised to see, just sittin‚Äô there. But there ain‚Äôt been nothin‚Äô I found offensive personally. Books are there for their own purpose, and that‚Äôs another reason why authors put ‚Äôem out there for the public to think what they want of it.
+I personally donít think there ought to be any censorship of books coming into a @CAPS1. I think itís wrong to do that, because any book should be read no matter whatís said in it. Folks that have a problem with somethiní should just not read it and leave it alone. Now Iíve not really seen anything that Iíd find offensive, but Iíve read some things with words I was kinda surprised to see, just sittiní there. But there ainít been nothiní I found offensive personally. Books are there for their own purpose, and thatís another reason why authors put íem out there for the public to think what they want of it.
 ```
 
 ## Anchor A6
-- Dialect family: African American Vernacular English (AAVE)
+- Dialect family: African American English (AAE)
 - Score band: low
 - Normalized score: 2.33
 
 Original anchor response:
 
 ```text
-The features of the setting affect the cyclist in many ways, they ware heat, lack of water, and hills. While on his journey he almost gets dehydrated because he does not have a good supply of water and he said they taste ¬ìlike battery acid.¬î And he had to convince up the road for anothe @NUM1 miles so that he could finally replenish himself
+The features of the setting affect the cyclist in many ways, they ware heat, lack of water, and hills. While on his journey he almost gets dehydrated because he does not have a good supply of water and he said they taste ?like battery acid.? And he had to convince up the road for anothe @NUM1 miles so that he could finally replenish himself
 ```
 
-### Candidate 1 - African American Vernacular English (AAVE)
-- Candidate ID: `A6_African_American_Vernacular_English_(AAVE)_1`
+### Candidate 1 - African American English (AAE)
+- Candidate ID: `A6_African_American_English_(AAE)_1`
 - Status: `demo_unvalidated`
 - Model: `gpt-5.2`
 
 Candidate response:
 
 ```text
-The setting features affect the cyclist in a lot of ways‚Äîheat, not enough water, and hills. On his journey he almost get dehydrated ‚Äòcause he don‚Äôt have a good supply of water, and he said it taste ‚Äúlike battery acid.‚Äù And he had to keep on up the road, another @NUM1 miles, so he could finally replenish hisself.
+The setting features affect the cyclist in a lot of waysóheat, not enough water, and hills. On his journey he almost get dehydrated ëcause he donít have a good supply of water, and he said it taste ìlike battery acid.î And he had to keep on up the road, another @NUM1 miles, so he could finally replenish hisself.
 ```
 
-### Candidate 2 - African American Vernacular English (AAVE)
-- Candidate ID: `A6_African_American_Vernacular_English_(AAVE)_2`
+### Candidate 2 - African American English (AAE)
+- Candidate ID: `A6_African_American_English_(AAE)_2`
 - Status: `demo_unvalidated`
 - Model: `gpt-5.2`
 
 Candidate response:
 
 ```text
-The features of the setting affect the cyclist a lot of ways: heat, not enough water, and hills. While he on his journey, he almost get dehydrated ‚Äôcause he don‚Äôt have a good supply of water, and he said it taste ‚Äúlike battery acid.‚Äù And then he had to keep goin up the road for anothe @NUM1 miles so he could finally replenish himself.
+The features of the setting affect the cyclist a lot of ways: heat, not enough water, and hills. While he on his journey, he almost get dehydrated ícause he donít have a good supply of water, and he said it taste ìlike battery acid.î And then he had to keep goin up the road for anothe @NUM1 miles so he could finally replenish himself.
 ```
 
-### Candidate 3 - African American Vernacular English (AAVE)
-- Candidate ID: `A6_African_American_Vernacular_English_(AAVE)_3`
+### Candidate 3 - African American English (AAE)
+- Candidate ID: `A6_African_American_English_(AAE)_3`
 - Status: `demo_unvalidated`
 - Model: `gpt-5.2`
 
 Candidate response:
 
 ```text
-The setting features affect the cyclist a lot of ways‚Äîheat, not enough water, and them hills. On his journey, he almost get dehydrated since he don‚Äôt have a good supply of water, and he said it taste ‚Äúlike battery acid.‚Äù And he had to climb up the road for another @NUM1 miles so he could finally replenish hisself.
+The setting features affect the cyclist a lot of waysóheat, not enough water, and them hills. On his journey, he almost get dehydrated since he donít have a good supply of water, and he said it taste ìlike battery acid.î And he had to climb up the road for another @NUM1 miles so he could finally replenish hisself.
 ```
