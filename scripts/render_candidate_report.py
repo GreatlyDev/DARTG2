@@ -1,5 +1,6 @@
 import argparse
 import sys
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -15,6 +16,34 @@ def index_by_anchor_id(rows: list[dict]) -> dict[str, dict]:
 
 def anchor_text(anchor: dict) -> str:
     return anchor.get("anchor_response") or anchor.get("essay") or anchor.get("text") or ""
+
+
+def clean_anchor_for_display(text: str) -> str:
+    """Light report-only cleanup for source text readability.
+
+    Candidate outputs are preserved verbatim. This function only affects how
+    anchor text is displayed in review reports; it does not alter source data.
+    """
+    replacements = {
+        "\u0093": '"',
+        "\u0094": '"',
+        "\u201c": '"',
+        "\u201d": '"',
+        "\u2018": "'",
+        "\u2019": "'",
+    }
+    for bad, good in replacements.items():
+        text = text.replace(bad, good)
+    text = re.sub(r"[ \t]{2,}", " ", text)
+    text = re.sub(r"([.!?])(?=[A-Za-z0-9@])", r"\1 ", text)
+    text = re.sub(r"\s+([,.;:!?])", r"\1", text)
+    text = re.sub(r"([.!?])\s+", r"\1 ", text)
+
+    def capitalize_sentence(match: re.Match) -> str:
+        return f"{match.group(1)} {match.group(2).upper()}"
+
+    text = re.sub(r"([.!?])\s+([a-z])", capitalize_sentence, text)
+    return text.strip()
 
 
 def write_block(lines: list[str], title: str, text: str) -> None:
@@ -40,12 +69,12 @@ def main() -> None:
         grouped[str(candidate["anchor_id"])].append(candidate)
 
     lines: list[str] = [
-        "# Stage 1 Demo Candidates",
+        "# DART Candidate Variant Review Report",
         "",
         f"Total anchors with candidates: {len(grouped)}",
         f"Total candidate records: {len(candidates)}",
         "",
-        "These are demo candidates generated from the current draft feature inventories. They are not final DART variants and have not passed semantic-equivalence review, linguistic review, or human validation.",
+        "These candidate variants are generated outputs for team review. They have not yet passed semantic-equivalence review, dialect-feature review, or human validation.",
         "",
     ]
 
@@ -62,7 +91,7 @@ def main() -> None:
         if anchor.get("normalized_score"):
             lines.append(f"- Normalized score: {anchor['normalized_score']}")
         lines.append("")
-        write_block(lines, "Original anchor response:", anchor_response)
+        write_block(lines, "Original anchor response:", clean_anchor_for_display(anchor_response))
 
         for row in rows:
             lines.append(f"### Candidate {row.get('candidate_index')} - {row.get('dialect_family')}")

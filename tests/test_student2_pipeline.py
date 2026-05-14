@@ -177,7 +177,7 @@ class CandidateReportTests(unittest.TestCase):
         )
 
         report = output_path.read_text(encoding='utf-8')
-        self.assertIn('# Stage 1 Demo Candidates', report)
+        self.assertIn('# DART Candidate Variant Review Report', report)
         self.assertIn('Original student response.', report)
         self.assertIn('Generated candidate response.', report)
         self.assertIn('demo_unvalidated', report)
