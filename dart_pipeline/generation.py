@@ -136,6 +136,17 @@ def existing_candidate_ids(rows: Iterable[dict[str, Any]]) -> set[str]:
     return {str(row.get("candidate_id")) for row in rows if row.get("candidate_id")}
 
 
+def is_failed_candidate(row: dict[str, Any]) -> bool:
+    response = str(row.get("candidate_response") or "").strip()
+    raw_output = str(row.get("raw_output") or "").strip()
+    status = str(row.get("generation_status") or "").strip().lower()
+    return response == "FAIL" or raw_output == "FAIL" or status in {"failed", "model_fail", "api_error"}
+
+
+def failed_candidate_ids(rows: Iterable[dict[str, Any]]) -> set[str]:
+    return {str(row.get("candidate_id")) for row in rows if row.get("candidate_id") and is_failed_candidate(row)}
+
+
 def sleep_between_calls(seconds: float) -> None:
     if seconds > 0:
         time.sleep(seconds)

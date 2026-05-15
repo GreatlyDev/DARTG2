@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 from dart_pipeline.assignments import make_balanced_assignments, make_greedy_assignments
-from dart_pipeline.generation import extract_output_text, generation_input
+from dart_pipeline.generation import failed_candidate_ids, extract_output_text, generation_input, is_failed_candidate
 from dart_pipeline.inventories import flatten_allowed_features, load_feature_inventory
 from dart_pipeline.io_utils import write_jsonl
 from dart_pipeline.prompts import render_generation_prompt
@@ -112,6 +112,20 @@ class GenerationTests(unittest.TestCase):
 
         self.assertIn('Base prompt.', rendered)
         self.assertIn('Candidate attempt: 2 of 3.', rendered)
+
+    def test_failed_candidate_detection_catches_literal_fail_outputs(self):
+        rows = [
+            {'candidate_id': 'A1_Southern_1', 'candidate_response': 'Valid response.', 'generation_status': 'demo_unvalidated'},
+            {'candidate_id': 'A1_Southern_2', 'candidate_response': 'FAIL', 'generation_status': 'demo_unvalidated'},
+            {'candidate_id': 'A1_Southern_3', 'raw_output': 'FAIL', 'generation_status': 'demo_unvalidated'},
+            {'candidate_id': 'A1_Southern_4', 'candidate_response': '', 'generation_status': 'model_fail'},
+        ]
+
+        self.assertFalse(is_failed_candidate(rows[0]))
+        self.assertEqual(
+            failed_candidate_ids(rows),
+            {'A1_Southern_2', 'A1_Southern_3', 'A1_Southern_4'},
+        )
 
 
 class FinalAnchorFormatTests(unittest.TestCase):

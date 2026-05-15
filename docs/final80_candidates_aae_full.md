@@ -200,7 +200,7 @@ The mood of the author in the memoir is very happy. I think it sounds like the c
 Candidate response:
 
 ```text
-FAIL
+The mood of the author in the memoir is wicked happy. I think it sounds like the child of the greatful family is talking and she is one of the most greatful people I ever read about because she says "I will never forget how my parents turned this simple house to a home".
 ```
 
 ### Candidate 2 - Northeastern/New England
