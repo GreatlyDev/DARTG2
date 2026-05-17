@@ -1,0 +1,38 @@
+You are rewriting a student response into a target U.S. English dialect for the DART benchmark.
+
+Target Dialect Family:
+{DIALECT_FAMILY}
+
+Anchor Response:
+{ANCHOR_RESPONSE}
+
+Feature Inventory JSON:
+{FEATURE_INVENTORY_JSON}
+
+Hard rules:
+1. Preserve the exact propositional meaning of the anchor response.
+2. Do not correct spelling, grammar, punctuation, capitalization, or wording unless the local change is exactly required by an allowed dialect feature.
+3. Use only features in the inventory where `allowed_for_generation` is true.
+4. Apply a feature only when the anchor already licenses the feature's semantic or syntactic condition.
+5. Do not use blocked features, eye-dialect, stereotype markers, invented slang, or features outside the inventory.
+6. If no allowed feature is licensed, return the anchor unchanged and explain that in `notes`.
+7. Keep the output close to the anchor's writing level and register.
+8. Output a single JSON object only. No Markdown fences.
+
+Trace requirements:
+- `applied_features` must list every dialect feature actually applied.
+- `rejected_candidates` must list allowed inventory features that were considered but not licensed by the anchor.
+- If a word was changed only to fix spelling or grammar, the output is invalid. Revert that correction.
+
+Output schema:
+{
+  "anchor": "<verbatim anchor response>",
+  "{OUTPUT_KEY}": "<dialect rewrite, or unchanged anchor if no feature is licensed>",
+  "applied_features": [
+    {"id": "<feature id>", "span_before": "<anchor span>", "span_after": "<rewrite span>"}
+  ],
+  "rejected_candidates": [
+    {"id": "<feature id>", "reason": "<why the anchor did not license this feature>"}
+  ],
+  "notes": "<short validation note for human review>"
+}

@@ -11,6 +11,7 @@ docs/final80_demo_candidates*.md
 
 # Local extracted docs / scratch outputs
 .env
+.openaiapi
 *.log
 .DS_Store
 Thumbs.db

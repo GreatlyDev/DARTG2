@@ -9,6 +9,12 @@ from dart_pipeline.generation import failed_candidate_ids, extract_output_text, 
 from dart_pipeline.inventories import flatten_allowed_features, load_feature_inventory
 from dart_pipeline.io_utils import write_jsonl
 from dart_pipeline.prompts import render_generation_prompt
+from dart_pipeline.trace_generation import (
+    build_trace_generation_input,
+    detect_student_text_corrections,
+    parse_model_json,
+    traced_candidate_response,
+)
 
 
 class FeatureInventoryTests(unittest.TestCase):
@@ -127,6 +133,48 @@ class GenerationTests(unittest.TestCase):
             {'A1_Southern_2', 'A1_Southern_3', 'A1_Southern_4'},
         )
 
+    def test_parse_model_json_handles_fenced_json(self):
+        parsed, error = parse_model_json('```json\n{"southern_output": "I reckon it matters."}\n```')
+
+        self.assertIsNone(error)
+        self.assertEqual(parsed, {"southern_output": "I reckon it matters."})
+
+    def test_traced_candidate_response_uses_family_output_key(self):
+        row = {
+            'dialect_family': 'southern',
+            'parsed_output': {'southern_output': 'I reckon it matters.'},
+            'raw_output': 'raw fallback',
+        }
+
+        self.assertEqual(traced_candidate_response(row), 'I reckon it matters.')
+
+    def test_detect_student_text_corrections_flags_unlicensed_spelling_cleanup(self):
+        anchor = 'I was being pationt so I cam text my friends on my snowmoble.'
+        candidate = 'I was being patient so I can text my friends on my snowmobile.'
+        result = detect_student_text_corrections(
+            anchor,
+            candidate,
+            applied_features=[],
+            known_student_forms={'pationt', 'cam', 'snowmoble'},
+        )
+
+        self.assertEqual(
+            result,
+            ['cam -> can', 'pationt -> patient', 'snowmoble -> snowmobile'],
+        )
+
+    def test_trace_generation_input_preserves_student_spelling_rule(self):
+        prompt = build_trace_generation_input(
+            template_path=Path('prompts/inventory_trace_v1.txt'),
+            dialect_family='Southern American English',
+            anchor_text='I was being pationt.',
+            feature_config={'features': []},
+        )
+
+        self.assertIn('I was being pationt.', prompt)
+        self.assertIn('Do not correct spelling, grammar, punctuation, capitalization, or wording', prompt)
+        self.assertIn('Southern American English', prompt)
+
 
 class FinalAnchorFormatTests(unittest.TestCase):
     def test_final_student1_csv_shape_uses_essay_id_text_and_dataset(self):
@@ -195,6 +243,86 @@ class CandidateReportTests(unittest.TestCase):
         self.assertIn('Original student response.', report)
         self.assertIn('Generated candidate response.', report)
         self.assertIn('demo_unvalidated', report)
+
+    def test_render_trace_comparison_flags_spelling_corrections(self):
+        root = Path('data/test_tmp/trace_comparison')
+        trace_path = root / 'trace.jsonl'
+        output_path = root / 'comparison.md'
+        write_jsonl(
+            trace_path,
+            [
+                {
+                    'anchor_id': 'A1',
+                    'dialect_family': 'aae',
+                    'anchor_text': 'I was being pationt so I cam text my friends.',
+                    'parsed_output': {
+                        'aae_output': 'I was being patient so I can text my friends.',
+                        'applied_features': [],
+                        'rejected_candidates': [{'id': 'aae_finna', 'reason': 'no near-future intent'}],
+                        'notes': 'No allowed feature was licensed by this anchor.',
+                    },
+                    'detected_student_corrections': ['cam -> can', 'pationt -> patient'],
+                    'generation_status': 'ok',
+                }
+            ],
+        )
+
+        subprocess.run(
+            [
+                sys.executable,
+                'scripts/render_trace_comparison.py',
+                '--traces',
+                str(trace_path),
+                '--output',
+                str(output_path),
+            ],
+            check=True,
+        )
+
+        report = output_path.read_text(encoding='utf-8')
+        self.assertIn('# DART Trace Comparison Report', report)
+        self.assertIn('A1', report)
+        self.assertIn('pationt -> patient', report)
+        self.assertIn('aae_finna', report)
+
+    def test_render_trace_comparison_can_compute_spelling_corrections(self):
+        root = Path('data/test_tmp/trace_comparison_computed')
+        trace_path = root / 'trace.jsonl'
+        output_path = root / 'comparison.md'
+        write_jsonl(
+            trace_path,
+            [
+                {
+                    'anchor_id': 'A1',
+                    'dialect_family': 'aae',
+                    'anchor_text': 'I was being pationt so I cam text my friends.',
+                    'parsed_output': {
+                        'aae_output': 'I was being patient so I can text my friends.',
+                        'applied_features': [],
+                        'rejected_candidates': [],
+                    },
+                    'generation_status': 'ok',
+                }
+            ],
+        )
+
+        subprocess.run(
+            [
+                sys.executable,
+                'scripts/render_trace_comparison.py',
+                '--traces',
+                str(trace_path),
+                '--output',
+                str(output_path),
+                '--known-student-forms',
+                'pationt,cam',
+            ],
+            check=True,
+        )
+
+        report = output_path.read_text(encoding='utf-8')
+        self.assertIn('cam -> can', report)
+        self.assertIn('pationt -> patient', report)
 
 
 if __name__ == '__main__':
