@@ -1,6 +1,6 @@
 """Run inventory-driven greedy dialect rewriting for a chosen dialect family.
 
-Loads prompts/<family>.md as the system prompt, the matching config/features/<family>.json
+Loads prompts/dialects/<family>.md as the system prompt, the matching config/features/<family>.json
 as the inventory, and walks an anchor CSV/JSONL, calling the OpenAI Responses API once per
 anchor. Writes one JSONL record per anchor with the parsed JSON output the prompt asks for.
 """
@@ -29,12 +29,12 @@ from dart_pipeline.io_utils import read_records, write_jsonl
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 FAMILY_MAP: dict[str, tuple[str, str]] = {
-    "aae":          ("aae.md",          "aae.json"),
-    "southern":     ("southern.md",     "southern.json"),
-    "appalachian":  ("appalachian.md",  "appalachian.json"),
-    "midwestern":   ("midwestern.md",   "midwestern_north_central.json"),
-    "northeastern": ("northeastern.md", "northeastern_new_england.json"),
-    "western":      ("western.md",      "western.json"),
+    "aae":          ("dialects/aae.md",          "aae.json"),
+    "southern":     ("dialects/southern.md",     "southern.json"),
+    "appalachian":  ("dialects/appalachian.md",  "appalachian.json"),
+    "midwestern":   ("dialects/midwestern.md",   "midwestern_north_central.json"),
+    "northeastern": ("dialects/northeastern.md", "northeastern_new_england.json"),
+    "western":      ("dialects/western.md",     "western.json"),
 }
 
 

@@ -23,7 +23,7 @@ def main() -> None:
     parser.add_argument("--anchors", required=True, type=Path, help="Input anchor JSONL file.")
     parser.add_argument("--assignments", required=True, type=Path, help="Anchor-to-dialect assignment JSONL.")
     parser.add_argument("--features", default=Path("config/features.index.json"), type=Path)
-    parser.add_argument("--template", default=Path("prompts/generation_v1.txt"), type=Path)
+    parser.add_argument("--template", default=Path("prompts/base.md"), type=Path)
     parser.add_argument("--output", required=True, type=Path, help="Output prompt jobs JSONL.")
     args = parser.parse_args()
 

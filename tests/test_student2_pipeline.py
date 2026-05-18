@@ -36,7 +36,7 @@ class FeatureInventoryTests(unittest.TestCase):
     def test_prompt_rendering_includes_anchor_and_inventory_constraints(self):
         inventory = load_feature_inventory(Path('config/features.index.json'))
         prompt = render_generation_prompt(
-            template_path=Path('prompts/generation_v1.txt'),
+            template_path=Path('prompts/base.md'),
             assignment_prompt='Explain why recycling matters.',
             anchor_response='Recycling matters because it reduces landfill waste.',
             dialect_family='Southern American English',

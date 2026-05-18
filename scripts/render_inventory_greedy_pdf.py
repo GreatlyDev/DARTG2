@@ -53,12 +53,23 @@ h2 { font-size: 13pt; margin: 16pt 0 4pt 0; border-bottom: 1px solid #d0d0d0; pa
 def render_html(family: str, rows: list[dict]) -> str:
     family_title = FAMILY_TITLES.get(family, family.title())
     output_key = f"{family}_output"
+
+    def _row_applied(row: dict) -> list:
+        if "rewrite_text" in row:
+            return row.get("applied_features") or []
+        return (row.get("parsed_output") or {}).get("applied_features") or []
+
+    def _row_has_content(row: dict) -> bool:
+        if "rewrite_text" in row:
+            return bool(row.get("rewrite_text"))
+        return bool(row.get("parsed_output"))
+
     total = len(rows)
-    ok_rows = [r for r in rows if r.get("generation_status") == "ok" and r.get("parsed_output")]
-    with_applied = [r for r in ok_rows if (r.get("parsed_output") or {}).get("applied_features")]
-    total_applied = sum(len((r.get("parsed_output") or {}).get("applied_features", [])) for r in ok_rows)
+    ok_rows = [r for r in rows if r.get("generation_status") == "ok" and _row_has_content(r)]
+    with_applied = [r for r in ok_rows if _row_applied(r)]
+    total_applied = sum(len(_row_applied(r)) for r in ok_rows)
     avg_applied = total_applied / len(ok_rows) if ok_rows else 0
-    unchanged = [r for r in ok_rows if not (r.get("parsed_output") or {}).get("applied_features")]
+    unchanged = [r for r in ok_rows if not _row_applied(r)]
     model = rows[0].get("model", "") if rows else ""
 
     parts: list[str] = []
@@ -83,10 +94,17 @@ def render_html(family: str, rows: list[dict]) -> str:
         anchor_id = html.escape(str(row.get("anchor_id", "")))
         anchor_text = str(row.get("anchor_text", ""))
         extras = row.get("anchor_extras") or {}
-        parsed = row.get("parsed_output") or {}
-        rewrite = str(parsed.get(output_key, "") or row.get("raw_output", ""))
-        applied = parsed.get("applied_features") or []
-        notes = parsed.get("notes")
+        # Support both the legacy schema (parsed_output dict with <family>_output)
+        # and the unified schema (rewrite_text / applied_features at top level).
+        if "rewrite_text" in row:
+            rewrite = str(row.get("rewrite_text") or row.get("raw_output", ""))
+            applied = row.get("applied_features") or []
+            notes = row.get("model_notes")
+        else:
+            parsed = row.get("parsed_output") or {}
+            rewrite = str(parsed.get(output_key, "") or row.get("raw_output", ""))
+            applied = parsed.get("applied_features") or []
+            notes = parsed.get("notes")
 
         meta_bits = [f"anchor_id={anchor_id}"]
         for k in ("dataset", "score", "score_band"):
@@ -164,7 +182,12 @@ def main() -> None:
     parser.add_argument("--family", choices=list(FAMILY_TITLES), default=None,
                         help="Render one family only. Default: all six.")
     parser.add_argument("--source", type=Path, default=Path("data/examples"),
-                        help="Directory containing inventory_greedy_<family>.jsonl (default: data/examples).")
+                        help="Directory containing the per-family JSONL files (default: data/examples).")
+    parser.add_argument("--pattern", default="inventory_greedy_{family}.jsonl",
+                        help="Filename pattern with {family} placeholder. Use e.g. "
+                             "'naive__gpt-4o__{family}.jsonl' to render output from the unified runner.")
+    parser.add_argument("--output-prefix", default="inventory_greedy",
+                        help="Prefix for the rendered PDF/HTML filenames (default: inventory_greedy).")
     parser.add_argument("--output-dir", type=Path, default=Path("docs/examples"),
                         help="Where to write the PDFs (default: docs/examples).")
     parser.add_argument("--combined", action="store_true",
@@ -177,13 +200,13 @@ def main() -> None:
     rendered_bodies: list[str] = []
 
     for family in families:
-        jsonl_path = args.source / f"inventory_greedy_{family}.jsonl"
+        jsonl_path = args.source / args.pattern.format(family=family)
         if not jsonl_path.exists():
             print(f"[skip] {family}: {jsonl_path} not found")
             continue
         rows = [json.loads(line) for line in jsonl_path.read_text().splitlines() if line.strip()]
-        html_path = args.output_dir / f"inventory_greedy_{family}.html"
-        pdf_path = args.output_dir / f"inventory_greedy_{family}.pdf"
+        html_path = args.output_dir / f"{args.output_prefix}_{family}.html"
+        pdf_path = args.output_dir / f"{args.output_prefix}_{family}.pdf"
         html_path.parent.mkdir(parents=True, exist_ok=True)
         full_html = render_html(family, rows)
         html_path.write_text(full_html, encoding="utf-8")
@@ -196,13 +219,13 @@ def main() -> None:
     if args.combined and not args.family and rendered_bodies:
         combined_html = (
             "<!DOCTYPE html><html><head><meta charset='utf-8'>"
-            "<title>Inventory-Driven Rewrites — All Families</title>"
+            "<title>Dialect Rewrites — All Families</title>"
             f"<style>{CSS}\n.family-break {{ page-break-before: always; }}</style></head><body>"
             + "<hr class='family-break'/>".join(rendered_bodies)
             + "</body></html>"
         )
-        combined_html_path = args.output_dir / "inventory_greedy_all.html"
-        combined_pdf_path = args.output_dir / "inventory_greedy_all.pdf"
+        combined_html_path = args.output_dir / f"{args.output_prefix}_all.html"
+        combined_pdf_path = args.output_dir / f"{args.output_prefix}_all.pdf"
         combined_html_path.write_text(combined_html, encoding="utf-8")
         html_to_pdf(combined_html_path, combined_pdf_path)
         print(f"[ok]   COMBINED: wrote {combined_pdf_path} ({combined_pdf_path.stat().st_size:,} bytes)")

@@ -11,6 +11,8 @@ from typing import Any, Iterable
 
 
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
+ANTHROPIC_MESSAGES_URL = "https://api.anthropic.com/v1/messages"
+ANTHROPIC_API_VERSION = "2023-06-01"
 
 
 def utc_now() -> str:
@@ -63,6 +65,8 @@ def generation_input(job: dict[str, Any], total_candidates: int | None = None) -
 
 
 class OpenAIResponsesClient:
+    provider = "openai"
+
     def __init__(
         self,
         api_key: str,
@@ -100,6 +104,115 @@ class OpenAIResponsesClient:
             raise RuntimeError(f"OpenAI API request failed with HTTP {exc.code}: {body}") from exc
         except urllib.error.URLError as exc:
             raise RuntimeError(f"OpenAI API request failed: {exc}") from exc
+
+
+class AnthropicMessagesClient:
+    provider = "anthropic"
+
+    def __init__(
+        self,
+        api_key: str,
+        model: str,
+        timeout: int = 120,
+        max_output_tokens: int | None = None,
+    ) -> None:
+        self.api_key = api_key
+        self.model = model
+        self.timeout = timeout
+        # Anthropic requires max_tokens; default to 1024 if caller didn't set one.
+        self.max_output_tokens = max_output_tokens or 1024
+
+    def create(self, prompt: str) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "model": self.model,
+            "max_tokens": self.max_output_tokens,
+            "messages": [{"role": "user", "content": prompt}],
+        }
+        request = urllib.request.Request(
+            ANTHROPIC_MESSAGES_URL,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "x-api-key": self.api_key,
+                "anthropic-version": ANTHROPIC_API_VERSION,
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=self.timeout) as response:
+                raw = json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            body = exc.read().decode("utf-8", errors="replace")
+            raise RuntimeError(f"Anthropic API request failed with HTTP {exc.code}: {body}") from exc
+        except urllib.error.URLError as exc:
+            raise RuntimeError(f"Anthropic API request failed: {exc}") from exc
+
+        # Normalize Anthropic's content[]/usage into the same shape OpenAI uses, so
+        # extract_output_text() and downstream code don't need provider-aware paths.
+        text_chunks = [
+            block.get("text", "")
+            for block in raw.get("content", [])
+            if isinstance(block, dict) and block.get("type") == "text"
+        ]
+        usage = raw.get("usage", {}) or {}
+        input_tokens = int(usage.get("input_tokens", 0) or 0)
+        output_tokens = int(usage.get("output_tokens", 0) or 0)
+        return {
+            "id": raw.get("id"),
+            "output_text": "\n".join(text_chunks),
+            "usage": {
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "total_tokens": input_tokens + output_tokens,
+            },
+            "stop_reason": raw.get("stop_reason"),
+            "provider": "anthropic",
+            "raw": raw,
+        }
+
+
+def provider_for_model(model: str) -> str:
+    """Detect which provider hosts a given model based on its ID prefix."""
+    name = model.lower()
+    if name.startswith(("claude-", "claude/", "anthropic/", "anthropic-")):
+        return "anthropic"
+    if name.startswith(("gpt-", "o1-", "o3-", "o4-", "openai/", "openai-")) or name in {"gpt-4o", "gpt-4", "gpt-3.5-turbo"}:
+        return "openai"
+    # Fallback: treat as OpenAI; will surface as a 4xx from the API if wrong.
+    return "openai"
+
+
+def make_client(
+    model: str,
+    openai_api_key: str | None,
+    anthropic_api_key: str | None,
+    timeout: int = 120,
+    max_output_tokens: int | None = None,
+):
+    """Return the right client instance for a model. Raises SystemExit if the needed key is missing."""
+    provider = provider_for_model(model)
+    if provider == "anthropic":
+        if not anthropic_api_key:
+            raise SystemExit(
+                f"Model {model!r} requires an Anthropic key. Add ANTHROPIC_API_KEY to .env "
+                f"or pass --anthropic-key-file."
+            )
+        return AnthropicMessagesClient(
+            api_key=anthropic_api_key,
+            model=model,
+            timeout=timeout,
+            max_output_tokens=max_output_tokens,
+        )
+    if not openai_api_key:
+        raise SystemExit(
+            f"Model {model!r} requires an OpenAI key. Add it to .openaiapi or .env (OPENAI_API_KEY)."
+        )
+    return OpenAIResponsesClient(
+        api_key=openai_api_key,
+        model=model,
+        timeout=timeout,
+        max_output_tokens=max_output_tokens,
+    )
 
 
 def generate_candidate_record(

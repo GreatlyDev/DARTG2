@@ -1,4 +1,4 @@
-"""Render PDFs of the per-dialect prompt files (prompts/<family>.md).
+"""Render PDFs of the per-dialect prompt files (prompts/dialects/<family>.md).
 
 Uses pandoc to convert Markdown → HTML, then headless Chrome to convert HTML → PDF.
 
@@ -95,8 +95,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--family", choices=FAMILIES, default=None,
                         help="Render one family only. Default: all six.")
-    parser.add_argument("--prompts-dir", type=Path, default=Path("prompts"),
-                        help="Directory containing <family>.md (default: prompts).")
+    parser.add_argument("--prompts-dir", type=Path, default=Path("prompts/dialects"),
+                        help="Directory containing <family>.md (default: prompts/dialects).")
     parser.add_argument("--output-dir", type=Path, default=Path("docs/examples"),
                         help="Where to write the PDFs (default: docs/examples).")
     parser.add_argument("--combined", action="store_true",
