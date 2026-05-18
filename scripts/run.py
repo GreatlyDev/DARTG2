@@ -5,9 +5,9 @@ partial progress is preserved across interruptions. Per-cell output goes to
 data/generated/<strategy>__<model>__<family>.jsonl (the runner's default).
 
 Usage:
-    python scripts/run_matrix.py
-    python scripts/run_matrix.py --strategies naive,inventory_greedy --models gpt-4o,claude-haiku-4-5
-    python scripts/run_matrix.py --limit 5  --print-output  # quick dev pass
+    python scripts/run.py
+    python scripts/run.py --strategies naive,inventory_greedy --models gpt-4o,claude-haiku-4-5
+    python scripts/run.py --limit 5  --print-output  # quick dev pass
 """
 
 from __future__ import annotations

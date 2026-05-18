@@ -10,11 +10,11 @@ Embedder keys:
             run pip-installs sentence-transformers and downloads the model)
 
 Usage:
-    python scripts/score_rewrites.py                                   # default: both embedders
-    python scripts/score_rewrites.py --embedders ""                    # cheap only
-    python scripts/score_rewrites.py --embedders openai
-    python scripts/score_rewrites.py --input 'data/generated/naive__*.jsonl'
-    python scripts/score_rewrites.py --output-suffix scored            # writes .scored.jsonl beside each input
+    python scripts/score.py                                   # default: HF embedder only
+    python scripts/score.py --embedders ""                    # cheap only
+    python scripts/score.py --embedders openai,hf             # both
+    python scripts/score.py --input 'data/generated/naive__*.jsonl'
+    python scripts/score.py --output-suffix scored            # writes .scored.jsonl beside each input
 """
 
 from __future__ import annotations
@@ -26,6 +26,7 @@ import os
 import sys
 import urllib.error
 import urllib.request
+import zipfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -140,7 +141,23 @@ def parse_args() -> argparse.Namespace:
                         help="If set, write results to <stem>.<suffix>.jsonl beside each input. "
                              "Default: in-place.")
     parser.add_argument("--dry-run", action="store_true", help="Print which files would be scored, then exit.")
+    parser.add_argument("--no-zip", action="store_true",
+                        help="Skip the pre/post zip snapshots (default: create data/generated/original.zip "
+                             "before scoring and data/generated/enriched.zip after).")
+    parser.add_argument("--zip-dir", type=Path, default=Path("data/generated"),
+                        help="Directory in which original.zip and enriched.zip are written (default: data/generated).")
     return parser.parse_args()
+
+
+def write_zip(zip_path: Path, files: list[Path], label: str) -> None:
+    """Bundle a list of files into a single zip. Overwrites any existing zip at the same path."""
+    zip_path.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for f in files:
+            if f.exists():
+                zf.write(f, arcname=f.name)
+    size_mb = zip_path.stat().st_size / (1024 * 1024)
+    print(f"[zip] {label}: {len(files)} file(s) → {zip_path} ({size_mb:.2f} MB)")
 
 
 def load_openai_key(key_file: Path, env_file: Path) -> str:
@@ -231,6 +248,13 @@ def main() -> None:
                 "OpenAI embedder requested but no key found in --key-file or OPENAI_API_KEY."
             )
 
+    # Snapshot the pre-scoring inputs before any mutation.
+    if not args.no_zip:
+        write_zip(args.zip_dir / "original.zip", files, label="original (pre-scoring)")
+
+    # Track output paths so we can zip them after the loop.
+    output_paths: list[Path] = []
+
     for input_path in files:
         rows = read_jsonl(input_path)
         if not rows:
@@ -290,6 +314,7 @@ def main() -> None:
 
         out_path = output_path_for(input_path, args.output_suffix)
         write_jsonl(out_path, rows)
+        output_paths.append(out_path)
         # Surface the per-file attribution so the scored output stays easy to skim.
         first = rows[0]
         print(
@@ -297,6 +322,10 @@ def main() -> None:
             f"        strategy={first.get('strategy','?')}  model={first.get('model','?')}  "
             f"family={first.get('dialect_family','?')}  prompt_path={first.get('prompt_path','?')}"
         )
+
+    # Snapshot the post-scoring outputs as enriched.zip.
+    if not args.no_zip and output_paths:
+        write_zip(args.zip_dir / "enriched.zip", output_paths, label="enriched (post-scoring)")
 
 
 if __name__ == "__main__":

@@ -68,7 +68,7 @@ def parse_args() -> argparse.Namespace:
                         help="Print each rewrite + applied_features (when present) to the terminal.")
     parser.add_argument("--run-id", default=None,
                         help="Shared identifier for this run. Defaults to a fresh uuid4 hex per invocation. "
-                             "When run by scripts/run_matrix.py, all cells of one matrix session receive the same value.")
+                             "When run by scripts/run.py, all cells of one matrix session receive the same value.")
     return parser.parse_args()
 
 

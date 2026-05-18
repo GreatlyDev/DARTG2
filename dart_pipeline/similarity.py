@@ -112,7 +112,7 @@ def cosine_from_vectors(a: Iterable[float], b: Iterable[float]) -> float:
 
 
 def cheap_scores(anchor: str, rewrite: str) -> dict:
-    """Compute every cheap-tier metric in one call. Used by score_rewrites.py per record."""
+    """Compute every cheap-tier metric in one call. Used by score.py per record."""
     return {
         "exact_match": exact_match(anchor, rewrite),
         "length_ratio": length_ratio(anchor, rewrite),
