@@ -8,6 +8,7 @@ from dart_pipeline.assignments import make_balanced_assignments, make_greedy_ass
 from dart_pipeline.generation import failed_candidate_ids, extract_output_text, generation_input, is_failed_candidate
 from dart_pipeline.inventories import flatten_allowed_features, load_feature_inventory
 from dart_pipeline.io_utils import write_jsonl
+from dart_pipeline.prefilter import prefilter_candidate
 from dart_pipeline.prompts import render_generation_prompt
 from dart_pipeline.trace_generation import (
     build_trace_generation_input,
@@ -53,6 +54,7 @@ class FeatureInventoryTests(unittest.TestCase):
         self.assertIn('Recycling matters because it reduces landfill waste.', prompt)
         self.assertIn('Southern American English', prompt)
         self.assertIn('Use only documented features', prompt)
+        self.assertIn("Do not correct the student's spelling", prompt)
         self.assertNotIn('{FEATURE_INVENTORY}', prompt)
 
 
@@ -323,6 +325,87 @@ class CandidateReportTests(unittest.TestCase):
         report = output_path.read_text(encoding='utf-8')
         self.assertIn('cam -> can', report)
         self.assertIn('pationt -> patient', report)
+
+
+class PrefilterTests(unittest.TestCase):
+    def test_prefilter_rejects_probable_student_spelling_cleanup(self):
+        result = prefilter_candidate(
+            anchor_response='I was being pationt so I cam text my friends.',
+            candidate_text='I was being patient so I can text my friends.',
+            feature_config={'features': []},
+            length_tolerance=1.0,
+            min_detected_features=0,
+        )
+
+        self.assertFalse(result.passed_prefilter)
+        self.assertIn('student_text_correction', result.rejection_reasons)
+        self.assertEqual(result.student_text_corrections, ['cam -> can', 'pationt -> patient'])
+
+    def test_prefilter_does_not_flag_allowed_dialect_marker_as_cleanup(self):
+        result = prefilter_candidate(
+            anchor_response='I think the author is going to show hope.',
+            candidate_text='I reckon the author is gonna show hope.',
+            feature_config={
+                'features': [
+                    {'feature': 'reckon', 'allowed_for_generation': True},
+                    {'feature': 'gonna', 'allowed_for_generation': True},
+                ]
+            },
+            length_tolerance=1.0,
+            min_detected_features=0,
+        )
+
+        self.assertNotIn('student_text_correction', result.rejection_reasons)
+        self.assertEqual(result.student_text_corrections, [])
+
+    def test_prefilter_script_uses_anchor_file_and_candidate_response(self):
+        root = Path('data/test_tmp/prefilter_script')
+        anchors_path = root / 'anchors.jsonl'
+        candidates_path = root / 'candidates.jsonl'
+        output_path = root / 'prefiltered.jsonl'
+        write_jsonl(
+            anchors_path,
+            [
+                {
+                    'anchor_id': 'A1',
+                    'anchor_response': 'I was being pationt so I cam text my friends.',
+                }
+            ],
+        )
+        write_jsonl(
+            candidates_path,
+            [
+                {
+                    'candidate_id': 'A1_AAE_1',
+                    'anchor_id': 'A1',
+                    'dialect_family': 'African American English (AAE)',
+                    'candidate_response': 'I was being patient so I can text my friends.',
+                }
+            ],
+        )
+
+        subprocess.run(
+            [
+                sys.executable,
+                'scripts/prefilter_candidates.py',
+                '--anchors',
+                str(anchors_path),
+                '--candidates',
+                str(candidates_path),
+                '--output',
+                str(output_path),
+                '--length-tolerance',
+                '1.0',
+                '--min-features',
+                '0',
+            ],
+            check=True,
+        )
+
+        result = json.loads(output_path.read_text(encoding='utf-8').splitlines()[0])
+        self.assertFalse(result['passed_prefilter'])
+        self.assertIn('student_text_correction', result['rejection_reasons'])
+        self.assertEqual(result['student_text_corrections'], ['cam -> can', 'pationt -> patient'])
 
 
 if __name__ == '__main__':

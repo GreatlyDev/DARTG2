@@ -2,6 +2,7 @@ import re
 from dataclasses import dataclass, field
 
 from dart_pipeline.inventories import flatten_allowed_features
+from dart_pipeline.trace_generation import detect_student_text_corrections
 
 WORD_RE = re.compile(r"\b\S+\b")
 
@@ -11,6 +12,7 @@ class PrefilterResult:
     passed_prefilter: bool
     length_delta: float
     detected_features: list[str] = field(default_factory=list)
+    student_text_corrections: list[str] = field(default_factory=list)
     rejection_reasons: list[str] = field(default_factory=list)
     semantic_equivalence_status: str = "not_checked"
 
@@ -40,6 +42,11 @@ def prefilter_candidate(
     candidate_len = word_count(candidate_text)
     length_delta = abs(candidate_len - anchor_len) / anchor_len
     detected = detect_features(candidate_text, feature_config)
+    corrections = detect_student_text_corrections(
+        anchor_response,
+        candidate_text,
+        allowed_feature_markers=set(flatten_allowed_features(feature_config)),
+    )
     reasons: list[str] = []
 
     if length_delta > length_tolerance:
@@ -48,10 +55,13 @@ def prefilter_candidate(
         reasons.append("insufficient_approved_features")
     if candidate_text.strip().upper() == "FAIL":
         reasons.append("generation_failed")
+    if corrections:
+        reasons.append("student_text_correction")
 
     return PrefilterResult(
         passed_prefilter=not reasons,
         length_delta=round(length_delta, 4),
         detected_features=detected,
+        student_text_corrections=corrections,
         rejection_reasons=reasons,
     )

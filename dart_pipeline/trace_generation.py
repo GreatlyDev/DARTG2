@@ -98,11 +98,13 @@ def detect_student_text_corrections(
     candidate_text: str,
     applied_features: list[dict[str, Any]] | None = None,
     known_student_forms: set[str] | None = None,
+    allowed_feature_markers: set[str] | None = None,
 ) -> list[str]:
     anchor_words = _words(anchor_text)
     candidate_words = _words(candidate_text)
     applied = _applied_spans(applied_features or [])
     suspicious_forms = {form.lower() for form in (known_student_forms or set())}
+    allowed_markers = {marker.lower() for marker in (allowed_feature_markers or set()) if marker}
     corrections: set[str] = set()
 
     matcher = SequenceMatcher(a=[word.lower() for word in anchor_words], b=[word.lower() for word in candidate_words])
@@ -117,9 +119,46 @@ def detect_student_text_corrections(
         after_lower = after.lower()
         if before_lower in applied or after_lower in applied:
             continue
+        if before_lower in allowed_markers or after_lower in allowed_markers:
+            continue
         if suspicious_forms and before_lower not in suspicious_forms:
             continue
-        if before_lower != after_lower:
+        if before_lower != after_lower and (suspicious_forms or _looks_like_spelling_cleanup(before_lower, after_lower)):
             corrections.add(f"{before} -> {after}")
 
     return sorted(corrections)
+
+
+def _looks_like_spelling_cleanup(before: str, after: str) -> bool:
+    before_parts = before.split()
+    after_parts = after.split()
+    if len(before_parts) != 1 or len(after_parts) != 1:
+        return False
+
+    source = before_parts[0]
+    target = after_parts[0]
+    if len(source) < 3 or len(target) < 3:
+        return False
+    if source == target:
+        return False
+
+    ratio = SequenceMatcher(a=source, b=target).ratio()
+    return ratio >= 0.74 or _edit_distance_at_most(source, target, 1)
+
+
+def _edit_distance_at_most(left: str, right: str, limit: int) -> bool:
+    if abs(len(left) - len(right)) > limit:
+        return False
+
+    previous = list(range(len(right) + 1))
+    for i, left_char in enumerate(left, start=1):
+        current = [i]
+        row_min = current[0]
+        for j, right_char in enumerate(right, start=1):
+            cost = 0 if left_char == right_char else 1
+            current.append(min(previous[j] + 1, current[j - 1] + 1, previous[j - 1] + cost))
+            row_min = min(row_min, current[-1])
+        if row_min > limit:
+            return False
+        previous = current
+    return previous[-1] <= limit

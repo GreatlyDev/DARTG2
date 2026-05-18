@@ -25,12 +25,13 @@ INSTRUCTIONS
 4. Do not use stereotypes, caricatures, exaggerated slang, mocking spellings, or unsupported dialect features.
 5. Keep the response sounding like natural, plausible student writing.
 6. Keep the length close to the original response. Do not significantly shorten or expand it.
-7. Do not correct the student's ideas, improve the argument, or make the writing more sophisticated.
-8. Do not explain your choices.
-9. Output only the rewritten response text.
-10. The rewrite must not be nearly identical to the anchor. If only one minor word changes, the rewrite is invalid.
-11. Use 2-4 approved target-dialect features when they can be used naturally without changing meaning.
-12. If the approved inventory does not provide enough natural options for this anchor, use every safe applicable feature instead of forcing unsupported features.
+7. Do not correct the student's spelling, grammar, punctuation, capitalization, wording, ideas, argument quality, or writing sophistication unless a documented dialect feature explicitly requires that exact local change.
+8. Preserve original student errors and roughness that are unrelated to the target dialect feature.
+9. Do not explain your choices.
+10. Output only the rewritten response text.
+11. The rewrite must not be nearly identical to the anchor. If only one minor word changes, the rewrite is invalid.
+12. Use 2-4 approved target-dialect features when they can be used naturally without changing meaning.
+13. If the approved inventory does not provide enough natural options for this anchor, use every safe applicable feature instead of forcing unsupported features.
 
 QUALITY CHECK BEFORE WRITING
 Before producing the final answer, make sure:
@@ -39,6 +40,7 @@ Before producing the final answer, make sure:
 - no original information has been removed
 - at least two approved dialect features are present when the inventory and anchor meaning allow it
 - the rewrite is visibly different from the anchor while still preserving meaning
+- the student's original non-dialect spelling, grammar, punctuation, capitalization, and wording have not been cleaned up
 - no disallowed feature is used
 
 If you cannot produce a valid rewrite under these constraints, output exactly:
