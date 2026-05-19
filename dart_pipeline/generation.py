@@ -9,6 +9,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
+from dart_pipeline.pricing import cost_usd
+
 
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
 
@@ -113,6 +115,8 @@ def generate_candidate_record(
     response = client.create(request_input)
     finished_at = utc_now()
     candidate_response = extract_output_text(response)
+    usage = response.get("usage", {}) if isinstance(response.get("usage", {}), dict) else {}
+    tokens_in, tokens_out = _token_counts(usage)
 
     return {
         "candidate_id": candidate_id(job),
@@ -125,11 +129,25 @@ def generate_candidate_record(
         "candidate_response": candidate_response,
         "raw_output": candidate_response,
         "openai_response_id": response.get("id"),
-        "usage": response.get("usage", {}),
+        "tokens_in": tokens_in,
+        "tokens_out": tokens_out,
+        "cost_usd": cost_usd(client.model, tokens_in, tokens_out),
+        "usage": usage,
         "started_at": started_at,
         "finished_at": finished_at,
         "source_job_id": str(job.get("job_id", "")),
     }
+
+
+def _token_counts(usage: dict[str, Any]) -> tuple[int | None, int | None]:
+    input_tokens = usage.get("input_tokens") or usage.get("prompt_tokens")
+    output_tokens = usage.get("output_tokens") or usage.get("completion_tokens")
+    try:
+        tokens_in = int(input_tokens) if input_tokens is not None else None
+        tokens_out = int(output_tokens) if output_tokens is not None else None
+    except (TypeError, ValueError):
+        return None, None
+    return tokens_in, tokens_out
 
 
 def existing_candidate_ids(rows: Iterable[dict[str, Any]]) -> set[str]:

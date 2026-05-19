@@ -10,6 +10,7 @@ from dart_pipeline.inventories import flatten_allowed_features, load_feature_inv
 from dart_pipeline.io_utils import write_jsonl
 from dart_pipeline.prefilter import prefilter_candidate
 from dart_pipeline.prompts import render_generation_prompt
+from dart_pipeline.scoring import candidate_quality_score, score_candidate_row
 from dart_pipeline.trace_generation import (
     build_trace_generation_input,
     detect_student_text_corrections,
@@ -135,6 +136,36 @@ class GenerationTests(unittest.TestCase):
             {'A1_Southern_2', 'A1_Southern_3', 'A1_Southern_4'},
         )
 
+    def test_generate_candidate_record_tracks_usage_tokens_and_estimated_cost(self):
+        class FakeClient:
+            model = 'gpt-4o'
+
+            def create(self, prompt):
+                return {
+                    'id': 'resp_test',
+                    'output_text': 'I reckon recycling matters.',
+                    'usage': {'input_tokens': 1000, 'output_tokens': 100},
+                }
+
+        from dart_pipeline.generation import generate_candidate_record
+
+        record = generate_candidate_record(
+            {
+                'job_id': 'A1_Southern_1',
+                'anchor_id': 'A1',
+                'dialect_family': 'Southern American English',
+                'candidate_index': 1,
+                'generation_prompt': 'Rewrite this.',
+                'prompt_version': 'generation_v1',
+            },
+            FakeClient(),
+            generation_status='demo_unvalidated',
+        )
+
+        self.assertEqual(record['tokens_in'], 1000)
+        self.assertEqual(record['tokens_out'], 100)
+        self.assertEqual(record['cost_usd'], 0.0035)
+
     def test_parse_model_json_handles_fenced_json(self):
         parsed, error = parse_model_json('```json\n{"southern_output": "I reckon it matters."}\n```')
 
@@ -245,6 +276,57 @@ class CandidateReportTests(unittest.TestCase):
         self.assertIn('Original student response.', report)
         self.assertIn('Generated candidate response.', report)
         self.assertIn('demo_unvalidated', report)
+
+    def test_render_candidate_report_preserves_anchor_text_verbatim(self):
+        root = Path('data/test_tmp/candidate_report_verbatim')
+        anchors_path = root / 'anchors.jsonl'
+        candidates_path = root / 'candidates.jsonl'
+        output_path = root / 'report.md'
+        anchor = 'it describs How the famialy let people in their house  and mybe it is nice.'
+        write_jsonl(
+            anchors_path,
+            [
+                {
+                    'anchor_id': 'A1',
+                    'anchor_response': anchor,
+                    'score_band': 'low',
+                }
+            ],
+        )
+        write_jsonl(
+            candidates_path,
+            [
+                {
+                    'candidate_id': 'A1_Southern_1',
+                    'anchor_id': 'A1',
+                    'dialect_family': 'Southern American English',
+                    'candidate_index': 1,
+                    'generation_status': 'demo_unvalidated',
+                    'model': 'gpt-4o',
+                    'candidate_response': 'it describs How the famialy let folks in their house  and mybe it is nice.',
+                }
+            ],
+        )
+
+        subprocess.run(
+            [
+                sys.executable,
+                'scripts/render_candidate_report.py',
+                '--anchors',
+                str(anchors_path),
+                '--candidates',
+                str(candidates_path),
+                '--output',
+                str(output_path),
+            ],
+            check=True,
+        )
+
+        report = output_path.read_text(encoding='utf-8')
+        self.assertIn(anchor, report)
+        self.assertNotIn('describes', report)
+        self.assertNotIn('family let people', report)
+        self.assertNotIn('maybe', report)
 
     def test_render_trace_comparison_flags_spelling_corrections(self):
         root = Path('data/test_tmp/trace_comparison')
@@ -406,6 +488,40 @@ class PrefilterTests(unittest.TestCase):
         self.assertFalse(result['passed_prefilter'])
         self.assertIn('student_text_correction', result['rejection_reasons'])
         self.assertEqual(result['student_text_corrections'], ['cam -> can', 'pationt -> patient'])
+
+
+class ScoringAndCurationTests(unittest.TestCase):
+    def test_score_candidate_row_adds_similarity_and_cleanup_flags(self):
+        row = {
+            'anchor_response': 'I was being pationt so I cam text my friends.',
+            'candidate_response': 'I was being patient so I can text my friends.',
+            'generation_status': 'demo_unvalidated',
+        }
+
+        scored = score_candidate_row(row)
+
+        self.assertIn('similarity_scores', scored)
+        self.assertGreater(scored['composite_change_score'], 0)
+        self.assertEqual(scored['student_text_corrections'], ['cam -> can', 'pationt -> patient'])
+        self.assertIn('student_text_correction', scored['rejection_reasons'])
+        self.assertFalse(scored['passed_quality_filter'])
+
+    def test_candidate_quality_score_rejects_cleanup_even_when_other_metrics_pass(self):
+        row = score_candidate_row(
+            {
+                'anchor_response': 'I was being pationt so I cam text my friends.',
+                'candidate_response': 'I reckon I was being patient so I can text my friends.',
+                'generation_status': 'demo_unvalidated',
+            },
+            min_change=0.01,
+            max_length_delta=1.0,
+            min_word_count=1,
+        )
+
+        usable, reasons = candidate_quality_score(row)
+
+        self.assertFalse(usable)
+        self.assertIn('student_text_correction', reasons)
 
 
 if __name__ == '__main__':

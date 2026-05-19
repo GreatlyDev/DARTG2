@@ -96,6 +96,24 @@ The `.env` file is ignored by Git.
 
 ## Final 80 Workflow
 
+### Recommended Base/GPT-4o Review Run
+
+The current recommended Student 2 production-style pass uses the inventory-injected base prompt with `gpt-4o`, then runs prefiltering, scoring, and curation with hard rejection for spelling/grammar cleanup of original student text:
+
+```powershell
+python scripts/run_base_gpt4o_workflow.py
+```
+
+For a small smoke test:
+
+```powershell
+python scripts/run_base_gpt4o_workflow.py --limit 6
+```
+
+See `docs/student2_base_gpt4o_workflow.md` for output paths and review notes.
+
+### Manual Step-By-Step Workflow
+
 Build the full final-80 greedy assignment file:
 
 ```powershell
