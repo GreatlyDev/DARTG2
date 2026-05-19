@@ -523,6 +523,59 @@ class ScoringAndCurationTests(unittest.TestCase):
         self.assertFalse(usable)
         self.assertIn('student_text_correction', reasons)
 
+    def test_score_candidates_script_reattaches_anchor_text_before_scoring(self):
+        root = Path('data/test_tmp/score_candidates_script')
+        anchors_path = root / 'anchors.jsonl'
+        candidates_path = root / 'prefiltered.jsonl'
+        output_path = root / 'scored.jsonl'
+        write_jsonl(
+            anchors_path,
+            [
+                {
+                    'anchor_id': 'A1',
+                    'anchor_response': 'I was being pationt so I cam text my friends.',
+                }
+            ],
+        )
+        write_jsonl(
+            candidates_path,
+            [
+                {
+                    'candidate_id': 'A1_AAE_1',
+                    'anchor_id': 'A1',
+                    'dialect_family': 'African American English (AAE)',
+                    'candidate_response': 'I was being patient so I can text my friends.',
+                    'generation_status': 'demo_unvalidated',
+                    'rejection_reasons': ['student_text_correction'],
+                }
+            ],
+        )
+
+        subprocess.run(
+            [
+                sys.executable,
+                'scripts/score_candidates.py',
+                '--anchors',
+                str(anchors_path),
+                '--candidates',
+                str(candidates_path),
+                '--output',
+                str(output_path),
+                '--min-change',
+                '0.01',
+                '--max-length-delta',
+                '1.0',
+                '--min-word-count',
+                '1',
+            ],
+            check=True,
+        )
+
+        result = json.loads(output_path.read_text(encoding='utf-8').splitlines()[0])
+        self.assertEqual(result['anchor_response'], 'I was being pationt so I cam text my friends.')
+        self.assertEqual(result['student_text_corrections'], ['cam -> can', 'pationt -> patient'])
+        self.assertFalse(result['passed_quality_filter'])
+
 
 if __name__ == '__main__':
     unittest.main()

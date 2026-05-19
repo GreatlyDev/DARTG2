@@ -96,6 +96,8 @@ def main() -> None:
     run_step([
         sys.executable,
         "scripts/score_candidates.py",
+        "--anchors",
+        str(args.anchors),
         "--candidates",
         str(prefiltered),
         "--features",
