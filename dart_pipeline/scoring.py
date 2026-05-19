@@ -26,7 +26,7 @@ def candidate_quality_score(
     max_length_delta: float = 0.20,
     min_word_count: int = 10,
 ) -> tuple[bool, list[str]]:
-    reasons = list(row.get("rejection_reasons") or [])
+    reasons = [reason for reason in (row.get("rejection_reasons") or []) if reason != "student_text_correction"]
     status = str(row.get("generation_status") or "").strip().lower()
     candidate_text = row_candidate_text(row)
 

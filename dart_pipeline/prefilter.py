@@ -24,14 +24,14 @@ def word_count(text: str) -> int:
 def detect_features(candidate_text: str, feature_config: dict) -> list[str]:
     text = candidate_text.lower()
     detected: list[str] = []
-    for feature in _allowed_feature_markers(feature_config):
+    for feature in allowed_feature_markers(feature_config):
         marker = feature.lower()
         if marker and marker in text and feature not in detected:
             detected.append(feature)
     return detected
 
 
-def _allowed_feature_markers(feature_config: dict) -> list[str]:
+def allowed_feature_markers(feature_config: dict) -> list[str]:
     markers: list[str] = []
     for marker in flatten_allowed_features(feature_config):
         if marker:
@@ -56,6 +56,10 @@ def _allowed_feature_markers(feature_config: dict) -> list[str]:
             markers.append("wants ")
         if "a_prefixing" in feature_id:
             markers.append("a-")
+        if "demonstrative_them" in feature_id:
+            markers.append("them")
+        if feature_label == "'em":
+            markers.append("'em")
 
     unique: list[str] = []
     for marker in markers:

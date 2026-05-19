@@ -17,6 +17,8 @@ from dart_pipeline.trace_generation import (
     parse_model_json,
     traced_candidate_response,
 )
+from scripts.retry_rejected_candidates import build_retry_prompt, target_candidate_ids
+from scripts.repair_student_cleanup import repair_cleanup_text
 
 
 class FeatureInventoryTests(unittest.TestCase):
@@ -548,6 +550,23 @@ class ScoringAndCurationTests(unittest.TestCase):
         self.assertIn('student_text_correction', scored['rejection_reasons'])
         self.assertFalse(scored['passed_quality_filter'])
 
+    def test_score_candidate_row_does_not_flag_allowed_demonstrative_them(self):
+        row = {
+            'anchor_response': 'The hills are short.',
+            'candidate_response': 'Them hills are short.',
+            'generation_status': 'demo_unvalidated',
+            'rejection_reasons': ['student_text_correction'],
+        }
+
+        scored = score_candidate_row(
+            row,
+            min_word_count=1,
+            allowed_feature_markers={'them'},
+        )
+
+        self.assertEqual(scored['student_text_corrections'], [])
+        self.assertTrue(scored['passed_quality_filter'])
+
     def test_candidate_quality_score_rejects_cleanup_even_when_other_metrics_pass(self):
         row = score_candidate_row(
             {
@@ -643,6 +662,44 @@ class ScoringAndCurationTests(unittest.TestCase):
         self.assertEqual(result['anchor_response'], 'I was being pationt so I cam text my friends.')
         self.assertEqual(result['student_text_corrections'], ['cam -> can', 'pationt -> patient'])
         self.assertFalse(result['passed_quality_filter'])
+
+    def test_retry_prompt_names_cleanup_violations_and_requires_anchor_preservation(self):
+        prompt = build_retry_prompt(
+            {
+                'generation_prompt': 'Base prompt text.',
+            },
+            {
+                'candidate_id': 'A1_AAE_1',
+                'candidate_response': 'I was being patient so I can text my friends.',
+                'rejection_reasons': ['student_text_correction'],
+                'student_text_corrections': ['cam -> can', 'pationt -> patient'],
+            },
+        )
+
+        self.assertIn('Base prompt text.', prompt)
+        self.assertIn('pationt -> patient', prompt)
+        self.assertIn('cam -> can', prompt)
+        self.assertIn('Start again from the anchor response', prompt)
+        self.assertIn('Do not correct, normalize, smooth, or improve', prompt)
+
+    def test_target_candidate_ids_filters_by_rejection_reason(self):
+        rows = [
+            {'candidate_id': 'A', 'rejection_reasons': ['student_text_correction']},
+            {'candidate_id': 'B', 'rejection_reasons': ['insufficient_change']},
+            {'candidate_id': 'C', 'passed_quality_filter': True, 'rejection_reasons': []},
+        ]
+
+        self.assertEqual(target_candidate_ids(rows, {'student_text_correction'}), {'A'})
+        self.assertEqual(target_candidate_ids(rows, {'student_text_correction', 'insufficient_change'}), {'A', 'B'})
+
+    def test_repair_cleanup_text_reverts_only_detected_cleanup_span(self):
+        anchor = 'I have no control over ther car but I can try.'
+        candidate = 'I have no control over the car but I can try, right?'
+
+        repaired, repairs = repair_cleanup_text(anchor, candidate, ['ther -> the'])
+
+        self.assertEqual(repaired, 'I have no control over ther car but I can try, right?')
+        self.assertEqual(repairs, ['ther -> the'])
 
 
 if __name__ == '__main__':

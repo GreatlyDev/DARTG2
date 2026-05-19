@@ -4,8 +4,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from dart_pipeline.inventories import flatten_allowed_features, load_feature_inventory
+from dart_pipeline.inventories import load_feature_inventory
 from dart_pipeline.io_utils import read_jsonl, read_records, write_jsonl
+from dart_pipeline.prefilter import allowed_feature_markers
 from dart_pipeline.scoring import score_candidate_row
 
 
@@ -50,7 +51,7 @@ def main() -> None:
                 min_change=args.min_change,
                 max_length_delta=args.max_length_delta,
                 min_word_count=args.min_word_count,
-                allowed_feature_markers=set(flatten_allowed_features(feature_config)),
+                allowed_feature_markers=set(allowed_feature_markers(feature_config)),
             )
         )
 

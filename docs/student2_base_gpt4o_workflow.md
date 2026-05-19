@@ -70,3 +70,19 @@ The scoring layer uses a low change threshold because this workflow is intention
 `final80_base_gpt4o_candidates_rejected.jsonl` preserves rejected records and rejection reasons for audit.
 
 The curated file is still not the final DART benchmark. It is the cleaner candidate set to prepare for Ricky/team review.
+
+## Cleanup Retry And Repair
+
+If candidates are rejected for `student_text_correction`, use targeted retry first:
+
+```powershell
+python scripts/retry_rejected_candidates.py --jobs data/generated/final80_base_gpt4o_prompt_jobs.jsonl --raw-candidates data/generated/final80_base_gpt4o_candidates_raw.jsonl --scored-candidates data/generated/final80_base_gpt4o_candidates_scored.jsonl --output data/generated/final80_base_gpt4o_candidates_retry1_raw.jsonl --model gpt-4o --rejection-reasons student_text_correction
+```
+
+If a small number of candidates still contain cleanup after retries, use mechanical repair to revert only the detected cleanup spans back to the original anchor tokens:
+
+```powershell
+python scripts/repair_student_cleanup.py --raw-candidates data/generated/final80_base_gpt4o_candidates_retry1_raw.jsonl --scored-candidates data/generated/final80_base_gpt4o_candidates_retry1_scored.jsonl --output data/generated/final80_base_gpt4o_candidates_repaired_raw.jsonl
+```
+
+Mechanical repair is conservative: it does not add dialect features or rewrite content. It only restores exact anchor spellings/word forms for spans already flagged as cleanup.
