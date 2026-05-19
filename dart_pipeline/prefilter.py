@@ -24,11 +24,44 @@ def word_count(text: str) -> int:
 def detect_features(candidate_text: str, feature_config: dict) -> list[str]:
     text = candidate_text.lower()
     detected: list[str] = []
-    for feature in flatten_allowed_features(feature_config):
+    for feature in _allowed_feature_markers(feature_config):
         marker = feature.lower()
-        if marker and marker in text:
+        if marker and marker in text and feature not in detected:
             detected.append(feature)
     return detected
+
+
+def _allowed_feature_markers(feature_config: dict) -> list[str]:
+    markers: list[str] = []
+    for marker in flatten_allowed_features(feature_config):
+        if marker:
+            markers.append(marker)
+
+    for feature in feature_config.get("features", []):
+        if not isinstance(feature, dict) or not feature.get("allowed_for_generation"):
+            continue
+        feature_id = str(feature.get("id", "")).lower()
+        feature_label = str(feature.get("feature", "")).lower()
+        if "tag_right" in feature_id or feature_label == "tag question right":
+            markers.append("right")
+        if "right_intensifier" in feature_id or feature_label == "right as intensifier":
+            markers.append("right")
+        if "perfective_done" in feature_id:
+            markers.append("done")
+        if "double_modal" in feature_id:
+            markers.extend(["might could", "might can", "may could"])
+        if "needs_cleaned" in feature_id:
+            markers.append("needs ")
+        if "wants_fixed" in feature_id:
+            markers.append("wants ")
+        if "a_prefixing" in feature_id:
+            markers.append("a-")
+
+    unique: list[str] = []
+    for marker in markers:
+        if marker and marker not in unique:
+            unique.append(marker)
+    return unique
 
 
 def prefilter_candidate(

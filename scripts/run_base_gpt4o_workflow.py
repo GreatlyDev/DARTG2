@@ -19,6 +19,7 @@ def main() -> None:
     parser.add_argument("--features", type=Path, default=Path("config/features.index.json"))
     parser.add_argument("--candidates", type=int, default=3)
     parser.add_argument("--model", default="gpt-4o")
+    parser.add_argument("--min-features", type=int, default=1)
     parser.add_argument("--skip-generation", action="store_true", help="Use existing generated candidates and run checks only.")
     parser.add_argument("--limit", type=int, default=None, help="Optional generation limit for smoke tests.")
     parser.add_argument("--resume", action="store_true")
@@ -73,13 +74,11 @@ def main() -> None:
             args.model,
             "--status",
             "demo_unvalidated",
-            "--retry-failures",
-            "--resume",
-        ]
+    ]
+        if args.resume:
+            generation_cmd.extend(["--resume", "--retry-failures"])
         if args.limit is not None:
             generation_cmd.extend(["--limit", str(args.limit)])
-        elif args.resume:
-            generation_cmd.append("--resume")
         run_step(generation_cmd)
     run_step([
         sys.executable,
@@ -92,6 +91,8 @@ def main() -> None:
         str(args.features),
         "--output",
         str(prefiltered),
+        "--min-features",
+        str(args.min_features),
     ])
     run_step([
         sys.executable,

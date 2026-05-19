@@ -22,7 +22,7 @@ def row_candidate_text(row: dict[str, Any]) -> str:
 def candidate_quality_score(
     row: dict[str, Any],
     *,
-    min_change: float = 0.10,
+    min_change: float = 0.005,
     max_length_delta: float = 0.20,
     min_word_count: int = 10,
 ) -> tuple[bool, list[str]]:
@@ -54,7 +54,7 @@ def candidate_quality_score(
 def score_candidate_row(
     row: dict[str, Any],
     *,
-    min_change: float = 0.10,
+    min_change: float = 0.005,
     max_length_delta: float = 0.20,
     min_word_count: int = 10,
     allowed_feature_markers: set[str] | None = None,

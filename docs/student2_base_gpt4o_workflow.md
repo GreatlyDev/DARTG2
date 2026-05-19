@@ -59,9 +59,11 @@ Files under `data/generated/` are ignored by Git. Treat the raw, scored, curated
 
 `final80_base_gpt4o_candidates_raw.jsonl` is the model output.
 
-`final80_base_gpt4o_candidates_prefiltered.jsonl` applies the feature and length prefilter.
+`final80_base_gpt4o_candidates_prefiltered.jsonl` applies the feature and length prefilter. The workflow requires at least one detected approved feature by default because some anchor/dialect pairs only license one safe feature without forcing unsupported changes.
 
 `final80_base_gpt4o_candidates_scored.jsonl` adds cheap similarity/change metrics and student-text-cleanup detection.
+
+The scoring layer uses a low change threshold because this workflow is intentionally minimal-edit. Exact no-op outputs still fail, but candidates are not rejected merely because they preserve most of the anchor text.
 
 `final80_base_gpt4o_candidates_curated.jsonl` contains records that passed the automated review layer.
 

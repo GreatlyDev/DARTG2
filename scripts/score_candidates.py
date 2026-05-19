@@ -30,7 +30,7 @@ def main() -> None:
     parser.add_argument("--candidates", required=True, type=Path, help="Candidate JSONL to score.")
     parser.add_argument("--features", default=Path("config/features.index.json"), type=Path)
     parser.add_argument("--output", required=True, type=Path, help="Scored output JSONL.")
-    parser.add_argument("--min-change", type=float, default=0.10)
+    parser.add_argument("--min-change", type=float, default=0.005)
     parser.add_argument("--max-length-delta", type=float, default=0.20)
     parser.add_argument("--min-word-count", type=int, default=10)
     args = parser.parse_args()

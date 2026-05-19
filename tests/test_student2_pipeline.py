@@ -56,6 +56,8 @@ class FeatureInventoryTests(unittest.TestCase):
         self.assertIn('Southern American English', prompt)
         self.assertIn('Use only documented features', prompt)
         self.assertIn("Do not correct the student's spelling", prompt)
+        self.assertIn('minimal-edit rewrite', prompt)
+        self.assertIn('Copy the anchor response exactly', prompt)
         self.assertNotIn('{FEATURE_INVENTORY}', prompt)
 
 
@@ -440,6 +442,46 @@ class PrefilterTests(unittest.TestCase):
         self.assertNotIn('student_text_correction', result.rejection_reasons)
         self.assertEqual(result.student_text_corrections, [])
 
+    def test_prefilter_detects_feature_surface_markers_from_inventory_labels(self):
+        result = prefilter_candidate(
+            anchor_response='The author wants the reader to see the connection.',
+            candidate_text='The author wants the reader to see the connection, right?',
+            feature_config={
+                'features': [
+                    {
+                        'id': 'midwestern_tag_right',
+                        'feature': 'tag question right',
+                        'allowed_for_generation': True,
+                    },
+                ]
+            },
+            length_tolerance=1.0,
+            min_detected_features=1,
+        )
+
+        self.assertTrue(result.passed_prefilter)
+        self.assertEqual(result.detected_features, ['right'])
+
+    def test_prefilter_can_accept_one_documented_feature_for_weak_anchor_pair(self):
+        result = prefilter_candidate(
+            anchor_response='I was being pationt when I was waiting.',
+            candidate_text='Ope, I was being pationt when I was waiting.',
+            feature_config={
+                'features': [
+                    {
+                        'id': 'midwestern_ope',
+                        'feature': 'ope',
+                        'allowed_for_generation': True,
+                    },
+                ]
+            },
+            length_tolerance=1.0,
+            min_detected_features=1,
+        )
+
+        self.assertTrue(result.passed_prefilter)
+        self.assertEqual(result.detected_features, ['ope'])
+
     def test_prefilter_script_uses_anchor_file_and_candidate_response(self):
         root = Path('data/test_tmp/prefilter_script')
         anchors_path = root / 'anchors.jsonl'
@@ -522,6 +564,32 @@ class ScoringAndCurationTests(unittest.TestCase):
 
         self.assertFalse(usable)
         self.assertIn('student_text_correction', reasons)
+
+    def test_minimal_edit_candidate_with_documented_feature_can_pass_quality_filter(self):
+        row = score_candidate_row(
+            {
+                'anchor_response': 'The author wants the reader to see the connection.',
+                'candidate_response': 'The author wants the reader to see the connection, right?',
+                'generation_status': 'demo_unvalidated',
+            },
+            min_word_count=1,
+        )
+
+        self.assertTrue(row['passed_quality_filter'])
+        self.assertEqual(row['rejection_reasons'], [])
+
+    def test_exact_match_still_fails_quality_filter(self):
+        row = score_candidate_row(
+            {
+                'anchor_response': 'The author wants the reader to see the connection.',
+                'candidate_response': 'The author wants the reader to see the connection.',
+                'generation_status': 'demo_unvalidated',
+            },
+            min_word_count=1,
+        )
+
+        self.assertFalse(row['passed_quality_filter'])
+        self.assertIn('insufficient_change', row['rejection_reasons'])
 
     def test_score_candidates_script_reattaches_anchor_text_before_scoring(self):
         root = Path('data/test_tmp/score_candidates_script')

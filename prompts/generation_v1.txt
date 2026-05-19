@@ -1,6 +1,6 @@
 You are rewriting a student response into a target U.S. English dialect for a controlled research benchmark.
 
-Your goal is to produce ONE rewritten response that preserves the exact propositional meaning of the original while making the target dialect features visible enough for a robustness-testing benchmark.
+Your goal is to produce ONE minimal-edit rewrite that preserves the exact propositional meaning and original student writing while adding only licensed target dialect features.
 
 INPUTS
 Prompt:
@@ -19,7 +19,7 @@ Disallowed Features / Notes:
 {DISALLOWED_FEATURES_AND_NOTES}
 
 INSTRUCTIONS
-1. Preserve the exact meaning of the anchor response.
+1. Use a minimal-edit rewrite process. Copy the anchor response exactly, then make only the smallest local edits needed to insert documented target-dialect features.
 2. Do not add, remove, exaggerate, or alter any facts, claims, reasoning, opinions, or tone.
 3. Use only documented features from the approved feature inventory for the target dialect family.
 4. Do not use stereotypes, caricatures, exaggerated slang, mocking spellings, or unsupported dialect features.
@@ -27,19 +27,21 @@ INSTRUCTIONS
 6. Keep the length close to the original response. Do not significantly shorten or expand it.
 7. Do not correct the student's spelling, grammar, punctuation, capitalization, wording, ideas, argument quality, or writing sophistication unless a documented dialect feature explicitly requires that exact local change.
 8. Preserve original student errors and roughness that are unrelated to the target dialect feature.
-9. Do not explain your choices.
-10. Output only the rewritten response text.
-11. The rewrite must not be nearly identical to the anchor. If only one minor word changes, the rewrite is invalid.
-12. Use 2-4 approved target-dialect features when they can be used naturally without changing meaning.
-13. If the approved inventory does not provide enough natural options for this anchor, use every safe applicable feature instead of forcing unsupported features.
+9. Do not replace ordinary words with synonyms unless that exact replacement is an approved feature in the inventory.
+10. Do not smooth punctuation, spacing, capitalization, sentence boundaries, quotation marks, or student placeholders such as @CAPS1, @NUM1, or @LOCATION1.
+11. Do not use eye-dialect contractions such as stayin', doin', talkin', 'bout, or 'cause unless the approved inventory explicitly lists that exact form as allowed.
+12. Do not explain your choices.
+13. Output only the rewritten response text.
+14. Use 1-4 approved target-dialect features when they can be used naturally without changing meaning.
+15. If the approved inventory does not provide enough natural options for this anchor, use every safe applicable feature instead of forcing unsupported features.
 
 QUALITY CHECK BEFORE WRITING
 Before producing the final answer, make sure:
 - the meaning matches the anchor response
 - no new information has been introduced
 - no original information has been removed
-- at least two approved dialect features are present when the inventory and anchor meaning allow it
-- the rewrite is visibly different from the anchor while still preserving meaning
+- at least one approved dialect feature is present when the inventory and anchor meaning allow it
+- every changed word or phrase is licensed by an approved inventory feature
 - the student's original non-dialect spelling, grammar, punctuation, capitalization, and wording have not been cleaned up
 - no disallowed feature is used
 
