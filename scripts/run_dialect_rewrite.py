@@ -1,9 +1,9 @@
 """Unified dialect-rewrite runner — one CLI, three strategies, any OpenAI model.
 
 Strategies:
-    naive               : "Rewrite this in <dialect>" one-liner.
-    inventory_injected  : prompts/base.md with the family's inventory injected.
-    inventory_greedy    : prompts/dialects/<family>.md license-by-anchor greedy rewrite (JSON output).
+    naive    : "Rewrite this in <dialect>" one-liner (prompts/naive.md).
+    base     : prompts/base.md with the family's inventory injected.
+    dialect  : prompts/dialects/<family>.md license-by-anchor greedy rewrite (JSON output).
 
 All three write the same unified JSONL schema. rewrite_text is always populated
 on status=ok records. applied_features / rejected_candidates / model_notes are

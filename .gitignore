@@ -4,7 +4,6 @@ __pycache__/
 
 # Generated DART pipeline outputs
 data/assignments/
-data/generated/
 data/test_tmp/
 docs/stage1_demo_candidates*.md
 docs/final80_demo_candidates*.md

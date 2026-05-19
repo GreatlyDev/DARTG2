@@ -182,7 +182,7 @@ def _derive_refused(row: dict, scores: dict) -> bool:
     status = row.get("generation_status")
     if status in {"model_fail", "parse_error", "api_error"}:
         return True
-    if row.get("strategy") == "inventory_greedy":
+    if row.get("strategy") in ("dialect", "inventory_greedy"):
         applied = row.get("applied_features")
         if isinstance(applied, list) and len(applied) == 0:
             return True

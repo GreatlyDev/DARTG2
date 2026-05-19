@@ -24,7 +24,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 RUNNER = REPO_ROOT / "scripts" / "run_dialect_rewrite.py"
 
-DEFAULT_STRATEGIES = ["naive", "inventory_injected", "inventory_greedy"]
+DEFAULT_STRATEGIES = ["naive", "base", "dialect"]
 DEFAULT_FAMILIES = ["aae", "southern", "appalachian", "midwestern", "northeastern", "western"]
 DEFAULT_MODELS = ["gpt-4o", "claude-haiku-4-5", "claude-sonnet-4-6"]
 DEFAULT_ANCHORS_PATH = Path("data/raw/DART_FINAL_80_ANCHORS.csv")

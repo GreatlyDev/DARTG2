@@ -60,9 +60,9 @@ def prompt_path_for(strategy_name: str, family: str) -> str:
     """Repo-relative path to the prompt file a given (strategy, family) actually uses."""
     if strategy_name == "naive":
         return "prompts/naive.md"
-    if strategy_name == "inventory_injected":
+    if strategy_name in ("base", "inventory_injected"):       # legacy name kept for back-compat
         return "prompts/base.md"
-    if strategy_name == "inventory_greedy":
+    if strategy_name in ("dialect", "inventory_greedy"):      # legacy name kept for back-compat
         return f"prompts/dialects/{family}.md"
     return ""
 
@@ -191,16 +191,16 @@ STRATEGIES: dict[str, Strategy] = {
         parse_output=_parse_naive,
         description="One-line conversion prompt. No inventory. Output is the rewrite text only.",
     ),
-    "inventory_injected": Strategy(
-        name="inventory_injected",
-        prompt_version="inventory_injected_v1",
+    "base": Strategy(
+        name="base",
+        prompt_version="base_v1",
         build_input=_build_inventory_injected,
         parse_output=_parse_inventory_injected,
         description="prompts/base.md with the family's allowed feature inventory injected as text. Free-text rewrite.",
     ),
-    "inventory_greedy": Strategy(
-        name="inventory_greedy",
-        prompt_version="inventory_greedy_v1",
+    "dialect": Strategy(
+        name="dialect",
+        prompt_version="dialect_v1",
         build_input=_build_inventory_greedy,
         parse_output=_parse_inventory_greedy,
         description="prompts/dialects/<family>.md greedy license-by-anchor prompt. Returns structured JSON with applied_features.",
