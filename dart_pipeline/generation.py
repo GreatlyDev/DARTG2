@@ -71,11 +71,13 @@ class OpenAIResponsesClient:
         model: str,
         timeout: int = 120,
         max_output_tokens: int | None = None,
+        temperature: float | None = None,
     ) -> None:
         self.api_key = api_key
         self.model = model
         self.timeout = timeout
         self.max_output_tokens = max_output_tokens
+        self.temperature = temperature
 
     def create(self, prompt: str) -> dict[str, Any]:
         payload: dict[str, Any] = {
@@ -84,6 +86,8 @@ class OpenAIResponsesClient:
         }
         if self.max_output_tokens:
             payload["max_output_tokens"] = self.max_output_tokens
+        if self.temperature is not None:
+            payload["temperature"] = self.temperature
 
         request = urllib.request.Request(
             OPENAI_RESPONSES_URL,

@@ -17,7 +17,7 @@ from dart_pipeline.trace_generation import (
     parse_model_json,
     traced_candidate_response,
 )
-from scripts.retry_rejected_candidates import build_retry_prompt, target_candidate_ids
+from scripts.retry_rejected_candidates import build_retry_prompt, parse_candidate_ids, target_candidate_ids
 from scripts.repair_student_cleanup import repair_cleanup_text
 
 
@@ -58,8 +58,9 @@ class FeatureInventoryTests(unittest.TestCase):
         self.assertIn('Southern American English', prompt)
         self.assertIn('Use only documented features', prompt)
         self.assertIn("Do not correct the student's spelling", prompt)
-        self.assertIn('minimal-edit rewrite', prompt)
-        self.assertIn('Copy the anchor response exactly', prompt)
+        self.assertIn('controlled dialect rewrite', prompt)
+        self.assertIn('not just one appended marker', prompt)
+        self.assertIn('Use 2-4 approved target-dialect feature placements', prompt)
         self.assertNotIn('{FEATURE_INVENTORY}', prompt)
 
 
@@ -584,7 +585,7 @@ class ScoringAndCurationTests(unittest.TestCase):
         self.assertFalse(usable)
         self.assertIn('student_text_correction', reasons)
 
-    def test_minimal_edit_candidate_with_documented_feature_can_pass_quality_filter(self):
+    def test_candidate_with_documented_feature_can_pass_quality_filter(self):
         row = score_candidate_row(
             {
                 'anchor_response': 'The author wants the reader to see the connection.',
@@ -691,6 +692,10 @@ class ScoringAndCurationTests(unittest.TestCase):
 
         self.assertEqual(target_candidate_ids(rows, {'student_text_correction'}), {'A'})
         self.assertEqual(target_candidate_ids(rows, {'student_text_correction', 'insufficient_change'}), {'A', 'B'})
+
+    def test_parse_candidate_ids_trims_allowlist_values(self):
+        self.assertEqual(parse_candidate_ids(' A, B ,,C '), {'A', 'B', 'C'})
+        self.assertEqual(parse_candidate_ids(None), set())
 
     def test_repair_cleanup_text_reverts_only_detected_cleanup_span(self):
         anchor = 'I have no control over ther car but I can try.'

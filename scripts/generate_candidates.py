@@ -35,6 +35,7 @@ def main() -> None:
     parser.add_argument("--sleep", type=float, default=0.0, help="Seconds to sleep between API calls.")
     parser.add_argument("--timeout", type=int, default=120, help="HTTP timeout per API call in seconds.")
     parser.add_argument("--max-output-tokens", type=int, default=900, help="Maximum output tokens per candidate.")
+    parser.add_argument("--temperature", type=float, default=None, help="Optional model sampling temperature.")
     parser.add_argument("--status", default="demo_unvalidated", help="Generation status label to store with each candidate.")
     parser.add_argument("--resume", action="store_true", help="Skip candidate IDs already present in the output file.")
     parser.add_argument(
@@ -74,6 +75,7 @@ def main() -> None:
         model=args.model,
         timeout=args.timeout,
         max_output_tokens=args.max_output_tokens,
+        temperature=args.temperature,
     )
 
     generated_rows = list(existing_rows)
