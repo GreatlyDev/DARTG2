@@ -35,6 +35,16 @@ def build_retry_prompt(job: dict, rejected_row: dict) -> str:
     corrections = rejected_row.get("student_text_corrections") or []
     correction_lines = "\n".join(f"- {correction}" for correction in corrections) or "- none listed"
     previous = str(rejected_row.get("candidate_response") or rejected_row.get("raw_output") or "")
+    failed_guidance = ""
+    if "generation_failed" in (rejected_row.get("rejection_reasons") or []):
+        failed_guidance = """
+The previous output was FAIL. For this retry, first try the smallest safe variant before deciding the pair is impossible.
+Prefer high-precision, meaning-preserving features already licensed by the prompt inventory:
+- replace an existing "I think" / "in my opinion" stance phrase with an approved stance marker such as "I reckon" only when the inventory licenses it for this dialect
+- replace an existing intensifier such as "very" with an approved regional intensifier only when the inventory licenses it for this dialect
+- add an approved discourse marker only when it does not change the claim, evidence, tone, or addressee
+Do not add a second-person form such as y'all unless the anchor already addresses multiple readers.
+"""
     return f"""{job['generation_prompt']}
 
 RETRY NOTE
@@ -55,6 +65,7 @@ Only change text when that exact local change is required to apply a documented 
 Use as many approved target-dialect features as naturally fit, but never force a feature by changing meaning or cleaning up student writing.
 If the anchor/dialect pair only naturally supports one approved feature, one feature is acceptable.
 If no approved feature can be applied without changing meaning or cleaning up student writing, output exactly FAIL.
+{failed_guidance}
 """
 
 
