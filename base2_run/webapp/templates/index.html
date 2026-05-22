@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>base2 sweep viewer</title>
+  <link rel="stylesheet" href="/static/app.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="toggle sidebar">≡</button>
+      <div class="brand">
+        <strong class="brand-name">base2</strong>
+        <span class="brand-sub">sweep viewer</span>
+      </div>
+      <nav class="nav" role="tablist">
+        <button data-tab="dashboard" class="navlink active" role="tab">
+          <span class="navicon">◧</span><span class="navlabel">Dashboard</span>
+        </button>
+        <button data-tab="families" class="navlink" role="tab">
+          <span class="navicon">⌗</span><span class="navlabel">Families</span>
+        </button>
+        <button data-tab="table" class="navlink" role="tab">
+          <span class="navicon">☰</span><span class="navlabel">Table</span>
+        </button>
+        <button data-tab="reader" class="navlink" role="tab">
+          <span class="navicon">☶</span><span class="navlabel">Reader</span>
+        </button>
+        <button data-tab="prompts" class="navlink" role="tab">
+          <span class="navicon">⌬</span><span class="navlabel">Prompts</span>
+        </button>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="dataset-name" title="{{ dataset_name }}">{{ dataset_name }}</div>
+        <div class="muted small">{{ record_count }} records</div>
+      </div>
+    </aside>
+
+    <main class="content">
+      <!-- ─────────────── DASHBOARD ─────────────── -->
+      <section id="tab-dashboard" class="tab-panel active">
+        <h2 class="section-title">Dashboard</h2>
+        <div id="headline-stats" class="stat-grid"></div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-title">Status breakdown</div>
+            <div class="chart-wrap"><canvas id="chart-status"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Dialect-pass distribution</div>
+            <div class="chart-wrap"><canvas id="chart-pass"></canvas></div>
+          </div>
+          <div class="chart-card wide">
+            <div class="chart-title">Dialect-pass rate by family</div>
+            <div class="chart-wrap"><canvas id="chart-fam-pass"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Median cosine by family</div>
+            <div class="chart-wrap"><canvas id="chart-fam-cos"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Median token Δ% by family</div>
+            <div class="chart-wrap"><canvas id="chart-fam-tcr"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Median feature count by family</div>
+            <div class="chart-wrap"><canvas id="chart-fam-feat"></canvas></div>
+          </div>
+          <div class="chart-card wide">
+            <div class="chart-title">Cosine similarity distribution</div>
+            <div class="chart-wrap"><canvas id="chart-hist-cos"></canvas></div>
+          </div>
+          <div class="chart-card wide">
+            <div class="chart-title">Token-change % distribution (with 5–25% pass band)</div>
+            <div class="chart-wrap"><canvas id="chart-hist-tcr"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Applied features per rewrite</div>
+            <div class="chart-wrap"><canvas id="chart-hist-feat"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">New inventory hits per rewrite</div>
+            <div class="chart-wrap"><canvas id="chart-hist-inv"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────── FAMILIES ─────────────── -->
+      <section id="tab-families" class="tab-panel">
+        <h2 class="section-title">Per-family</h2>
+        <div id="family-stats" class="loading">loading…</div>
+      </section>
+
+      <!-- ─────────────── TABLE ─────────────── -->
+      <section id="tab-table" class="tab-panel">
+        <h2 class="section-title">Records</h2>
+        <form id="filters" class="filters">
+          <label>Family
+            <select id="f-family" multiple size="3">
+              {% for fam in families %}
+              <option value="{{ fam }}">{{ fam }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label>Status
+            <select id="f-status" multiple size="3">
+              <option value="ok">ok</option>
+              <option value="model_fail">model_fail</option>
+              <option value="parse_error">parse_error</option>
+              <option value="api_error">api_error</option>
+            </select>
+          </label>
+          <label>Dialect pass
+            <select id="f-pass">
+              <option value="any">any</option>
+              <option value="true">pass</option>
+              <option value="false">fail</option>
+              <option value="none">uncomputed</option>
+            </select>
+          </label>
+          <label>Refused
+            <select id="f-refused">
+              <option value="any">any</option>
+              <option value="false">no</option>
+              <option value="true">yes</option>
+            </select>
+          </label>
+          <label>Min features
+            <input id="f-min-feat" type="number" min="0" step="1" placeholder="0" />
+          </label>
+          <label>Token Δ % range
+            <span class="range">
+              <input id="f-tc-min" type="number" min="0" max="100" step="1" placeholder="0" /> –
+              <input id="f-tc-max" type="number" min="0" max="100" step="1" placeholder="100" />
+            </span>
+          </label>
+          <label>Cosine range
+            <span class="range">
+              <input id="f-cos-min" type="number" min="-1" max="1" step="0.01" placeholder="-1" /> –
+              <input id="f-cos-max" type="number" min="-1" max="1" step="0.01" placeholder="1" />
+            </span>
+          </label>
+          <label class="grow">Search
+            <input id="f-search" type="search" placeholder="search anchor / rewrite / anchor_id" />
+          </label>
+          <div class="filter-actions">
+            <button type="button" id="apply-filters">Apply</button>
+            <button type="button" id="reset-filters">Reset</button>
+            <button type="button" id="dl-jsonl">⬇ jsonl</button>
+            <button type="button" id="dl-csv">⬇ csv</button>
+          </div>
+        </form>
+        <div id="table-meta" class="muted small"></div>
+        <div id="table-wrap"><table id="records-table" class="datatable"><thead></thead><tbody></tbody></table></div>
+      </section>
+
+      <!-- ─────────────── READER ─────────────── -->
+      <section id="tab-reader" class="tab-panel">
+        <h2 class="section-title">Reader</h2>
+        <div class="reader-controls">
+          <button id="reader-prev-family">‹ prev (family)</button>
+          <button id="reader-prev-global">‹ prev (all)</button>
+          <button id="reader-next-global">next (all) ›</button>
+          <button id="reader-next-family">next (family) ›</button>
+          <button id="reader-random">random</button>
+          <button id="reader-random-family">random in family</button>
+          <label class="reader-family-jump">Jump to family
+            <select id="reader-family-select">
+              <option value="">— all —</option>
+              {% for fam in families %}
+              <option value="{{ fam }}">{{ fam }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <span id="reader-position" class="muted small"></span>
+        </div>
+        <div id="reader-card" class="reader-card loading">click a row in the Table, or hit “random” above.</div>
+        <p class="muted small">keyboard: ← prev · → next · shift+← prev (family) · shift+→ next (family) · r random</p>
+      </section>
+
+      <!-- ─────────────── PROMPTS ─────────────── -->
+      <section id="tab-prompts" class="tab-panel">
+        <h2 class="section-title">Prompts</h2>
+        <div class="prompts-layout">
+          <aside id="prompt-list" class="prompt-list"></aside>
+          <article id="prompt-body" class="prompt-body loading">loading…</article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

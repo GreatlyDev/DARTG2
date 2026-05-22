@@ -62,6 +62,8 @@ def prompt_path_for(strategy_name: str, family: str) -> str:
         return "prompts/naive.md"
     if strategy_name in ("base", "inventory_injected"):       # legacy name kept for back-compat
         return "prompts/base.md"
+    if strategy_name == "base2":
+        return "prompts/base2.md"
     if strategy_name in ("dialect", "inventory_greedy"):      # legacy name kept for back-compat
         return f"prompts/dialects/{family}.md"
     return ""
@@ -116,6 +118,61 @@ def _parse_inventory_injected(raw: str) -> ParsedOutput:
     if text.upper().strip() in {"FAIL", "FAIL."}:
         return ParsedOutput(rewrite_text="", generation_status="model_fail", parse_error="model returned FAIL")
     return ParsedOutput(rewrite_text=text)
+
+
+# ────────────────────────────── base2 ──────────────────────────────
+
+
+def _build_base2(anchor_text: str, family: str, family_title: str, inventory: dict) -> str:
+    template = _read_prompt_file("base2.md")
+    feature_block = format_feature_inventory(inventory)
+    disallowed_block = format_disallowed_features(inventory)
+    return (
+        template
+        .replace("{PROMPT}", "[PROMPT NOT PROVIDED]")
+        .replace("{ANCHOR_RESPONSE}", anchor_text)
+        .replace("{DIALECT_FAMILY}", family_title)
+        .replace("{FEATURE_INVENTORY}", feature_block)
+        .replace("{DISALLOWED_FEATURES_AND_NOTES}", disallowed_block)
+    )
+
+
+def _parse_base2(raw: str) -> ParsedOutput:
+    text = raw.strip()
+    if text.upper().strip() in {"FAIL", "FAIL."}:
+        return ParsedOutput(rewrite_text="", generation_status="model_fail", parse_error="model returned FAIL")
+
+    parsed, err = _extract_json_object(text)
+    if parsed is None:
+        return ParsedOutput(rewrite_text="", generation_status="parse_error", parse_error=err)
+
+    rewrite = str(parsed.get("rewrite_text", "")).strip()
+    if not rewrite:
+        return ParsedOutput(rewrite_text="", generation_status="parse_error", parse_error="missing rewrite_text")
+
+    applied = parsed.get("applied_features")
+    applied_list: list[dict] | None = None
+    if isinstance(applied, list):
+        applied_list = []
+        for item in applied:
+            if not isinstance(item, dict):
+                continue
+            name = str(item.get("feature") or item.get("id") or "").strip()
+            normalized = dict(item)
+            if name and "id" not in normalized:
+                normalized["id"] = name
+            applied_list.append(normalized)
+
+    declared_count = parsed.get("feature_count")
+    notes = None
+    if isinstance(declared_count, int) and applied_list is not None and declared_count != len(applied_list):
+        notes = f"feature_count={declared_count} disagrees with len(applied_features)={len(applied_list)}"
+
+    return ParsedOutput(
+        rewrite_text=rewrite,
+        applied_features=applied_list,
+        model_notes=notes,
+    )
 
 
 # ───────────────────────── inventory_greedy ─────────────────────────
@@ -197,6 +254,13 @@ STRATEGIES: dict[str, Strategy] = {
         build_input=_build_inventory_injected,
         parse_output=_parse_inventory_injected,
         description="prompts/base.md with the family's allowed feature inventory injected as text. Free-text rewrite.",
+    ),
+    "base2": Strategy(
+        name="base2",
+        prompt_version="base2_v1",
+        build_input=_build_base2,
+        parse_output=_parse_base2,
+        description="prompts/base2.md — stronger variation targets and feature-count reporting. JSON output with rewrite_text + applied_features + feature_count.",
     ),
     "dialect": Strategy(
         name="dialect",
