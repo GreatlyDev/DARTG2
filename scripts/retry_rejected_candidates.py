@@ -11,6 +11,7 @@ from dart_pipeline.io_utils import read_records, write_jsonl
 
 
 DEFAULT_REJECTION_REASONS = {
+    "anchor_near_duplicate",
     "common_feature_only",
     "student_text_correction",
     "generation_failed",
@@ -75,6 +76,13 @@ Do not copy the sibling candidate text listed below. Use different approved feat
 The previous output was too close to the anchor or just appended a dialect marker. Do not tack a marker onto the end.
 Integrate approved features into existing clauses where they naturally fit. Aim for at least two meaningful, source-backed surface changes when the anchor licenses them.
 """
+    if "anchor_near_duplicate" in row_reasons:
+        quality_guidance += """
+ANCHOR NEAR-DUPLICATE RETRY
+The previous output technically used detected features, but it still read like the same anchor with only tiny insertions.
+For this retry, make distributed changes across the response using approved target-dialect features already licensed by the anchor.
+Do not repeat the same three-token pattern from the rejected output. Prefer different approved feature choices or different natural placements, while preserving meaning and the student's original writing quality.
+"""
     if "aae_authenticity_review" in row_reasons:
         quality_guidance += """
 The previous AAE output looked inauthentic or over-stacked. Do not combine finna, ain't, gonna, and done in the same short answer.
@@ -86,6 +94,7 @@ The previous output used a tag-question "right?" in an inappropriate dialect-fam
 Use only approved target-family features from the prompt inventory.
 """
     if row_reasons & {
+        "anchor_near_duplicate",
         "insufficient_approved_features",
         "single_detected_feature",
         "common_feature_only",
@@ -104,7 +113,7 @@ FEATURE DIVERSITY RETRY
 - Distribute feature placements across the response when possible; do not append one marker at the end as the entire transformation.
 - Do not force a second feature if doing so would cause semantic drift, add new information, change stance/tone, or clean up student writing.
 """
-    if row_reasons & {"within_anchor_duplicate", "weak_minimal_edit_or_append", "targeted_ricky_cleanup"}:
+    if row_reasons & {"anchor_near_duplicate", "within_anchor_duplicate", "weak_minimal_edit_or_append", "targeted_ricky_cleanup"}:
         candidate_index = int(rejected_row.get("candidate_index") or job.get("candidate_index") or 1)
         strategy = {
             1: "Use the strongest natural combination of approved lexical plus syntactic features licensed by the anchor.",

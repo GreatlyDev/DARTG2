@@ -41,6 +41,10 @@ def sequence_ratio(left: str, right: str) -> float:
     return SequenceMatcher(None, normalized_text(left), normalized_text(right)).ratio()
 
 
+def word_sequence_ratio(left: str, right: str) -> float:
+    return SequenceMatcher(a=words(left), b=words(right)).ratio()
+
+
 def is_tiny_append(anchor_text: str, variant_text: str, max_extra_words: int = 3) -> bool:
     anchor_words = words(anchor_text)
     variant_words = words(variant_text)
@@ -60,6 +64,13 @@ def changed_word_count(anchor_text: str, variant_text: str) -> int:
             continue
         total += (end_a - start_a) + (end_b - start_b)
     return total
+
+
+def changed_chunk_count(anchor_text: str, variant_text: str) -> int:
+    anchor_words = words(anchor_text)
+    variant_words = words(variant_text)
+    matcher = SequenceMatcher(a=anchor_words, b=variant_words)
+    return sum(1 for tag, *_ in matcher.get_opcodes() if tag != "equal")
 
 
 def surface_change_ratio(anchor_text: str, variant_text: str) -> float:
@@ -142,9 +153,12 @@ def surface_change_reasons(
     row: dict,
     *,
     min_surface_change_ratio: float,
+    preferred_surface_change_ratio: float,
     max_surface_change_ratio: float,
     long_anchor_word_threshold: int,
     preferred_long_feature_count: int,
+    near_anchor_similarity_threshold: float,
+    near_anchor_max_change_chunks: int,
 ) -> list[str]:
     if candidate_text(row).strip().upper() == "FAIL":
         return []
@@ -156,6 +170,9 @@ def surface_change_reasons(
     row["surface_change_ratio"] = round(ratio, 4)
     row["audit_anchor_word_count"] = anchor_count
     row["audit_changed_word_count"] = changed_word_count(anchor, variant)
+    anchor_similarity = word_sequence_ratio(anchor, variant)
+    row["anchor_similarity_ratio"] = round(anchor_similarity, 4)
+    row["audit_changed_chunk_count"] = changed_chunk_count(anchor, variant)
     if not row.get("feature_realization_count"):
         row["feature_realization_count"] = len(row.get("detected_features") or [])
 
@@ -166,6 +183,13 @@ def surface_change_reasons(
         reasons.append("surface_change_above_upper_bound")
     if anchor_count >= long_anchor_word_threshold and int(row.get("feature_realization_count") or 0) < preferred_long_feature_count:
         reasons.append("long_anchor_low_feature_count")
+    if (
+        anchor_count >= long_anchor_word_threshold
+        and anchor_similarity >= near_anchor_similarity_threshold
+        and ratio < preferred_surface_change_ratio
+        and int(row.get("audit_changed_chunk_count") or 0) <= near_anchor_max_change_chunks
+    ):
+        reasons.append("anchor_near_duplicate")
     return reasons
 
 
@@ -182,9 +206,12 @@ def audit_rows(
     duplicate_threshold: float,
     common_feature_markers: set[str] | None = None,
     min_surface_change_ratio: float = 0.05,
+    preferred_surface_change_ratio: float = 0.10,
     max_surface_change_ratio: float = 0.25,
     long_anchor_word_threshold: int = 80,
     preferred_long_feature_count: int = 3,
+    near_anchor_similarity_threshold: float = 0.94,
+    near_anchor_max_change_chunks: int = 4,
 ) -> list[dict]:
     common_feature_markers = {
         normalize_feature_marker(marker)
@@ -221,9 +248,12 @@ def audit_rows(
         for reason in surface_change_reasons(
             row,
             min_surface_change_ratio=min_surface_change_ratio,
+            preferred_surface_change_ratio=preferred_surface_change_ratio,
             max_surface_change_ratio=max_surface_change_ratio,
             long_anchor_word_threshold=long_anchor_word_threshold,
             preferred_long_feature_count=preferred_long_feature_count,
+            near_anchor_similarity_threshold=near_anchor_similarity_threshold,
+            near_anchor_max_change_chunks=near_anchor_max_change_chunks,
         ):
             add_reason(row, reason)
         if is_weak_minimal_edit(row):
@@ -246,9 +276,12 @@ def main() -> None:
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--duplicate-threshold", type=float, default=0.985)
     parser.add_argument("--min-surface-change-ratio", type=float, default=0.05)
+    parser.add_argument("--preferred-surface-change-ratio", type=float, default=0.10)
     parser.add_argument("--max-surface-change-ratio", type=float, default=0.25)
     parser.add_argument("--long-anchor-word-threshold", type=int, default=80)
     parser.add_argument("--preferred-long-feature-count", type=int, default=3)
+    parser.add_argument("--near-anchor-similarity-threshold", type=float, default=0.94)
+    parser.add_argument("--near-anchor-max-change-chunks", type=int, default=4)
     parser.add_argument(
         "--common-feature-markers",
         default=",".join(sorted(DEFAULT_COMMON_FEATURE_MARKERS)),
@@ -267,9 +300,12 @@ def main() -> None:
         duplicate_threshold=args.duplicate_threshold,
         common_feature_markers=common_feature_markers,
         min_surface_change_ratio=args.min_surface_change_ratio,
+        preferred_surface_change_ratio=args.preferred_surface_change_ratio,
         max_surface_change_ratio=args.max_surface_change_ratio,
         long_anchor_word_threshold=args.long_anchor_word_threshold,
         preferred_long_feature_count=args.preferred_long_feature_count,
+        near_anchor_similarity_threshold=args.near_anchor_similarity_threshold,
+        near_anchor_max_change_chunks=args.near_anchor_max_change_chunks,
     )
     write_jsonl(args.output, audited)
 

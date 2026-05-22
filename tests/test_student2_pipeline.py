@@ -852,6 +852,26 @@ class ScoringAndCurationTests(unittest.TestCase):
         self.assertIn('Do not force a second feature', prompt)
         self.assertIn('semantic drift', prompt)
 
+    def test_retry_prompt_for_anchor_near_duplicate_requires_distributed_changes(self):
+        prompt = build_retry_prompt(
+            {
+                'generation_prompt': 'Base prompt text.',
+                'candidate_index': 1,
+            },
+            {
+                'candidate_id': 'A1_Midwestern_1',
+                'candidate_index': 1,
+                'candidate_response': 'worda wordb anymore wordc right wordd needs planted',
+                'detected_features': ['anymore', 'right', 'needs'],
+                'rejection_reasons': ['anchor_near_duplicate'],
+                'student_text_corrections': [],
+            },
+        )
+
+        self.assertIn('ANCHOR NEAR-DUPLICATE RETRY', prompt)
+        self.assertIn('distributed changes', prompt)
+        self.assertIn('same three-token pattern', prompt)
+
     def test_audit_flags_surface_change_below_dacon_minimum(self):
         anchor_words = [f'word{chr(97 + i % 26)}{chr(97 + i // 26)}' for i in range(50)]
         candidate_words = list(anchor_words)
@@ -876,6 +896,34 @@ class ScoringAndCurationTests(unittest.TestCase):
         self.assertFalse(audited[0]['passed_quality_filter'])
         self.assertIn('surface_change_below_minimum', audited[0]['rejection_reasons'])
         self.assertLess(audited[0]['surface_change_ratio'], 0.05)
+
+    def test_audit_flags_anchor_near_duplicate_even_with_detected_features(self):
+        anchor_words = [f'word{chr(97 + i % 26)}{chr(97 + i // 26)}' for i in range(100)]
+        candidate_words = list(anchor_words)
+        candidate_words.insert(20, 'anymore')
+        candidate_words[50] = 'right'
+        candidate_words.insert(80, 'needs')
+        candidate_words.insert(81, 'planted')
+        rows = [
+            {
+                'anchor_id': 'A1',
+                'candidate_id': 'A1_Midwestern_1',
+                'candidate_index': 1,
+                'dialect_family': 'Midwestern/North Central',
+                'anchor_response': ' '.join(anchor_words),
+                'candidate_response': ' '.join(candidate_words),
+                'detected_features': ['anymore', 'right', 'needs'],
+                'feature_realization_count': 3,
+                'passed_quality_filter': True,
+                'rejection_reasons': [],
+            }
+        ]
+
+        audited = audit_rows(rows, duplicate_threshold=0.985)
+
+        self.assertFalse(audited[0]['passed_quality_filter'])
+        self.assertIn('anchor_near_duplicate', audited[0]['rejection_reasons'])
+        self.assertGreaterEqual(audited[0]['anchor_similarity_ratio'], 0.94)
 
     def test_audit_flags_surface_change_above_dacon_upper_bound(self):
         anchor_words = [f'word{chr(97 + i % 26)}{chr(97 + i // 26)}' for i in range(30)]
