@@ -11,12 +11,17 @@ from dart_pipeline.io_utils import read_records, write_jsonl
 
 
 DEFAULT_REJECTION_REASONS = {
+    "common_feature_only",
     "student_text_correction",
     "generation_failed",
     "candidate_too_short",
     "length_outside_tolerance",
+    "long_anchor_low_feature_count",
     "insufficient_approved_features",
     "insufficient_change",
+    "single_detected_feature",
+    "surface_change_above_upper_bound",
+    "surface_change_below_minimum",
 }
 
 
@@ -79,6 +84,25 @@ Avoid "done be" constructions. Prefer one or two natural, documented AAE feature
         quality_guidance += """
 The previous output used a tag-question "right?" in an inappropriate dialect-family context. Do not use tag-question "right?" for this retry.
 Use only approved target-family features from the prompt inventory.
+"""
+    if row_reasons & {
+        "insufficient_approved_features",
+        "single_detected_feature",
+        "common_feature_only",
+        "long_anchor_low_feature_count",
+        "surface_change_below_minimum",
+        "surface_change_above_upper_bound",
+    }:
+        detected_features = ", ".join(str(feature) for feature in rejected_row.get("detected_features") or []) or "none detected"
+        quality_guidance += f"""
+FEATURE DIVERSITY RETRY
+- Previous detected features: {detected_features}.
+- Prefer a rewrite with at least two distinct approved feature placements from the target inventory when the anchor licenses them naturally.
+- For longer anchors, prefer 3-5 clear published feature realizations when they fit naturally.
+- Keep the rewrite inside the 5%-25% surface-change band when possible: below 5% is usually too minimal, while above 25% risks paraphrase or meaning drift.
+- If the previous attempt only used broad/common markers, choose a more context-specific approved lexical, syntactic, or discourse feature instead of repeating only those same markers.
+- Distribute feature placements across the response when possible; do not append one marker at the end as the entire transformation.
+- Do not force a second feature if doing so would cause semantic drift, add new information, change stance/tone, or clean up student writing.
 """
     if row_reasons & {"within_anchor_duplicate", "weak_minimal_edit_or_append", "targeted_ricky_cleanup"}:
         candidate_index = int(rejected_row.get("candidate_index") or job.get("candidate_index") or 1)

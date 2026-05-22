@@ -17,6 +17,7 @@ from dart_pipeline.trace_generation import (
     parse_model_json,
     traced_candidate_response,
 )
+from scripts.audit_ricky_candidate_quality import audit_rows
 from scripts.retry_rejected_candidates import build_retry_prompt, parse_candidate_ids, target_candidate_ids
 from scripts.repair_student_cleanup import repair_cleanup_text
 
@@ -57,10 +58,12 @@ class FeatureInventoryTests(unittest.TestCase):
         self.assertIn('Recycling matters because it reduces landfill waste.', prompt)
         self.assertIn('Southern American English', prompt)
         self.assertIn('Use only documented features', prompt)
-        self.assertIn("Do not correct the student's spelling", prompt)
+        self.assertIn("Do not correct, normalize, smooth, or improve the student's spelling", prompt)
         self.assertIn('controlled dialect rewrite', prompt)
-        self.assertIn('not just one appended marker', prompt)
-        self.assertIn('Use 2-4 approved target-dialect feature placements', prompt)
+        self.assertIn('or one appended marker', prompt)
+        self.assertIn('Use 2-5 approved target-dialect feature placements', prompt)
+        self.assertIn('Prefer a mix of distinct approved feature entries', prompt)
+        self.assertIn('Low-score and low-band responses must stay low-score/low-band', prompt)
         self.assertNotIn('{FEATURE_INVENTORY}', prompt)
 
 
@@ -485,6 +488,100 @@ class PrefilterTests(unittest.TestCase):
         self.assertTrue(result.passed_prefilter)
         self.assertEqual(result.detected_features, ['ope'])
 
+    def test_prefilter_uses_explicit_detection_markers(self):
+        result = prefilter_candidate(
+            anchor_response='The character was very happy.',
+            candidate_text='The character was mad happy.',
+            feature_config={
+                'features': [
+                    {
+                        'id': 'northeastern_mad_intensifier',
+                        'feature': 'mad as intensifier',
+                        'detection_markers': ['mad'],
+                        'allowed_for_generation': True,
+                    },
+                ]
+            },
+            length_tolerance=1.0,
+            min_detected_features=1,
+        )
+
+        self.assertTrue(result.passed_prefilter)
+        self.assertEqual(result.detected_features, ['mad'])
+
+    def test_prefilter_detects_aae_habitual_be_pattern(self):
+        result = prefilter_candidate(
+            anchor_response='The students are working after school.',
+            candidate_text='The students be working after school.',
+            feature_config={
+                'features': [
+                    {
+                        'id': 'aae_habitual_be',
+                        'feature': 'habitual be',
+                        'allowed_for_generation': True,
+                    },
+                ]
+            },
+            length_tolerance=1.0,
+            min_detected_features=1,
+        )
+
+        self.assertTrue(result.passed_prefilter)
+        self.assertEqual(result.detected_features, ['habitual be'])
+        self.assertEqual(result.feature_realization_count, 1)
+
+    def test_prefilter_does_not_detect_markers_inside_other_words(self):
+        result = prefilter_candidate(
+            anchor_response='The passage mentions Madison and a popular activity.',
+            candidate_text='The passage mentions Madison and a popular activity.',
+            feature_config={
+                'features': [
+                    {
+                        'id': 'northeastern_mad_intensifier',
+                        'feature': 'mad as intensifier',
+                        'detection_markers': ['mad'],
+                        'allowed_for_generation': True,
+                    },
+                    {
+                        'id': 'midwestern_pop',
+                        'feature': 'pop',
+                        'detection_markers': ['pop'],
+                        'allowed_for_generation': True,
+                    },
+                ]
+            },
+            length_tolerance=1.0,
+            min_detected_features=0,
+        )
+
+        self.assertEqual(result.detected_features, [])
+        self.assertEqual(result.feature_realization_count, 0)
+
+    def test_prefilter_counts_multiple_feature_realizations(self):
+        result = prefilter_candidate(
+            anchor_response='I think the students are working and the computers are helping.',
+            candidate_text='I reckon the students be working and the computers be helping.',
+            feature_config={
+                'features': [
+                    {
+                        'id': 'southern_reckon',
+                        'feature': 'reckon',
+                        'allowed_for_generation': True,
+                    },
+                    {
+                        'id': 'aae_habitual_be',
+                        'feature': 'habitual be',
+                        'allowed_for_generation': True,
+                    },
+                ]
+            },
+            length_tolerance=1.0,
+            min_detected_features=3,
+        )
+
+        self.assertTrue(result.passed_prefilter)
+        self.assertEqual(result.feature_realization_count, 3)
+
     def test_prefilter_script_uses_anchor_file_and_candidate_response(self):
         root = Path('data/test_tmp/prefilter_script')
         anchors_path = root / 'anchors.jsonl'
@@ -692,6 +789,142 @@ class ScoringAndCurationTests(unittest.TestCase):
 
         self.assertEqual(target_candidate_ids(rows, {'student_text_correction'}), {'A'})
         self.assertEqual(target_candidate_ids(rows, {'student_text_correction', 'insufficient_change'}), {'A', 'B'})
+
+    def test_audit_flags_single_detected_feature_for_targeted_retry(self):
+        rows = [
+            {
+                'anchor_id': 'A1',
+                'candidate_id': 'A1_Western_1',
+                'candidate_index': 1,
+                'dialect_family': 'Western American English',
+                'anchor_response': 'I think the answer is clear and the story matters.',
+                'candidate_response': 'I think the answer is clear for sure and the story matters.',
+                'detected_features': ['for sure'],
+                'passed_quality_filter': True,
+                'rejection_reasons': [],
+            }
+        ]
+
+        audited = audit_rows(rows, duplicate_threshold=0.985)
+
+        self.assertFalse(audited[0]['passed_quality_filter'])
+        self.assertIn('single_detected_feature', audited[0]['rejection_reasons'])
+
+    def test_audit_flags_common_feature_only_for_targeted_retry(self):
+        rows = [
+            {
+                'anchor_id': 'A1',
+                'candidate_id': 'A1_Western_1',
+                'candidate_index': 1,
+                'dialect_family': 'Western American English',
+                'anchor_response': 'I am going to explain the reason because the passage shows the plan.',
+                'candidate_response': 'I am gonna explain the reason because the passage for sure shows the plan.',
+                'detected_features': ['gonna', 'for sure'],
+                'passed_quality_filter': True,
+                'rejection_reasons': [],
+            }
+        ]
+
+        audited = audit_rows(rows, duplicate_threshold=0.985)
+
+        self.assertFalse(audited[0]['passed_quality_filter'])
+        self.assertIn('common_feature_only', audited[0]['rejection_reasons'])
+
+    def test_retry_prompt_for_feature_diversity_rejections_preserves_meaning_first(self):
+        prompt = build_retry_prompt(
+            {
+                'generation_prompt': 'Base prompt text.',
+                'candidate_index': 2,
+            },
+            {
+                'candidate_id': 'A1_Western_2',
+                'candidate_index': 2,
+                'candidate_response': 'I am gonna explain the reason because the passage for sure shows the plan.',
+                'detected_features': ['gonna', 'for sure'],
+                'rejection_reasons': ['common_feature_only', 'single_detected_feature', 'surface_change_below_minimum'],
+                'student_text_corrections': [],
+            },
+        )
+
+        self.assertIn('FEATURE DIVERSITY RETRY', prompt)
+        self.assertIn('Prefer a rewrite with at least two distinct approved feature placements', prompt)
+        self.assertIn('5%-25% surface-change band', prompt)
+        self.assertIn('Do not force a second feature', prompt)
+        self.assertIn('semantic drift', prompt)
+
+    def test_audit_flags_surface_change_below_dacon_minimum(self):
+        anchor_words = [f'word{chr(97 + i % 26)}{chr(97 + i // 26)}' for i in range(50)]
+        candidate_words = list(anchor_words)
+        candidate_words[0] = 'reckon'
+        rows = [
+            {
+                'anchor_id': 'A1',
+                'candidate_id': 'A1_Southern_1',
+                'candidate_index': 1,
+                'dialect_family': 'Southern American English',
+                'anchor_response': ' '.join(anchor_words),
+                'candidate_response': ' '.join(candidate_words),
+                'detected_features': ['reckon', "y'all"],
+                'feature_realization_count': 2,
+                'passed_quality_filter': True,
+                'rejection_reasons': [],
+            }
+        ]
+
+        audited = audit_rows(rows, duplicate_threshold=0.985)
+
+        self.assertFalse(audited[0]['passed_quality_filter'])
+        self.assertIn('surface_change_below_minimum', audited[0]['rejection_reasons'])
+        self.assertLess(audited[0]['surface_change_ratio'], 0.05)
+
+    def test_audit_flags_surface_change_above_dacon_upper_bound(self):
+        anchor_words = [f'word{chr(97 + i % 26)}{chr(97 + i // 26)}' for i in range(30)]
+        candidate_words = [f'new{chr(97 + i % 26)}{chr(97 + i // 26)}' for i in range(30)]
+        rows = [
+            {
+                'anchor_id': 'A1',
+                'candidate_id': 'A1_Western_1',
+                'candidate_index': 1,
+                'dialect_family': 'Western American English',
+                'anchor_response': ' '.join(anchor_words),
+                'candidate_response': ' '.join(candidate_words),
+                'detected_features': ['for sure', 'gonna', 'like'],
+                'feature_realization_count': 3,
+                'passed_quality_filter': True,
+                'rejection_reasons': [],
+            }
+        ]
+
+        audited = audit_rows(rows, duplicate_threshold=0.985)
+
+        self.assertFalse(audited[0]['passed_quality_filter'])
+        self.assertIn('surface_change_above_upper_bound', audited[0]['rejection_reasons'])
+        self.assertGreater(audited[0]['surface_change_ratio'], 0.25)
+
+    def test_audit_prefers_three_features_for_long_anchors(self):
+        anchor_words = [f'word{chr(97 + i % 26)}{chr(97 + i // 26)}' for i in range(90)]
+        candidate_words = list(anchor_words)
+        for index in range(10):
+            candidate_words[index] = f'change{chr(97 + index)}'
+        rows = [
+            {
+                'anchor_id': 'A1',
+                'candidate_id': 'A1_Southern_1',
+                'candidate_index': 1,
+                'dialect_family': 'Southern American English',
+                'anchor_response': ' '.join(anchor_words),
+                'candidate_response': ' '.join(candidate_words),
+                'detected_features': ['reckon', "y'all"],
+                'feature_realization_count': 2,
+                'passed_quality_filter': True,
+                'rejection_reasons': [],
+            }
+        ]
+
+        audited = audit_rows(rows, duplicate_threshold=0.985)
+
+        self.assertFalse(audited[0]['passed_quality_filter'])
+        self.assertIn('long_anchor_low_feature_count', audited[0]['rejection_reasons'])
 
     def test_parse_candidate_ids_trims_allowlist_values(self):
         self.assertEqual(parse_candidate_ids(' A, B ,,C '), {'A', 'B', 'C'})

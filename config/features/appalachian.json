@@ -9,24 +9,362 @@
     "Yale Grammatical Diversity Project"
   ],
   "features": [
-    {"id": "appalachian_yall", "category": "lexical", "feature": "y'all", "description": "Second-person plural pronoun or address form.", "safe_example": "Y'all can see why the answer matters.", "blocked_context": "Do not insert when no second-person reference exists.", "risk_level": "low", "source_reference": "Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "appalachian_younse", "category": "lexical", "feature": "you'uns / younse", "description": "Second-person plural form.", "safe_example": "You'uns can see why she tried again.", "blocked_context": "Do not insert when no second-person reference exists.", "risk_level": "medium", "source_reference": "DART Appendix A; Wolfram and Schilling, 2016", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "appalachian_afeared", "category": "lexical", "feature": "afeared", "description": "Lexical item meaning afraid.", "safe_example": "He was afeared he would fail.", "blocked_context": "Use only when fear is already present in the anchor.", "risk_level": "medium", "source_reference": "DART Appendix A; Wolfram and Schilling, 2016", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "appalachian_poke", "category": "lexical", "feature": "poke", "description": "Regional lexical item for bag.", "safe_example": "She put it in a poke.", "blocked_context": "Use only where the anchor already mentions a bag.", "risk_level": "medium", "source_reference": "DART Appendix A; Wolfram and Schilling, 2016", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "appalachian_right_intensifier", "category": "lexical", "feature": "right as intensifier", "description": "Intensifier in phrases such as right hard or right much.", "safe_example": "The character worked right hard.", "blocked_context": "Use sparingly; do not create exaggerated rural voice.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "appalachian_nary", "category": "lexical", "feature": "nary", "description": "Negative quantifier meaning not any/no.", "safe_example": "He had nary a reason to quit.", "blocked_context": "Use only when the anchor already expresses absence or negation.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "appalachian_hollow", "category": "lexical", "feature": "holler / hollow", "description": "Regional term referring to a small valley.", "safe_example": "", "blocked_context": "Do not add setting details absent from the anchor.", "risk_level": "medium", "source_reference": "DART Appendix A; Wolfram and Schilling, 2016", "citation_status": "appendix_a_direct", "allowed_for_generation": false},
-    {"id": "appalachian_a_prefixing", "category": "syntactic", "feature": "a-prefixing", "description": "A-prefix before certain -ing verb forms.", "safe_example": "He kept a-running down the road.", "blocked_context": "Use only with compatible -ing verbs; avoid excessive use.", "risk_level": "medium", "source_reference": "DART Appendix A; Williams, 1992", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "appalachian_perfective_done", "category": "syntactic", "feature": "perfective done", "description": "Marks completed action or resultant state.", "safe_example": "She done answered the question.", "blocked_context": "Use only when completion is already expressed.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "appalachian_double_modal", "category": "syntactic", "feature": "double modals", "description": "Stacked modal construction such as might could.", "safe_example": "He might could explain it better.", "blocked_context": "Do not add uncertainty or ability if the anchor does not contain it.", "risk_level": "medium", "source_reference": "Williams, 1992; Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "appalachian_personal_dative", "category": "syntactic", "feature": "personal dative", "description": "Coreferential pronoun after a verb, often highlighting subject involvement.", "safe_example": "She wrote her a better answer.", "blocked_context": "Use only when a subject acts for their own benefit and meaning is preserved.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "appalachian_demonstrative_them", "category": "syntactic", "feature": "demonstrative them", "description": "Use of them before plural nouns.", "safe_example": "Them examples support the answer.", "blocked_context": "Use only with plural noun phrases already present or naturally available.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "appalachian_used_to_could", "category": "syntactic", "feature": "buffered modal used to could", "description": "Modal-like construction listed in Appendix A.", "safe_example": "She used to could pass that test.", "blocked_context": "Do not add ability or past habitual meaning absent from the anchor.", "risk_level": "high", "source_reference": "DART Appendix A; Williams, 1992", "citation_status": "appendix_a_direct", "allowed_for_generation": false},
-    {"id": "appalachian_hit_generic", "category": "orthographic", "feature": "hit generic object", "description": "Form listed as generic object in Appendix A.", "safe_example": "", "blocked_context": "Requires linguistic review before generation.", "risk_level": "high", "source_reference": "DART Appendix A; Wolfram and Schilling, 2016", "citation_status": "appendix_a_direct", "allowed_for_generation": false},
-    {"id": "appalachian_em", "category": "orthographic", "feature": "'em", "description": "Reduced written form of them.", "safe_example": "She helped 'em understand.", "blocked_context": "Use only where them already appears or is clearly implied.", "risk_level": "low", "source_reference": "DART Appendix A; Wolfram and Schilling, 2016", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "appalachian_narrative_present", "category": "discourse", "feature": "narrative present", "description": "Present-tense narration for past events.", "safe_example": "He comes in and says he will try again.", "blocked_context": "Do not shift time reference if it changes meaning.", "risk_level": "high", "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006", "citation_status": "appendix_a_direct", "allowed_for_generation": false}
+    {
+      "id": "appalachian_yall",
+      "category": "lexical",
+      "feature": "y'all",
+      "description": "Second-person plural pronoun or address form.",
+      "safe_example": "Y'all can see why the answer matters.",
+      "blocked_context": "Do not insert when no second-person reference exists.",
+      "risk_level": "low",
+      "source_reference": "Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american"
+      ],
+      "detection_markers": [
+        "y'all"
+      ]
+    },
+    {
+      "id": "appalachian_younse",
+      "category": "lexical",
+      "feature": "you'uns / younse",
+      "description": "Second-person plural form.",
+      "safe_example": "You'uns can see why she tried again.",
+      "blocked_context": "Do not insert when no second-person reference exists.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Wolfram and Schilling, 2016",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "wolfram2016american"
+      ],
+      "detection_markers": [
+        "you'uns",
+        "younse"
+      ]
+    },
+    {
+      "id": "appalachian_afeared",
+      "category": "lexical",
+      "feature": "afeared",
+      "description": "Lexical item meaning afraid.",
+      "safe_example": "He was afeared he would fail.",
+      "blocked_context": "Use only when fear is already present in the anchor.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Wolfram and Schilling, 2016",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "wolfram2016american"
+      ],
+      "detection_markers": [
+        "afeared"
+      ]
+    },
+    {
+      "id": "appalachian_poke",
+      "category": "lexical",
+      "feature": "poke",
+      "description": "Regional lexical item for bag.",
+      "safe_example": "She put it in a poke.",
+      "blocked_context": "Use only where the anchor already mentions a bag.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Wolfram and Schilling, 2016",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "wolfram2016american"
+      ],
+      "detection_markers": [
+        "poke"
+      ]
+    },
+    {
+      "id": "appalachian_right_intensifier",
+      "category": "lexical",
+      "feature": "right as intensifier",
+      "description": "Intensifier in phrases such as right hard or right much.",
+      "safe_example": "The character worked right hard.",
+      "blocked_context": "Use sparingly; do not create exaggerated rural voice.",
+      "risk_level": "medium",
+      "source_reference": "Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american"
+      ],
+      "detection_markers": [
+        "right "
+      ]
+    },
+    {
+      "id": "appalachian_nary",
+      "category": "lexical",
+      "feature": "nary",
+      "description": "Negative quantifier meaning not any/no.",
+      "safe_example": "He had nary a reason to quit.",
+      "blocked_context": "Use only when the anchor already expresses absence or negation.",
+      "risk_level": "medium",
+      "source_reference": "Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american"
+      ],
+      "detection_markers": [
+        "nary"
+      ]
+    },
+    {
+      "id": "appalachian_hollow",
+      "category": "lexical",
+      "feature": "holler / hollow",
+      "description": "Regional term referring to a small valley.",
+      "safe_example": "",
+      "blocked_context": "Do not add setting details absent from the anchor.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Wolfram and Schilling, 2016",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "wolfram2016american"
+      ]
+    },
+    {
+      "id": "appalachian_a_prefixing",
+      "category": "syntactic",
+      "feature": "a-prefixing",
+      "description": "A-prefix before certain -ing verb forms.",
+      "safe_example": "He kept a-running down the road.",
+      "blocked_context": "Use only with compatible -ing verbs; avoid excessive use.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Williams, 1992",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "williams1992appalachian"
+      ]
+    },
+    {
+      "id": "appalachian_perfective_done",
+      "category": "syntactic",
+      "feature": "perfective done",
+      "description": "Marks completed action or resultant state.",
+      "safe_example": "She done answered the question.",
+      "blocked_context": "Use only when completion is already expressed.",
+      "risk_level": "medium",
+      "source_reference": "Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american"
+      ]
+    },
+    {
+      "id": "appalachian_double_modal",
+      "category": "syntactic",
+      "feature": "double modals",
+      "description": "Stacked modal construction such as might could.",
+      "safe_example": "He might could explain it better.",
+      "blocked_context": "Do not add uncertainty or ability if the anchor does not contain it.",
+      "risk_level": "medium",
+      "source_reference": "Williams, 1992; Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american",
+        "williams1992appalachian"
+      ]
+    },
+    {
+      "id": "appalachian_personal_dative",
+      "category": "syntactic",
+      "feature": "personal dative",
+      "description": "Coreferential pronoun after a verb, often highlighting subject involvement.",
+      "safe_example": "She wrote her a better answer.",
+      "blocked_context": "Use only when a subject acts for their own benefit and meaning is preserved.",
+      "risk_level": "medium",
+      "source_reference": "Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american"
+      ]
+    },
+    {
+      "id": "appalachian_demonstrative_them",
+      "category": "syntactic",
+      "feature": "demonstrative them",
+      "description": "Use of them before plural nouns.",
+      "safe_example": "Them examples support the answer.",
+      "blocked_context": "Use only with plural noun phrases already present or naturally available.",
+      "risk_level": "medium",
+      "source_reference": "Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american"
+      ]
+    },
+    {
+      "id": "appalachian_used_to_could",
+      "category": "syntactic",
+      "feature": "buffered modal used to could",
+      "description": "Modal-like construction listed in Appendix A.",
+      "safe_example": "She used to could pass that test.",
+      "blocked_context": "Do not add ability or past habitual meaning absent from the anchor.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Williams, 1992",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "williams1992appalachian"
+      ]
+    },
+    {
+      "id": "appalachian_hit_generic",
+      "category": "orthographic",
+      "feature": "hit generic object",
+      "description": "Form listed as generic object in Appendix A.",
+      "safe_example": "",
+      "blocked_context": "Requires linguistic review before generation.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Wolfram and Schilling, 2016",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "wolfram2016american"
+      ]
+    },
+    {
+      "id": "appalachian_em",
+      "category": "orthographic",
+      "feature": "'em",
+      "description": "Reduced written form of them.",
+      "safe_example": "She helped 'em understand.",
+      "blocked_context": "Use only where them already appears or is clearly implied.",
+      "risk_level": "low",
+      "source_reference": "DART Appendix A; Wolfram and Schilling, 2016",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "wolfram2016american"
+      ]
+    },
+    {
+      "id": "appalachian_narrative_present",
+      "category": "discourse",
+      "feature": "narrative present",
+      "description": "Present-tense narration for past events.",
+      "safe_example": "He comes in and says he will try again.",
+      "blocked_context": "Do not shift time reference if it changes meaning.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov2006atlas"
+      ]
+    },
+    {
+      "id": "appalachian_liketa",
+      "category": "lexical",
+      "feature": "liketa",
+      "description": "Near-miss marker meaning almost/nearly did.",
+      "safe_example": "He liketa missed the chance.",
+      "blocked_context": "Use only for near-miss or almost-event meanings already present.",
+      "source_reference": "Yale Grammatical Diversity Project; Wolfram and Christian, 1976; Wolfram and Schilling, 2016",
+      "detection_markers": [
+        "liketa"
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american",
+        "wolframChristian1976appalachian",
+        "yaleGrammaticalDiversity"
+      ]
+    },
+    {
+      "id": "appalachian_needs_washed",
+      "category": "syntactic",
+      "feature": "needs washed",
+      "description": "Need + past participle construction without to be.",
+      "safe_example": "The paragraph needs explained more.",
+      "blocked_context": "Use only where a needs-to-be/needs-ing passive meaning already exists.",
+      "source_reference": "Yale Grammatical Diversity Project; Wolfram and Schilling, 2016",
+      "detection_markers": [
+        "needs "
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american",
+        "yaleGrammaticalDiversity"
+      ]
+    },
+    {
+      "id": "appalachian_positive_anymore",
+      "category": "discourse",
+      "feature": "positive anymore",
+      "description": "Anymore used in non-negative contexts meaning nowadays/these days.",
+      "safe_example": "People use computers for school anymore.",
+      "blocked_context": "Use only where the time/aspect meaning is already compatible.",
+      "source_reference": "Yale Grammatical Diversity Project; Wolfram and Schilling, 2016",
+      "detection_markers": [
+        "anymore"
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american",
+        "yaleGrammaticalDiversity"
+      ]
+    },
+    {
+      "id": "appalachian_plumb_intensifier",
+      "category": "lexical",
+      "feature": "plumb as intensifier",
+      "description": "Plumb used as an intensifier meaning completely/very.",
+      "safe_example": "The character was plumb tired.",
+      "blocked_context": "Use sparingly and only where intensity is already present.",
+      "source_reference": "Dictionary of American Regional English (DARE); Wolfram and Christian, 1976",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "plumb"
+      ],
+      "risk_level": "medium",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolframChristian1976appalachian",
+        "dare1985regional"
+      ]
+    }
   ],
-  "disallowed_features": ["hillbilly caricature", "heavy eye-dialect", "unsupported phonetic spellings", "poverty stereotypes"],
-  "safety_notes": ["Do not signal social class or intelligence through the rewrite.", "Use grammatical features sparingly and only when they preserve the same proposition."],
+  "disallowed_features": [
+    "hillbilly caricature",
+    "heavy eye-dialect",
+    "unsupported phonetic spellings",
+    "poverty stereotypes"
+  ],
+  "safety_notes": [
+    "Do not signal social class or intelligence through the rewrite.",
+    "Use grammatical features sparingly and only when they preserve the same proposition."
+  ],
   "appendix_source": "DART_EMNLP Appendix A"
 }

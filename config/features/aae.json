@@ -9,25 +9,390 @@
     "Yale Grammatical Diversity Project"
   ],
   "features": [
-    {"id": "aae_finna", "category": "lexical", "feature": "finna", "description": "Prospective marker meaning fixing to/about to.", "safe_example": "She finna try again.", "blocked_context": "Use only when the anchor expresses near-future action.", "risk_level": "medium", "source_reference": "DART Appendix A; Rickford, 1999", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "aae_hisself", "category": "lexical", "feature": "hisself", "description": "Reflexive pronoun form.", "safe_example": "He blamed hisself for the mistake.", "blocked_context": "Use only where a reflexive pronoun already exists.", "risk_level": "medium", "source_reference": "DART Appendix A; Rickford, 1999", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "aae_kinfolk", "category": "lexical", "feature": "kinfolk", "description": "Lexical item referring to family or relatives.", "safe_example": "Her kinfolk supported her.", "blocked_context": "Do not add family relationships absent from the anchor.", "risk_level": "medium", "source_reference": "DART Appendix A; Rickford, 1999", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "aae_tryna", "category": "lexical", "feature": "tryna", "description": "Reduced form of trying to.", "safe_example": "The student is tryna explain the reason.", "blocked_context": "Use only where trying to already exists or is directly implied.", "risk_level": "medium", "source_reference": "Rickford, 1999", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": false},
-    {"id": "aae_asked_lexical", "category": "lexical", "feature": "axed", "description": "Dialectal lexical/phonological form corresponding to asked.", "safe_example": "", "blocked_context": "High risk as orthographic/phonological marking; avoid unless specifically approved.", "risk_level": "high", "source_reference": "DART Appendix A; Rickford, 1999", "citation_status": "appendix_a_direct", "allowed_for_generation": false},
-    {"id": "aae_habitual_be", "category": "syntactic", "feature": "habitual be", "description": "Invariant be marks habitual or repeated action/state.", "safe_example": "She be working after school.", "blocked_context": "Do not replace every is/are with be; use only for habitual meaning.", "risk_level": "medium", "source_reference": "DART Appendix A; Labov, 1972", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "aae_perfective_done", "category": "syntactic", "feature": "perfective done", "description": "Preverbal done marks completed action or resultant state.", "safe_example": "She done finished the answer.", "blocked_context": "Use only when the anchor already expresses completion.", "risk_level": "medium", "source_reference": "Rickford, 1999; Labov, 1972", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "aae_stressed_bin", "category": "syntactic", "feature": "stressed BIN", "description": "Remote past marker for a state or event that began long ago.", "safe_example": "He BIN knew the answer.", "blocked_context": "Use only when remote past meaning is already present; do not turn recent past into long-term past.", "risk_level": "high", "source_reference": "Rickford, 1999; Labov, 1972", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": false},
-    {"id": "aae_stressed_stay", "category": "syntactic", "feature": "stressed STAY", "description": "Habitual frequentative marker for repeated or persistent events.", "safe_example": "He stay asking questions in class.", "blocked_context": "Use only where repeated/frequent action is already stated.", "risk_level": "medium", "source_reference": "Rickford, 1999; Dacon, 2022", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": false},
-    {"id": "aae_zero_copula", "category": "syntactic", "feature": "zero/null copula", "description": "Omission of forms of be in specific grammatical contexts.", "safe_example": "He tall.", "blocked_context": "Do not omit be in contexts not licensed by the grammar; requires careful review.", "risk_level": "high", "source_reference": "DART Appendix A; Labov, 1972", "citation_status": "appendix_a_direct", "allowed_for_generation": false},
-    {"id": "aae_negative_concord", "category": "syntactic", "feature": "negative concord", "description": "Multiple negative elements expressing one semantic negation.", "safe_example": "Nobody don't like it.", "blocked_context": "Do not change the polarity or strength of the original claim.", "risk_level": "high", "source_reference": "DART Appendix A; Labov, 1972", "citation_status": "appendix_a_direct", "allowed_for_generation": false},
-    {"id": "aae_negative_inversion", "category": "syntactic", "feature": "negative inversion", "description": "Negative element appears before auxiliary/subject order in some clauses.", "safe_example": "", "blocked_context": "Too likely to change emphasis or readability; keep for review-only inventory.", "risk_level": "high", "source_reference": "Labov, 1972; Rickford, 1999", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": false},
-    {"id": "aae_third_s_absence", "category": "syntactic", "feature": "third-person singular -s absence", "description": "Present-tense third-person verbs may appear without Standard English -s.", "safe_example": "She walk to school every day.", "blocked_context": "High risk of being interpreted as an error rather than a dialect feature; hold for human-reviewed conditions.", "risk_level": "high", "source_reference": "Rickford, 1999", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": false},
-    {"id": "aae_demonstrative_them", "category": "syntactic", "feature": "demonstrative them", "description": "Use of them as a demonstrative before plural nouns.", "safe_example": "Them examples show the point.", "blocked_context": "Use only when a plural demonstrative already exists or is naturally available.", "risk_level": "medium", "source_reference": "Rickford, 1999", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "aae_subject_contact_relatives", "category": "syntactic", "feature": "subject contact relatives", "description": "Relative clauses without an overt relative pronoun in subject position.", "safe_example": "The person helped him was kind.", "blocked_context": "Review-only because omission can reduce clarity in educational answers.", "risk_level": "high", "source_reference": "Rickford, 1999", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": false},
-    {"id": "aae_topic_chaining", "category": "discourse", "feature": "topic chaining", "description": "Short linked clauses maintaining the same topic.", "safe_example": "He kept trying. Kept going even after failing.", "blocked_context": "Do not remove rubric-relevant reasoning while shortening.", "risk_level": "medium", "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "aae_eye_dialect_spellings", "category": "orthographic", "feature": "thang/dis/dat spellings", "description": "Orthographic representations listed in Appendix A.", "safe_example": "", "blocked_context": "Avoid mocking or racialized eye-dialect spellings unless explicitly approved for orthographic perturbation.", "risk_level": "high", "source_reference": "DART Appendix A; Rickford, 1999; Dacon, 2022", "citation_status": "appendix_a_direct", "allowed_for_generation": false}
+    {
+      "id": "aae_finna",
+      "category": "lexical",
+      "feature": "finna",
+      "description": "Prospective marker meaning fixing to/about to.",
+      "safe_example": "She finna try again.",
+      "blocked_context": "Use only when the anchor expresses near-future action.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Rickford, 1999",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "rickford1999aave"
+      ],
+      "detection_markers": [
+        "finna"
+      ]
+    },
+    {
+      "id": "aae_hisself",
+      "category": "lexical",
+      "feature": "hisself",
+      "description": "Reflexive pronoun form.",
+      "safe_example": "He blamed hisself for the mistake.",
+      "blocked_context": "Use only where a reflexive pronoun already exists.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Rickford, 1999",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "rickford1999aave"
+      ],
+      "detection_markers": [
+        "hisself"
+      ]
+    },
+    {
+      "id": "aae_kinfolk",
+      "category": "lexical",
+      "feature": "kinfolk",
+      "description": "Lexical item referring to family or relatives.",
+      "safe_example": "Her kinfolk supported her.",
+      "blocked_context": "Do not add family relationships absent from the anchor.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Rickford, 1999",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "rickford1999aave"
+      ],
+      "detection_markers": [
+        "kinfolk"
+      ]
+    },
+    {
+      "id": "aae_tryna",
+      "category": "lexical",
+      "feature": "tryna",
+      "description": "Reduced form of trying to.",
+      "safe_example": "The student is tryna explain the reason.",
+      "blocked_context": "Use only where trying to already exists or is directly implied.",
+      "risk_level": "medium",
+      "source_reference": "Rickford, 1999",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "rickford1999aave"
+      ],
+      "detection_markers": [
+        "tryna"
+      ]
+    },
+    {
+      "id": "aae_asked_lexical",
+      "category": "lexical",
+      "feature": "axed",
+      "description": "Dialectal lexical/phonological form corresponding to asked.",
+      "safe_example": "",
+      "blocked_context": "High risk as orthographic/phonological marking; avoid unless specifically approved.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Rickford, 1999",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "rickford1999aave"
+      ]
+    },
+    {
+      "id": "aae_habitual_be",
+      "category": "syntactic",
+      "feature": "habitual be",
+      "description": "Invariant be marks habitual or repeated action/state.",
+      "safe_example": "She be working after school.",
+      "blocked_context": "Do not replace every is/are with be; use only for habitual meaning.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Labov, 1972",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov1972language"
+      ]
+    },
+    {
+      "id": "aae_perfective_done",
+      "category": "syntactic",
+      "feature": "perfective done",
+      "description": "Preverbal done marks completed action or resultant state.",
+      "safe_example": "She done finished the answer.",
+      "blocked_context": "Use only when the anchor already expresses completion.",
+      "risk_level": "medium",
+      "source_reference": "Rickford, 1999; Labov, 1972",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "labov1972language",
+        "rickford1999aave"
+      ],
+      "detection_markers": [
+        "done"
+      ]
+    },
+    {
+      "id": "aae_stressed_bin",
+      "category": "syntactic",
+      "feature": "stressed BIN",
+      "description": "Remote past marker for a state or event that began long ago.",
+      "safe_example": "He BIN knew the answer.",
+      "blocked_context": "Use only when remote past meaning is already present; do not turn recent past into long-term past.",
+      "risk_level": "medium",
+      "source_reference": "Rickford, 1999; Labov, 1972",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "labov1972language",
+        "rickford1999aave"
+      ],
+      "detection_markers": [
+        "BIN",
+        "bin "
+      ]
+    },
+    {
+      "id": "aae_stressed_stay",
+      "category": "syntactic",
+      "feature": "stressed STAY",
+      "description": "Habitual frequentative marker for repeated or persistent events.",
+      "safe_example": "He stay asking questions in class.",
+      "blocked_context": "Use only where repeated/frequent action is already stated.",
+      "risk_level": "medium",
+      "source_reference": "Rickford, 1999; Dacon, 2022",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "rickford1999aave"
+      ],
+      "detection_markers": [
+        "stay "
+      ]
+    },
+    {
+      "id": "aae_zero_copula",
+      "category": "syntactic",
+      "feature": "zero/null copula",
+      "description": "Omission of forms of be in specific grammatical contexts.",
+      "safe_example": "He tall.",
+      "blocked_context": "Do not omit be in contexts not licensed by the grammar; requires careful review.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Labov, 1972",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov1972language"
+      ]
+    },
+    {
+      "id": "aae_negative_concord",
+      "category": "syntactic",
+      "feature": "negative concord",
+      "description": "Multiple negative elements expressing one semantic negation.",
+      "safe_example": "Nobody don't like it.",
+      "blocked_context": "Use only where a negative meaning already exists; do not add or strengthen negation.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Labov, 1972",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov1972language"
+      ],
+      "detection_markers": [
+        "ain't no",
+        "don't no",
+        "nobody don't",
+        "nothing don't"
+      ]
+    },
+    {
+      "id": "aae_negative_inversion",
+      "category": "syntactic",
+      "feature": "negative inversion",
+      "description": "Negative element appears before auxiliary/subject order in some clauses.",
+      "safe_example": "",
+      "blocked_context": "Too likely to change emphasis or readability; keep for review-only inventory.",
+      "risk_level": "high",
+      "source_reference": "Labov, 1972; Rickford, 1999",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "labov1972language",
+        "rickford1999aave"
+      ]
+    },
+    {
+      "id": "aae_third_s_absence",
+      "category": "syntactic",
+      "feature": "third-person singular -s absence",
+      "description": "Present-tense third-person verbs may appear without Standard English -s.",
+      "safe_example": "She walk to school every day.",
+      "blocked_context": "Use only in present-tense third-person contexts where the subject and time reference stay unchanged.",
+      "risk_level": "medium",
+      "source_reference": "Rickford, 1999",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "rickford1999aave"
+      ],
+      "detection_markers": []
+    },
+    {
+      "id": "aae_demonstrative_them",
+      "category": "syntactic",
+      "feature": "demonstrative them",
+      "description": "Use of them as a demonstrative before plural nouns.",
+      "safe_example": "Them examples show the point.",
+      "blocked_context": "Use only when a plural demonstrative already exists or is naturally available.",
+      "risk_level": "medium",
+      "source_reference": "Rickford, 1999",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "rickford1999aave"
+      ],
+      "detection_markers": [
+        "them "
+      ]
+    },
+    {
+      "id": "aae_subject_contact_relatives",
+      "category": "syntactic",
+      "feature": "subject contact relatives",
+      "description": "Relative clauses without an overt relative pronoun in subject position.",
+      "safe_example": "The person helped him was kind.",
+      "blocked_context": "Review-only because omission can reduce clarity in educational answers.",
+      "risk_level": "high",
+      "source_reference": "Rickford, 1999",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "rickford1999aave"
+      ]
+    },
+    {
+      "id": "aae_topic_chaining",
+      "category": "discourse",
+      "feature": "topic chaining",
+      "description": "Short linked clauses maintaining the same topic.",
+      "safe_example": "He kept trying. Kept going even after failing.",
+      "blocked_context": "Do not remove rubric-relevant reasoning while shortening.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov2006atlas"
+      ]
+    },
+    {
+      "id": "aae_eye_dialect_spellings",
+      "category": "orthographic",
+      "feature": "thang/dis/dat spellings",
+      "description": "Orthographic representations listed in Appendix A.",
+      "safe_example": "",
+      "blocked_context": "Avoid mocking or racialized eye-dialect spellings unless explicitly approved for orthographic perturbation.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Rickford, 1999; Dacon, 2022",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "rickford1999aave"
+      ]
+    },
+    {
+      "id": "aae_aint_auxiliary",
+      "category": "lexical",
+      "feature": "ain't",
+      "description": "Negative auxiliary form used across AAE and other English varieties.",
+      "safe_example": "That ain't the main reason.",
+      "blocked_context": "Use only where a negative auxiliary already exists; do not add negation.",
+      "source_reference": "Green, 2002; Rickford, 1999; Yale Grammatical Diversity Project",
+      "detection_markers": [
+        "ain't"
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "rickford1999aave",
+        "green2002aae",
+        "yaleGrammaticalDiversity"
+      ]
+    },
+    {
+      "id": "aae_zero_copula_contractible",
+      "category": "syntactic",
+      "feature": "zero copula in contractible contexts",
+      "description": "Omission of be only where Standard English contraction would be possible.",
+      "safe_example": "The answer clear.",
+      "blocked_context": "Use only in contractible present-tense be contexts; do not remove be where it changes tense, emphasis, or clarity.",
+      "source_reference": "DART Appendix A; Labov, 1972; Green, 2002; Rickford, 1999",
+      "citation_status": "appendix_a_direct",
+      "detection_markers": [],
+      "risk_level": "medium",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov1972language",
+        "rickford1999aave",
+        "green2002aae"
+      ]
+    },
+    {
+      "id": "aae_possessive_s_absence",
+      "category": "syntactic",
+      "feature": "possessive -s absence",
+      "description": "Possessive noun phrase without Standard English possessive -s.",
+      "safe_example": "The author point is clear.",
+      "blocked_context": "Use only where possession already exists; avoid proper names if it reduces clarity.",
+      "source_reference": "Green, 2002; Rickford, 1999",
+      "detection_markers": [],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "rickford1999aave",
+        "green2002aae"
+      ]
+    },
+    {
+      "id": "aae_steady",
+      "category": "syntactic",
+      "feature": "steady",
+      "description": "Marker of sustained or intensified activity.",
+      "safe_example": "The character steady tries even after failing.",
+      "blocked_context": "Use only where ongoing/persistent activity is already present.",
+      "source_reference": "Green, 2002; Rickford, 1999",
+      "detection_markers": [
+        "steady"
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "rickford1999aave",
+        "green2002aae"
+      ]
+    }
   ],
-  "disallowed_features": ["racial caricature", "random slang insertion", "mocking eye-dialect", "features not licensed by the inventory"],
-  "safety_notes": ["Do not make the response sound less intelligent, less academic, or stereotyped.", "Prefer tense/aspect features only when the anchor already contains the needed time meaning."],
+  "disallowed_features": [
+    "racial caricature",
+    "random slang insertion",
+    "mocking eye-dialect",
+    "features not licensed by the inventory"
+  ],
+  "safety_notes": [
+    "Do not make the response sound less intelligent, less academic, or stereotyped.",
+    "Prefer tense/aspect features only when the anchor already contains the needed time meaning."
+  ],
   "appendix_source": "DART_EMNLP Appendix A"
 }

@@ -19,9 +19,11 @@ RETRY_FAILURE_NOTE = """
 
 RETRY NOTE
 The previous attempt for this same candidate returned FAIL. For this retry, produce a usable candidate response.
-If the anchor and inventory naturally license only one approved target-dialect feature, one feature is acceptable.
-Do not output FAIL. Do not correct the student's spelling, grammar, or writing quality unless an approved dialect
-feature requires that exact local change.
+Apply at least two approved target-dialect feature placements if the anchor and inventory license them safely.
+If fewer than two approved feature placements can be applied without changing meaning or cleaning up the student's
+writing, produce the best safe rewrite using every licensed feature that naturally fits. Only output FAIL if no
+approved feature can be applied at all. Do not correct the student's spelling, grammar, punctuation, sentence
+boundaries, or writing quality unless an approved dialect feature requires that exact local change.
 """
 
 

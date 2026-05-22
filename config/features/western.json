@@ -9,20 +9,379 @@
     "Harvard Dialect Survey"
   ],
   "features": [
-    {"id": "western_hella", "category": "lexical", "feature": "hella", "description": "Regional intensifier associated with Northern California and Western varieties.", "safe_example": "The evidence is hella clear.", "blocked_context": "Avoid if it lowers academic register too much for the anchor.", "risk_level": "medium", "source_reference": "DART Appendix A; Eckert, 2001", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "western_hecka", "category": "lexical", "feature": "hecka", "description": "Milder intensifier associated with Northern California and Western usage.", "safe_example": "The evidence is hecka clear.", "blocked_context": "Avoid if it sounds forced or childish in the anchor.", "risk_level": "medium", "source_reference": "Eckert, 2001", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "western_totally", "category": "lexical", "feature": "totally", "description": "Intensifier or agreement marker listed in Appendix A.", "safe_example": "The character is totally affected by the setting.", "blocked_context": "Do not add certainty or emphasis that changes the argument.", "risk_level": "low", "source_reference": "DART Appendix A; Eckert, 2001", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "western_for_sure", "category": "lexical", "feature": "for sure", "description": "Agreement or emphasis marker common in informal Western speech.", "safe_example": "The author for sure shows the character is changing.", "blocked_context": "Use only where it does not change the strength of the claim.", "risk_level": "medium", "source_reference": "Eckert, 2001", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "western_you_guys", "category": "lexical", "feature": "you guys", "description": "Second-person plural address form.", "safe_example": "You guys can see why the evidence matters.", "blocked_context": "Do not insert when no second-person reference exists.", "risk_level": "low", "source_reference": "Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "western_gonna", "category": "lexical", "feature": "gonna", "description": "Informal future form listed in Appendix A.", "safe_example": "She is gonna try again.", "blocked_context": "Use only where future meaning exists.", "risk_level": "low", "source_reference": "DART Appendix A; Eckert, 2001", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "western_kinda", "category": "lexical", "feature": "kinda", "description": "Informal approximator or hedge.", "safe_example": "The example kinda shows the same point.", "blocked_context": "Avoid weakening claims where certainty is rubric-relevant.", "risk_level": "medium", "source_reference": "Eckert, 2001", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "western_freeway_article", "category": "syntactic", "feature": "freeway article the 5", "description": "Definite article before freeway numbers in Southern California usage.", "safe_example": "They drove on the 5.", "blocked_context": "Use only if the anchor already mentions a numbered freeway/highway.", "risk_level": "low", "source_reference": "Eckert, 2001", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "western_quotative_like", "category": "syntactic", "feature": "quotative like", "description": "Quotative construction such as He was like.", "safe_example": "The character was like, he needed to keep going.", "blocked_context": "Use only for reported speech/thought and avoid making writing sound unserious.", "risk_level": "medium", "source_reference": "DART Appendix A; Eckert, 2001", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "western_discourse_like", "category": "discourse", "feature": "discourse marker like", "description": "Discourse marker like used for approximation, focus, or planning.", "safe_example": "The setting, like, makes him feel lost.", "blocked_context": "Avoid excessive filler or changing the response's seriousness.", "risk_level": "medium", "source_reference": "DART Appendix A; Eckert, 2001", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "western_uptalk", "category": "discourse", "feature": "uptalk/question intonation", "description": "Rising declarative intonation associated with some Western varieties.", "safe_example": "", "blocked_context": "Not suitable for written anchors except in annotated speech data; keep blocked.", "risk_level": "high", "source_reference": "DART Appendix A; Eckert, 2001", "citation_status": "appendix_a_direct", "allowed_for_generation": false},
-    {"id": "western_california_vowel_shift_spelling", "category": "orthographic", "feature": "California Vowel Shift spelling", "description": "Orthographic representation listed in Appendix A.", "safe_example": "", "blocked_context": "Avoid phonetic spelling unless team approves orthographic perturbations.", "risk_level": "high", "source_reference": "DART Appendix A; Eckert, 2001", "citation_status": "appendix_a_direct", "allowed_for_generation": false}
+    {
+      "id": "western_hella",
+      "category": "lexical",
+      "feature": "hella",
+      "description": "Regional intensifier associated with Northern California and Western varieties.",
+      "safe_example": "The evidence is hella clear.",
+      "blocked_context": "Avoid if it lowers academic register too much for the anchor.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Eckert, 2001",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "eckert2001style"
+      ]
+    },
+    {
+      "id": "western_hecka",
+      "category": "lexical",
+      "feature": "hecka",
+      "description": "Milder intensifier associated with Northern California and Western usage.",
+      "safe_example": "The evidence is hecka clear.",
+      "blocked_context": "Avoid if it sounds forced or childish in the anchor.",
+      "risk_level": "medium",
+      "source_reference": "Eckert, 2001",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "eckert2001style"
+      ]
+    },
+    {
+      "id": "western_totally",
+      "category": "lexical",
+      "feature": "totally",
+      "description": "Intensifier or agreement marker listed in Appendix A.",
+      "safe_example": "The character is totally affected by the setting.",
+      "blocked_context": "Do not add certainty or emphasis that changes the argument.",
+      "risk_level": "low",
+      "source_reference": "DART Appendix A; Eckert, 2001",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "eckert2001style"
+      ],
+      "detection_markers": [
+        "totally"
+      ]
+    },
+    {
+      "id": "western_for_sure",
+      "category": "lexical",
+      "feature": "for sure",
+      "description": "Agreement or emphasis marker common in informal Western speech.",
+      "safe_example": "The author for sure shows the character is changing.",
+      "blocked_context": "Use only where it does not change the strength of the claim.",
+      "risk_level": "medium",
+      "source_reference": "Eckert, 2001",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "eckert2001style"
+      ],
+      "detection_markers": [
+        "for sure"
+      ]
+    },
+    {
+      "id": "western_you_guys",
+      "category": "lexical",
+      "feature": "you guys",
+      "description": "Second-person plural address form.",
+      "safe_example": "You guys can see why the evidence matters.",
+      "blocked_context": "Do not insert when no second-person reference exists.",
+      "risk_level": "low",
+      "source_reference": "Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american"
+      ]
+    },
+    {
+      "id": "western_gonna",
+      "category": "lexical",
+      "feature": "gonna",
+      "description": "Informal future form listed in Appendix A.",
+      "safe_example": "She is gonna try again.",
+      "blocked_context": "Use only where future meaning exists.",
+      "risk_level": "low",
+      "source_reference": "DART Appendix A; Eckert, 2001",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "eckert2001style"
+      ],
+      "detection_markers": [
+        "gonna"
+      ]
+    },
+    {
+      "id": "western_kinda",
+      "category": "lexical",
+      "feature": "kinda",
+      "description": "Informal approximator or hedge.",
+      "safe_example": "The example kinda shows the same point.",
+      "blocked_context": "Avoid weakening claims where certainty is rubric-relevant.",
+      "risk_level": "medium",
+      "source_reference": "Eckert, 2001",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "eckert2001style"
+      ],
+      "detection_markers": [
+        "kinda"
+      ]
+    },
+    {
+      "id": "western_freeway_article",
+      "category": "syntactic",
+      "feature": "freeway article the 5",
+      "description": "Definite article before freeway numbers in Southern California usage.",
+      "safe_example": "They drove on the 5.",
+      "blocked_context": "Use only if the anchor already mentions a numbered freeway/highway.",
+      "risk_level": "low",
+      "source_reference": "Eckert, 2001",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "eckert2001style"
+      ]
+    },
+    {
+      "id": "western_quotative_like",
+      "category": "syntactic",
+      "feature": "quotative like",
+      "description": "Quotative construction such as He was like.",
+      "safe_example": "The character was like, he needed to keep going.",
+      "blocked_context": "Use only for reported speech/thought and avoid making writing sound unserious.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Eckert, 2001",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "eckert2001style"
+      ],
+      "detection_markers": [
+        "was like",
+        "is like",
+        "be like"
+      ]
+    },
+    {
+      "id": "western_discourse_like",
+      "category": "discourse",
+      "feature": "discourse marker like",
+      "description": "Discourse marker like used for approximation, focus, or planning.",
+      "safe_example": "The setting, like, makes him feel lost.",
+      "blocked_context": "Avoid excessive filler or changing the response's seriousness.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Eckert, 2001",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "eckert2001style"
+      ],
+      "detection_markers": [
+        "like,",
+        ", like,",
+        " like "
+      ]
+    },
+    {
+      "id": "western_uptalk",
+      "category": "discourse",
+      "feature": "uptalk/question intonation",
+      "description": "Rising declarative intonation associated with some Western varieties.",
+      "safe_example": "",
+      "blocked_context": "Not suitable for written anchors except in annotated speech data; keep blocked.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Eckert, 2001",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "eckert2001style"
+      ]
+    },
+    {
+      "id": "western_california_vowel_shift_spelling",
+      "category": "orthographic",
+      "feature": "California Vowel Shift spelling",
+      "description": "Orthographic representation listed in Appendix A.",
+      "safe_example": "",
+      "blocked_context": "Avoid phonetic spelling unless team approves orthographic perturbations.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Eckert, 2001",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "eckert2001style"
+      ]
+    },
+    {
+      "id": "western_approximative_like",
+      "category": "discourse",
+      "feature": "approximative like",
+      "description": "Like used to mark approximation.",
+      "safe_example": "It took like ten minutes.",
+      "blocked_context": "Use only where approximation is already present or does not change the exact claim.",
+      "source_reference": "D'Arcy, 2017; Eckert, 2001",
+      "detection_markers": [
+        "like "
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "eckert2001style",
+        "darcy2017like"
+      ]
+    },
+    {
+      "id": "western_sentence_initial_like",
+      "category": "discourse",
+      "feature": "sentence-initial like",
+      "description": "Like used as a discourse-planning or focus marker at clause/sentence start.",
+      "safe_example": "Like, the evidence shows the same point.",
+      "blocked_context": "Use sparingly; avoid filler-like overuse or reducing seriousness.",
+      "source_reference": "D'Arcy, 2017; Eckert, 2001",
+      "detection_markers": [
+        "like,"
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "eckert2001style",
+        "darcy2017like"
+      ]
+    },
+    {
+      "id": "western_focus_like",
+      "category": "discourse",
+      "feature": "focus like",
+      "description": "Like used to focus or frame a phrase.",
+      "safe_example": "The setting, like, makes him feel alone.",
+      "blocked_context": "Use sparingly and do not interrupt important quoted text.",
+      "source_reference": "D'Arcy, 2017; Eckert, 2001",
+      "detection_markers": [
+        ", like,",
+        " like "
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "eckert2001style",
+        "darcy2017like"
+      ]
+    },
+    {
+      "id": "western_be_like_quotative",
+      "category": "syntactic",
+      "feature": "be like",
+      "description": "Quotative be like for reported speech or thought.",
+      "safe_example": "The character was like, he needed to try again.",
+      "blocked_context": "Use only for reported speech/thought already in the anchor.",
+      "source_reference": "D'Arcy, 2017; Eckert, 2001",
+      "detection_markers": [
+        "was like",
+        "is like",
+        "be like"
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "eckert2001style",
+        "darcy2017like"
+      ]
+    },
+    {
+      "id": "western_dude_address",
+      "category": "lexical",
+      "feature": "dude",
+      "description": "Informal address or discourse term associated with Western/California speech styles.",
+      "safe_example": "Dude, the evidence is clear.",
+      "blocked_context": "Use only if direct address is already natural; avoid making academic answers flippant.",
+      "source_reference": "Eckert, 2001; Bucholtz et al., 2007",
+      "detection_markers": [
+        "dude"
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "bucholtz2007hella",
+        "eckert2001style"
+      ]
+    },
+    {
+      "id": "western_stoked",
+      "category": "lexical",
+      "feature": "stoked",
+      "description": "Informal adjective meaning excited or enthusiastic.",
+      "safe_example": "The character was stoked to try again.",
+      "blocked_context": "Use only where excitement/enthusiasm is already present.",
+      "source_reference": "Dictionary of American Regional English (DARE); Eckert, 2001",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "stoked"
+      ],
+      "risk_level": "medium",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "eckert2001style"
+      ]
+    },
+    {
+      "id": "western_sketchy",
+      "category": "lexical",
+      "feature": "sketchy",
+      "description": "Informal adjective meaning questionable or suspicious.",
+      "safe_example": "The plan seemed sketchy.",
+      "blocked_context": "Use only where the anchor already expresses doubt or suspicion.",
+      "source_reference": "Dictionary of American Regional English (DARE); Eckert, 2001",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "sketchy"
+      ],
+      "risk_level": "medium",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "eckert2001style"
+      ]
+    },
+    {
+      "id": "western_bail",
+      "category": "lexical",
+      "feature": "bail",
+      "description": "Informal verb meaning leave or abandon an activity.",
+      "safe_example": "He did not bail on the task.",
+      "blocked_context": "Use only where leaving/quitting is already present.",
+      "source_reference": "Dictionary of American Regional English (DARE); Eckert, 2001",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "bail"
+      ],
+      "risk_level": "medium",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "eckert2001style"
+      ]
+    }
   ],
-  "disallowed_features": ["valley-girl caricature", "surfer stereotype", "excessive filler"],
-  "safety_notes": ["Avoid making the response sound unserious or less capable.", "Keep like/totally/hella use limited and meaning-preserving."],
+  "disallowed_features": [
+    "valley-girl caricature",
+    "surfer stereotype",
+    "excessive filler"
+  ],
+  "safety_notes": [
+    "Avoid making the response sound unserious or less capable.",
+    "Keep like/totally/hella use limited and meaning-preserving."
+  ],
   "appendix_source": "DART_EMNLP Appendix A"
 }

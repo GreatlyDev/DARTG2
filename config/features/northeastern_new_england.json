@@ -9,21 +9,386 @@
     "Dictionary of American Regional English"
   ],
   "features": [
-    {"id": "northeastern_wicked", "category": "lexical", "feature": "wicked", "description": "Regional intensifier.", "safe_example": "The setting is wicked important to the story.", "blocked_context": "Do not overuse or make the response sound unserious.", "risk_level": "medium", "source_reference": "DART Appendix A; Labov, 1998", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "northeastern_rotary", "category": "lexical", "feature": "rotary", "description": "Regional term for traffic circle/roundabout.", "safe_example": "The car went through the rotary.", "blocked_context": "Use only when the anchor mentions a traffic circle/roundabout.", "risk_level": "low", "source_reference": "Labov, Ash, and Boberg, 2006", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "northeastern_tonic", "category": "lexical", "feature": "tonic", "description": "Regional lexical item for soda/soft drink.", "safe_example": "", "blocked_context": "Use only if the anchor mentions soda or soft drinks.", "risk_level": "low", "source_reference": "Labov, Ash, and Boberg, 2006", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "northeastern_jimmies", "category": "lexical", "feature": "jimmies", "description": "Regional lexical item for chocolate sprinkles.", "safe_example": "", "blocked_context": "Use only if the anchor mentions sprinkles.", "risk_level": "low", "source_reference": "Labov, Ash, and Boberg, 2006", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "northeastern_youse", "category": "lexical", "feature": "youse / yous", "description": "Second-person plural form associated with some Northeastern urban varieties.", "safe_example": "Youse can see why the evidence matters.", "blocked_context": "Do not insert when no second-person reference exists; mark for team review because it is not specifically New England-only.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "northeastern_packie", "category": "lexical", "feature": "packie", "description": "Regional term for package/liquor store.", "safe_example": "", "blocked_context": "Do not use in educational benchmark generation unless the anchor already contains this exact context and team approves register.", "risk_level": "high", "source_reference": "Labov, Ash, and Boberg, 2006", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": false},
-    {"id": "northeastern_pissah", "category": "lexical", "feature": "pissah", "description": "Regional lexical item for excellent listed in Appendix A.", "safe_example": "", "blocked_context": "Avoid in student benchmark generation unless team approves because register may be inappropriate.", "risk_level": "high", "source_reference": "DART Appendix A; Labov, 1998", "citation_status": "appendix_a_direct", "allowed_for_generation": false},
-    {"id": "northeastern_down_the_shore", "category": "syntactic", "feature": "down the shore", "description": "Regional prepositional phrase pattern.", "safe_example": "They went down the shore during summer.", "blocked_context": "Use only when the anchor already describes going to a shore/coastal place.", "risk_level": "medium", "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "northeastern_down_cellar", "category": "syntactic", "feature": "down cellar", "description": "Regional prepositional phrase pattern without the before cellar.", "safe_example": "The box was down cellar.", "blocked_context": "Use only if cellar/basement location already exists.", "risk_level": "medium", "source_reference": "Labov, Ash, and Boberg, 2006", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "northeastern_pragmatic_deletion", "category": "discourse", "feature": "pragmatic deletion", "description": "Omission in contextually recoverable utterances such as Need more evidence?", "safe_example": "Need more evidence?", "blocked_context": "Do not remove rubric-relevant content or make the sentence ambiguous.", "risk_level": "medium", "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "northeastern_non_rhotic_spelling", "category": "orthographic", "feature": "non-rhotic spelling", "description": "Orthographic representation such as cah for car.", "safe_example": "", "blocked_context": "Avoid accent spelling unless team approves orthographic perturbations.", "risk_level": "high", "source_reference": "DART Appendix A; Labov, 1998", "citation_status": "appendix_a_direct", "allowed_for_generation": false},
-    {"id": "northeastern_intrusive_r_spelling", "category": "orthographic", "feature": "intrusive-r spellings", "description": "Orthographic representations such as idear for idea.", "safe_example": "", "blocked_context": "Avoid phonetic spelling because it can read as caricature.", "risk_level": "high", "source_reference": "Labov, 1998; Labov, Ash, and Boberg, 2006", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": false},
-    {"id": "northeastern_broad_a_spelling", "category": "orthographic", "feature": "broad a spelling", "description": "Orthographic representation such as Bahston listed in Appendix A.", "safe_example": "", "blocked_context": "Avoid phonetic spelling because it can read as caricature.", "risk_level": "high", "source_reference": "DART Appendix A; Labov, 1998", "citation_status": "appendix_a_direct", "allowed_for_generation": false}
+    {
+      "id": "northeastern_wicked",
+      "category": "lexical",
+      "feature": "wicked",
+      "description": "Regional intensifier.",
+      "safe_example": "The setting is wicked important to the story.",
+      "blocked_context": "Do not overuse or make the response sound unserious.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Labov, 1998",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov1998phonological"
+      ],
+      "detection_markers": [
+        "wicked"
+      ]
+    },
+    {
+      "id": "northeastern_rotary",
+      "category": "lexical",
+      "feature": "rotary",
+      "description": "Regional term for traffic circle/roundabout.",
+      "safe_example": "The car went through the rotary.",
+      "blocked_context": "Use only when the anchor mentions a traffic circle/roundabout.",
+      "risk_level": "low",
+      "source_reference": "Labov, Ash, and Boberg, 2006",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "labov2006atlas"
+      ],
+      "detection_markers": [
+        "rotary"
+      ]
+    },
+    {
+      "id": "northeastern_tonic",
+      "category": "lexical",
+      "feature": "tonic",
+      "description": "Regional lexical item for soda/soft drink.",
+      "safe_example": "",
+      "blocked_context": "Use only if the anchor mentions soda or soft drinks.",
+      "risk_level": "low",
+      "source_reference": "Labov, Ash, and Boberg, 2006",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "labov2006atlas"
+      ],
+      "detection_markers": [
+        "tonic"
+      ]
+    },
+    {
+      "id": "northeastern_jimmies",
+      "category": "lexical",
+      "feature": "jimmies",
+      "description": "Regional lexical item for chocolate sprinkles.",
+      "safe_example": "",
+      "blocked_context": "Use only if the anchor mentions sprinkles.",
+      "risk_level": "low",
+      "source_reference": "Labov, Ash, and Boberg, 2006",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "labov2006atlas"
+      ],
+      "detection_markers": [
+        "jimmies"
+      ]
+    },
+    {
+      "id": "northeastern_youse",
+      "category": "lexical",
+      "feature": "youse / yous",
+      "description": "Second-person plural form associated with some Northeastern urban varieties.",
+      "safe_example": "Youse can see why the evidence matters.",
+      "blocked_context": "Do not insert when no second-person reference exists; mark for team review because it is not specifically New England-only.",
+      "risk_level": "medium",
+      "source_reference": "Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american"
+      ],
+      "detection_markers": [
+        "youse",
+        "yous"
+      ]
+    },
+    {
+      "id": "northeastern_packie",
+      "category": "lexical",
+      "feature": "packie",
+      "description": "Regional term for package/liquor store.",
+      "safe_example": "",
+      "blocked_context": "Do not use in educational benchmark generation unless the anchor already contains this exact context and team approves register.",
+      "risk_level": "high",
+      "source_reference": "Labov, Ash, and Boberg, 2006",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "labov2006atlas"
+      ]
+    },
+    {
+      "id": "northeastern_pissah",
+      "category": "lexical",
+      "feature": "pissah",
+      "description": "Regional lexical item for excellent listed in Appendix A.",
+      "safe_example": "",
+      "blocked_context": "Avoid in student benchmark generation unless team approves because register may be inappropriate.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Labov, 1998",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov1998phonological"
+      ]
+    },
+    {
+      "id": "northeastern_down_the_shore",
+      "category": "syntactic",
+      "feature": "down the shore",
+      "description": "Regional prepositional phrase pattern.",
+      "safe_example": "They went down the shore during summer.",
+      "blocked_context": "Use only when the anchor already describes going to a shore/coastal place.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov2006atlas"
+      ]
+    },
+    {
+      "id": "northeastern_down_cellar",
+      "category": "syntactic",
+      "feature": "down cellar",
+      "description": "Regional prepositional phrase pattern without the before cellar.",
+      "safe_example": "The box was down cellar.",
+      "blocked_context": "Use only if cellar/basement location already exists.",
+      "risk_level": "medium",
+      "source_reference": "Labov, Ash, and Boberg, 2006",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "labov2006atlas"
+      ]
+    },
+    {
+      "id": "northeastern_pragmatic_deletion",
+      "category": "discourse",
+      "feature": "pragmatic deletion",
+      "description": "Omission in contextually recoverable utterances such as Need more evidence?",
+      "safe_example": "Need more evidence?",
+      "blocked_context": "Do not remove rubric-relevant content or make the sentence ambiguous.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov2006atlas"
+      ]
+    },
+    {
+      "id": "northeastern_non_rhotic_spelling",
+      "category": "orthographic",
+      "feature": "non-rhotic spelling",
+      "description": "Orthographic representation such as cah for car.",
+      "safe_example": "",
+      "blocked_context": "Avoid accent spelling unless team approves orthographic perturbations.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Labov, 1998",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov1998phonological"
+      ]
+    },
+    {
+      "id": "northeastern_intrusive_r_spelling",
+      "category": "orthographic",
+      "feature": "intrusive-r spellings",
+      "description": "Orthographic representations such as idear for idea.",
+      "safe_example": "",
+      "blocked_context": "Avoid phonetic spelling because it can read as caricature.",
+      "risk_level": "high",
+      "source_reference": "Labov, 1998; Labov, Ash, and Boberg, 2006",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "labov2006atlas",
+        "labov1998phonological"
+      ]
+    },
+    {
+      "id": "northeastern_broad_a_spelling",
+      "category": "orthographic",
+      "feature": "broad a spelling",
+      "description": "Orthographic representation such as Bahston listed in Appendix A.",
+      "safe_example": "",
+      "blocked_context": "Avoid phonetic spelling because it can read as caricature.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Labov, 1998",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov1998phonological"
+      ]
+    },
+    {
+      "id": "northeastern_sneakers",
+      "category": "lexical",
+      "feature": "sneakers",
+      "description": "Regional term for athletic shoes.",
+      "safe_example": "He wore sneakers for the trip.",
+      "blocked_context": "Use only where athletic shoes are already mentioned.",
+      "risk_level": "low",
+      "source_reference": "Harvard Dialect Survey; Dictionary of American Regional English (DARE)",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "sneakers"
+      ],
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "vauxGolder2003harvardDialect"
+      ]
+    },
+    {
+      "id": "northeastern_grinder",
+      "category": "lexical",
+      "feature": "grinder",
+      "description": "New England regional term for a submarine sandwich.",
+      "safe_example": "He bought a grinder for lunch.",
+      "blocked_context": "Use only where a sub/hoagie-type sandwich is already mentioned.",
+      "risk_level": "low",
+      "source_reference": "Dictionary of American Regional English (DARE); Harvard Dialect Survey",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "grinder"
+      ],
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "vauxGolder2003harvardDialect"
+      ]
+    },
+    {
+      "id": "northeastern_bubbler",
+      "category": "lexical",
+      "feature": "bubbler",
+      "description": "Regional term for water fountain in parts of New England.",
+      "safe_example": "She used the bubbler.",
+      "blocked_context": "Use only where a water fountain is already mentioned.",
+      "risk_level": "low",
+      "source_reference": "Dictionary of American Regional English (DARE); Harvard Dialect Survey",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "bubbler"
+      ],
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "vauxGolder2003harvardDialect"
+      ]
+    },
+    {
+      "id": "northeastern_clicker",
+      "category": "lexical",
+      "feature": "clicker",
+      "description": "Regional/common term for remote control.",
+      "safe_example": "He used the clicker to turn it off.",
+      "blocked_context": "Use only where a remote control is already present.",
+      "risk_level": "low",
+      "source_reference": "Dictionary of American Regional English (DARE); Harvard Dialect Survey",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "clicker"
+      ],
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "vauxGolder2003harvardDialect"
+      ]
+    },
+    {
+      "id": "northeastern_carriage_cart",
+      "category": "lexical",
+      "feature": "carriage",
+      "description": "Regional term for shopping cart.",
+      "safe_example": "She pushed the carriage through the store.",
+      "blocked_context": "Use only where a shopping cart is already mentioned.",
+      "risk_level": "low",
+      "source_reference": "Dictionary of American Regional English (DARE); Harvard Dialect Survey",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "carriage"
+      ],
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "vauxGolder2003harvardDialect"
+      ]
+    },
+    {
+      "id": "northeastern_on_line",
+      "category": "syntactic",
+      "feature": "on line",
+      "description": "Regional prepositional phrase for waiting in line.",
+      "safe_example": "He waited on line for help.",
+      "blocked_context": "Use only where waiting in line is already present.",
+      "risk_level": "low",
+      "source_reference": "Dictionary of American Regional English (DARE); Harvard Dialect Survey",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "on line"
+      ],
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "vauxGolder2003harvardDialect"
+      ]
+    },
+    {
+      "id": "northeastern_mad_intensifier",
+      "category": "lexical",
+      "feature": "mad as intensifier",
+      "description": "Intensifier use of mad, associated with Northeastern urban speech.",
+      "safe_example": "The evidence is mad clear.",
+      "blocked_context": "Use sparingly; avoid lowering register or sounding flippant.",
+      "source_reference": "Dictionary of American Regional English (DARE); Wolfram and Schilling, 2016",
+      "detection_markers": [
+        "mad "
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american",
+        "dare1985regional"
+      ]
+    },
+    {
+      "id": "northeastern_so_dont_i",
+      "category": "discourse",
+      "feature": "so don't I",
+      "description": "Negative agreement pattern documented in New England varieties.",
+      "safe_example": "The narrator does not agree, and so don't I.",
+      "blocked_context": "Use only where negative agreement is already present; do not add negation.",
+      "source_reference": "Yale Grammatical Diversity Project; Wood, 2014",
+      "detection_markers": [
+        "so don't i",
+        "so doesn't"
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "yaleGrammaticalDiversity",
+        "wood2014soDontI"
+      ]
+    }
   ],
-  "disallowed_features": ["Boston caricature", "mocking non-rhotic spellings", "unsupported local slang"],
-  "safety_notes": ["Do not represent accent through mocking spellings.", "Prefer lexical and phrase-level features that are safe in written student responses."],
+  "disallowed_features": [
+    "Boston caricature",
+    "mocking non-rhotic spellings",
+    "unsupported local slang"
+  ],
+  "safety_notes": [
+    "Do not represent accent through mocking spellings.",
+    "Prefer lexical and phrase-level features that are safe in written student responses."
+  ],
   "appendix_source": "DART_EMNLP Appendix A"
 }

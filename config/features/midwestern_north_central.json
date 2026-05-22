@@ -9,21 +9,377 @@
     "Yale Grammatical Diversity Project"
   ],
   "features": [
-    {"id": "midwestern_ope", "category": "lexical", "feature": "ope", "description": "Regional discourse/lexical marker often used for small surprise or interruption.", "safe_example": "Ope, the author gives another reason.", "blocked_context": "Avoid comic overuse or insertion where it disrupts academic writing.", "risk_level": "medium", "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "midwestern_you_guys", "category": "lexical", "feature": "you guys", "description": "Second-person plural address form common in Northern/Midwestern usage.", "safe_example": "You guys can see the author gives evidence.", "blocked_context": "Do not insert when no second-person reference exists.", "risk_level": "low", "source_reference": "Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "midwestern_pop", "category": "lexical", "feature": "pop", "description": "Regional lexical item for soda/soft drink.", "safe_example": "", "blocked_context": "Use only if the anchor mentions soda or soft drinks.", "risk_level": "low", "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "midwestern_bubbler", "category": "lexical", "feature": "bubbler", "description": "Regional lexical item for water fountain.", "safe_example": "", "blocked_context": "Use only if the anchor mentions a water fountain.", "risk_level": "low", "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "midwestern_kitty_corner", "category": "lexical", "feature": "kitty-corner", "description": "Regional form meaning diagonally across.", "safe_example": "The building was kitty-corner from the school.", "blocked_context": "Use only if the anchor already describes diagonal location.", "risk_level": "low", "source_reference": "Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "midwestern_needs_cleaned", "category": "syntactic", "feature": "needs cleaned", "description": "Need + past participle construction without to be.", "safe_example": "The argument needs explained more clearly.", "blocked_context": "Do not use if it changes what needs to happen.", "risk_level": "medium", "source_reference": "DART Appendix A; Labov, 1998", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "midwestern_wants_fixed", "category": "syntactic", "feature": "wants fixed", "description": "Want + past participle construction without to be.", "safe_example": "The paragraph wants revised before it is clear.", "blocked_context": "Use only where want/need-like requirement is already present.", "risk_level": "medium", "source_reference": "Labov, 1998; Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "midwestern_come_with", "category": "syntactic", "feature": "come with", "description": "Intransitive come with meaning accompany.", "safe_example": "She asked if he wanted to come with.", "blocked_context": "Use only if accompaniment is already part of the anchor.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "midwestern_alls", "category": "syntactic", "feature": "alls construction", "description": "Alls used before a clause, as in Alls I know is...", "safe_example": "Alls I know is the evidence supports the claim.", "blocked_context": "Use only where an all/only summary meaning already exists.", "risk_level": "medium", "source_reference": "Wolfram and Schilling, 2016", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": true},
-    {"id": "midwestern_positive_anymore", "category": "discourse", "feature": "positive anymore", "description": "Use of anymore in non-negative contexts in Midland/North Midland varieties.", "safe_example": "Students use computers for research anymore.", "blocked_context": "Use only when it preserves time/aspect meaning.", "risk_level": "high", "source_reference": "Labov, Ash, and Boberg, 2006", "citation_status": "paper_reference_expansion_needs_page_check", "allowed_for_generation": false},
-    {"id": "midwestern_tag_right", "category": "discourse", "feature": "tag question right", "description": "Tag question marker such as right.", "safe_example": "The author wants the reader to see the connection, right?", "blocked_context": "Do not change certainty or make the student sound flippant.", "risk_level": "medium", "source_reference": "DART Appendix A; Wolfram and Schilling, 2016", "citation_status": "appendix_a_direct", "allowed_for_generation": true},
-    {"id": "midwestern_dont_you_know", "category": "discourse", "feature": "don't you know", "description": "Regional tag/discourse marker listed in Appendix A.", "safe_example": "", "blocked_context": "High risk of caricature; use only after team approval.", "risk_level": "high", "source_reference": "DART Appendix A; Wolfram and Schilling, 2016", "citation_status": "appendix_a_direct", "allowed_for_generation": false},
-    {"id": "midwestern_northern_cities_vowel_shift", "category": "orthographic", "feature": "Northern Cities Vowel Shift spelling", "description": "Orthographic representation of vowel shift listed in Appendix A.", "safe_example": "", "blocked_context": "Avoid phonetic spelling unless team approves orthographic perturbations.", "risk_level": "high", "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006", "citation_status": "appendix_a_direct", "allowed_for_generation": false}
+    {
+      "id": "midwestern_ope",
+      "category": "lexical",
+      "feature": "ope",
+      "description": "Regional discourse/lexical marker often used for small surprise or interruption.",
+      "safe_example": "Ope, the author gives another reason.",
+      "blocked_context": "Avoid comic overuse or insertion where it disrupts academic writing.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov2006atlas"
+      ],
+      "detection_markers": [
+        "ope"
+      ]
+    },
+    {
+      "id": "midwestern_you_guys",
+      "category": "lexical",
+      "feature": "you guys",
+      "description": "Second-person plural address form common in Northern/Midwestern usage.",
+      "safe_example": "You guys can see the author gives evidence.",
+      "blocked_context": "Do not insert when no second-person reference exists.",
+      "risk_level": "low",
+      "source_reference": "Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american"
+      ],
+      "detection_markers": [
+        "you guys"
+      ]
+    },
+    {
+      "id": "midwestern_pop",
+      "category": "lexical",
+      "feature": "pop",
+      "description": "Regional lexical item for soda/soft drink.",
+      "safe_example": "",
+      "blocked_context": "Use only if the anchor mentions soda or soft drinks.",
+      "risk_level": "low",
+      "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov2006atlas"
+      ],
+      "detection_markers": [
+        "pop"
+      ]
+    },
+    {
+      "id": "midwestern_bubbler",
+      "category": "lexical",
+      "feature": "bubbler",
+      "description": "Regional lexical item for water fountain.",
+      "safe_example": "",
+      "blocked_context": "Use only if the anchor mentions a water fountain.",
+      "risk_level": "low",
+      "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov2006atlas"
+      ],
+      "detection_markers": [
+        "bubbler"
+      ]
+    },
+    {
+      "id": "midwestern_kitty_corner",
+      "category": "lexical",
+      "feature": "kitty-corner",
+      "description": "Regional form meaning diagonally across.",
+      "safe_example": "The building was kitty-corner from the school.",
+      "blocked_context": "Use only if the anchor already describes diagonal location.",
+      "risk_level": "low",
+      "source_reference": "Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american"
+      ],
+      "detection_markers": [
+        "kitty-corner",
+        "kitty corner"
+      ]
+    },
+    {
+      "id": "midwestern_needs_cleaned",
+      "category": "syntactic",
+      "feature": "needs cleaned",
+      "description": "Need + past participle construction without to be.",
+      "safe_example": "The argument needs explained more clearly.",
+      "blocked_context": "Do not use if it changes what needs to happen.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Labov, 1998",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov1998phonological"
+      ]
+    },
+    {
+      "id": "midwestern_wants_fixed",
+      "category": "syntactic",
+      "feature": "wants fixed",
+      "description": "Want + past participle construction without to be.",
+      "safe_example": "The paragraph wants revised before it is clear.",
+      "blocked_context": "Use only where want/need-like requirement is already present.",
+      "risk_level": "medium",
+      "source_reference": "Labov, 1998; Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "labov1998phonological",
+        "wolfram2016american"
+      ]
+    },
+    {
+      "id": "midwestern_come_with",
+      "category": "syntactic",
+      "feature": "come with",
+      "description": "Intransitive come with meaning accompany.",
+      "safe_example": "She asked if he wanted to come with.",
+      "blocked_context": "Use only if accompaniment is already part of the anchor.",
+      "risk_level": "medium",
+      "source_reference": "Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american"
+      ]
+    },
+    {
+      "id": "midwestern_alls",
+      "category": "syntactic",
+      "feature": "alls construction",
+      "description": "Alls used before a clause, as in Alls I know is...",
+      "safe_example": "Alls I know is the evidence supports the claim.",
+      "blocked_context": "Use only where an all/only summary meaning already exists.",
+      "risk_level": "medium",
+      "source_reference": "Wolfram and Schilling, 2016",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "wolfram2016american"
+      ]
+    },
+    {
+      "id": "midwestern_positive_anymore",
+      "category": "discourse",
+      "feature": "positive anymore",
+      "description": "Use of anymore in non-negative contexts in Midland/North Midland varieties.",
+      "safe_example": "Students use computers for research anymore.",
+      "blocked_context": "Use only when nowadays/these-days time meaning is already compatible; do not alter event time.",
+      "risk_level": "medium",
+      "source_reference": "Labov, Ash, and Boberg, 2006",
+      "citation_status": "paper_reference_expansion_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "labov2006atlas"
+      ],
+      "detection_markers": [
+        "anymore"
+      ]
+    },
+    {
+      "id": "midwestern_tag_right",
+      "category": "discourse",
+      "feature": "tag question right",
+      "description": "Tag question marker such as right.",
+      "safe_example": "The author wants the reader to see the connection, right?",
+      "blocked_context": "Do not change certainty or make the student sound flippant.",
+      "risk_level": "medium",
+      "source_reference": "DART Appendix A; Wolfram and Schilling, 2016",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "wolfram2016american"
+      ],
+      "detection_markers": [
+        "right?"
+      ]
+    },
+    {
+      "id": "midwestern_dont_you_know",
+      "category": "discourse",
+      "feature": "don't you know",
+      "description": "Regional tag/discourse marker listed in Appendix A.",
+      "safe_example": "",
+      "blocked_context": "High risk of caricature; use only after team approval.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Wolfram and Schilling, 2016",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "wolfram2016american"
+      ]
+    },
+    {
+      "id": "midwestern_northern_cities_vowel_shift",
+      "category": "orthographic",
+      "feature": "Northern Cities Vowel Shift spelling",
+      "description": "Orthographic representation of vowel shift listed in Appendix A.",
+      "safe_example": "",
+      "blocked_context": "Avoid phonetic spelling unless team approves orthographic perturbations.",
+      "risk_level": "high",
+      "source_reference": "DART Appendix A; Labov, Ash, and Boberg, 2006",
+      "citation_status": "appendix_a_direct",
+      "allowed_for_generation": false,
+      "bibtex_keys": [
+        "dartAppendixA",
+        "labov2006atlas"
+      ]
+    },
+    {
+      "id": "midwestern_gym_shoes",
+      "category": "lexical",
+      "feature": "gym shoes",
+      "description": "Regional term for athletic shoes/sneakers in parts of the Midwest.",
+      "safe_example": "He wore gym shoes for the activity.",
+      "blocked_context": "Use only when athletic shoes/sneakers are already mentioned.",
+      "risk_level": "low",
+      "source_reference": "Harvard Dialect Survey; Dictionary of American Regional English (DARE)",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "gym shoes"
+      ],
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "vauxGolder2003harvardDialect"
+      ]
+    },
+    {
+      "id": "midwestern_sucker_lollipop",
+      "category": "lexical",
+      "feature": "sucker",
+      "description": "Regional term for lollipop.",
+      "safe_example": "The child had a sucker.",
+      "blocked_context": "Use only if lollipop/candy-on-a-stick is already mentioned.",
+      "risk_level": "low",
+      "source_reference": "Harvard Dialect Survey; Dictionary of American Regional English (DARE)",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "sucker"
+      ],
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "vauxGolder2003harvardDialect"
+      ]
+    },
+    {
+      "id": "midwestern_supper",
+      "category": "lexical",
+      "feature": "supper",
+      "description": "Regional term for evening meal in many Midland/North Central areas.",
+      "safe_example": "They ate supper before studying.",
+      "blocked_context": "Use only where dinner/evening meal is already present.",
+      "risk_level": "low",
+      "source_reference": "Harvard Dialect Survey; Dictionary of American Regional English (DARE)",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "supper"
+      ],
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "vauxGolder2003harvardDialect"
+      ]
+    },
+    {
+      "id": "midwestern_drinking_fountain",
+      "category": "lexical",
+      "feature": "drinking fountain",
+      "description": "Regional term for water fountain.",
+      "safe_example": "He stopped at the drinking fountain.",
+      "blocked_context": "Use only when a water fountain is already present.",
+      "risk_level": "low",
+      "source_reference": "Harvard Dialect Survey; Dictionary of American Regional English (DARE)",
+      "citation_status": "source_backed_needs_entry_check",
+      "detection_markers": [
+        "drinking fountain"
+      ],
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "dare1985regional",
+        "vauxGolder2003harvardDialect"
+      ]
+    },
+    {
+      "id": "midwestern_all_the_comparative",
+      "category": "syntactic",
+      "feature": "all the + comparative",
+      "description": "All the used with a comparative adjective/adverb.",
+      "safe_example": "The answer is all the clearer with evidence.",
+      "blocked_context": "Use only where a comparative meaning already exists.",
+      "source_reference": "Yale Grammatical Diversity Project; Murray and Simon, 1999",
+      "detection_markers": [
+        "all the more",
+        "all the better",
+        "all the clearer"
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "yaleGrammaticalDiversity",
+        "murraySimon1999colloquial"
+      ]
+    },
+    {
+      "id": "midwestern_like_past_participle",
+      "category": "syntactic",
+      "feature": "like + past participle",
+      "description": "Like/want/need pattern with a past participle in regional Midland usage.",
+      "safe_example": "The paragraph likes revised before it is clear.",
+      "blocked_context": "Use only in want/need-like contexts; avoid if it makes the answer unclear.",
+      "source_reference": "Yale Grammatical Diversity Project; Murray and Simon, 1999",
+      "detection_markers": [
+        "likes ",
+        "liked "
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "yaleGrammaticalDiversity",
+        "murraySimon1999colloquial"
+      ]
+    },
+    {
+      "id": "midwestern_so_dont_i",
+      "category": "discourse",
+      "feature": "so don't I",
+      "description": "Regional negative agreement pattern used where Standard English has neither/do not either patterns.",
+      "safe_example": "He does not agree, and so don't I.",
+      "blocked_context": "Use only where negative agreement is already present; do not add negation.",
+      "source_reference": "Yale Grammatical Diversity Project; Wood, 2014",
+      "detection_markers": [
+        "so don't i",
+        "so doesn't"
+      ],
+      "risk_level": "medium",
+      "citation_status": "source_backed_needs_page_check",
+      "allowed_for_generation": true,
+      "bibtex_keys": [
+        "yaleGrammaticalDiversity",
+        "wood2014soDontI"
+      ]
+    }
   ],
-  "disallowed_features": ["comic overuse of ope", "fake Scandinavianized spelling", "unsupported rural caricature"],
-  "safety_notes": ["Avoid turning regional features into parody.", "Prefer lexical items only when the anchor already has the matching concept."],
+  "disallowed_features": [
+    "comic overuse of ope",
+    "fake Scandinavianized spelling",
+    "unsupported rural caricature"
+  ],
+  "safety_notes": [
+    "Avoid turning regional features into parody.",
+    "Prefer lexical items only when the anchor already has the matching concept."
+  ],
   "appendix_source": "DART_EMNLP Appendix A"
 }
