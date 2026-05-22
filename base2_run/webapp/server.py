@@ -22,20 +22,28 @@ import difflib
 import hashlib
 import io
 import json
+import os
 import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Optional
 
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import Body, FastAPI, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 WEBAPP_DIR = Path(__file__).resolve().parent
 BASE2_DIR = WEBAPP_DIR.parent
+REPO_ROOT = BASE2_DIR.parent
 DEFAULT_DATASET = BASE2_DIR / "output" / "base2__claude-sonnet-4-6__all.jsonl"
+# Directories scanned by /api/datasets. Loads are restricted to these roots
+# (resolved + path-prefix check) so a malicious /api/load body can't read
+# arbitrary files off disk.
+DATASET_ROOTS: list[Path] = [
+    BASE2_DIR / "output",
+]
 
 sys.path.insert(0, str(BASE2_DIR))
 from lib.strategies import (  # noqa: E402
@@ -71,18 +79,93 @@ def _build_record_index(records: list[dict]) -> dict[str, int]:
 
 RECORDS: list[dict] = []
 RECORD_INDEX: dict[str, int] = {}
-DATASET_PATH: Path = DEFAULT_DATASET
+# BASE2_STARTUP_DATASET lets the __main__ block pass a startup dataset across
+# the uvicorn re-import boundary (uvicorn.run("server:app") imports this
+# module afresh in the worker, which would otherwise re-fire the module-level
+# reload_dataset() and stomp the CLI choice).
+_STARTUP_DATASET_ENV = "BASE2_STARTUP_DATASET"
+_startup_override = os.environ.get(_STARTUP_DATASET_ENV)
+DATASET_PATH: Path = Path(_startup_override) if _startup_override else DEFAULT_DATASET
 
 
 def reload_dataset(path: Path | None = None) -> None:
     global RECORDS, RECORD_INDEX, DATASET_PATH
-    DATASET_PATH = Path(path) if path else DEFAULT_DATASET
+    if path:
+        DATASET_PATH = Path(path)
+    elif _startup_override:
+        DATASET_PATH = Path(_startup_override)
+    else:
+        DATASET_PATH = DEFAULT_DATASET
     if not DATASET_PATH.exists():
         RECORDS = []
         RECORD_INDEX = {}
         return
     RECORDS = _load_jsonl(DATASET_PATH)
     RECORD_INDEX = _build_record_index(RECORDS)
+
+
+def _resolve_under_roots(raw: str) -> Path:
+    """Resolve `raw` to an absolute path and require it to live under one of
+    DATASET_ROOTS. Raises HTTPException(400/404) otherwise."""
+    if not raw:
+        raise HTTPException(status_code=400, detail="path is required")
+    candidate = Path(raw).expanduser()
+    if not candidate.is_absolute():
+        # Permit names relative to any configured root, first match wins.
+        for root in DATASET_ROOTS:
+            trial = (root / raw).resolve()
+            if trial.exists():
+                candidate = trial
+                break
+        else:
+            raise HTTPException(status_code=404, detail=f"no dataset found at {raw!r}")
+    else:
+        candidate = candidate.resolve()
+    for root in DATASET_ROOTS:
+        try:
+            candidate.relative_to(root.resolve())
+            break
+        except ValueError:
+            continue
+    else:
+        roots = ", ".join(str(r) for r in DATASET_ROOTS)
+        raise HTTPException(status_code=400,
+                            detail=f"path is outside allowed dataset roots: {roots}")
+    if not candidate.exists():
+        raise HTTPException(status_code=404, detail=f"dataset not found: {candidate}")
+    if candidate.suffix.lower() != ".jsonl":
+        raise HTTPException(status_code=400, detail="only .jsonl files are loadable")
+    return candidate
+
+
+def _scan_dataset_roots() -> list[dict]:
+    """Return every *.jsonl under DATASET_ROOTS as {label, path, size_bytes, mtime}.
+    Sorted by mtime (newest first) so fresh runs surface at the top."""
+    out: list[dict] = []
+    seen: set[Path] = set()
+    for root in DATASET_ROOTS:
+        if not root.exists():
+            continue
+        for path in root.glob("*.jsonl"):
+            resolved = path.resolve()
+            if resolved in seen:
+                continue
+            seen.add(resolved)
+            stat = resolved.stat()
+            try:
+                rel = resolved.relative_to(REPO_ROOT)
+            except ValueError:
+                rel = resolved
+            out.append({
+                "name": resolved.name,
+                "path": str(resolved),
+                "rel_path": str(rel),
+                "size_bytes": stat.st_size,
+                "mtime_utc": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat(),
+                "is_current": resolved == DATASET_PATH.resolve() if DATASET_PATH.exists() else False,
+            })
+    out.sort(key=lambda d: d["mtime_utc"], reverse=True)
+    return out
 
 
 reload_dataset()
@@ -302,6 +385,7 @@ def index(request: Request) -> Any:
 def api_dataset() -> dict:
     return {
         "path": str(DATASET_PATH),
+        "name": DATASET_PATH.name,
         "exists": DATASET_PATH.exists(),
         "records": len(RECORDS),
         "families": {fam: FAMILY_TITLES[fam] for fam in sorted(FAMILY_TITLES)},
@@ -309,6 +393,34 @@ def api_dataset() -> dict:
         "strategy": RECORDS[0].get("strategy") if RECORDS else None,
         "prompt_version": RECORDS[0].get("prompt_version") if RECORDS else None,
         "run_id": RECORDS[0].get("run_id") if RECORDS else None,
+    }
+
+
+@app.get("/api/datasets")
+def api_datasets() -> dict:
+    """List every .jsonl under DATASET_ROOTS that the UI can swap to."""
+    return {
+        "current": str(DATASET_PATH),
+        "current_name": DATASET_PATH.name,
+        "roots": [str(r) for r in DATASET_ROOTS],
+        "datasets": _scan_dataset_roots(),
+    }
+
+
+@app.post("/api/load")
+def api_load(payload: dict = Body(...)) -> dict:
+    """Swap the in-memory dataset. Body: {"path": "..."} — accepts an absolute
+    path, a path relative to one of the dataset roots, or a bare filename
+    matched against the roots."""
+    raw = (payload or {}).get("path") or (payload or {}).get("name") or ""
+    path = _resolve_under_roots(str(raw))
+    reload_dataset(path)
+    return {
+        "loaded": str(DATASET_PATH),
+        "name": DATASET_PATH.name,
+        "records": len(RECORDS),
+        "model": RECORDS[0].get("model") if RECORDS else None,
+        "strategy": RECORDS[0].get("strategy") if RECORDS else None,
     }
 
 
@@ -691,5 +803,29 @@ def healthz() -> str:
 
 
 if __name__ == "__main__":
+    import argparse
     import uvicorn
-    uvicorn.run("server:app", host="127.0.0.1", port=8765, reload=False)
+
+    parser = argparse.ArgumentParser(description="base2 sweep viewer")
+    parser.add_argument("--dataset", type=Path, default=None,
+                        help="JSONL file to load on startup (default: "
+                             f"{DEFAULT_DATASET}). Can also be swapped at runtime "
+                             "via the sidebar dropdown or POST /api/load.")
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--port", type=int, default=8765)
+    parser.add_argument("--reload", action="store_true",
+                        help="Enable uvicorn reload mode (dev only).")
+    args = parser.parse_args()
+
+    if args.dataset:
+        path = args.dataset.expanduser().resolve()
+        if not path.exists():
+            raise SystemExit(f"--dataset path does not exist: {path}")
+        # Stash in env so the module-level reload_dataset() in the freshly
+        # re-imported worker process picks it up; reload it in this process
+        # too so the boot-time log line is accurate.
+        os.environ[_STARTUP_DATASET_ENV] = str(path)
+        reload_dataset(path)
+        print(f"Loaded {len(RECORDS)} records from {path}")
+
+    uvicorn.run("server:app", host=args.host, port=args.port, reload=args.reload)

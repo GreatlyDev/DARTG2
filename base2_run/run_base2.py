@@ -55,6 +55,14 @@ from lib.dialect_scoring import (
 
 
 DEFAULT_MODEL = "claude-sonnet-4-6"
+KNOWN_MODELS = (
+    "claude-sonnet-4-6",   # default
+    "claude-haiku-4-5",
+    "gpt-4o",
+    "gpt-4o-mini",
+    "gpt-5.2",             # OpenAI responses API; supports --reasoning-effort
+)
+REASONING_EFFORT_CHOICES = ("minimal", "low", "medium", "high")
 DEFAULT_ANCHORS = THIS_DIR / "data" / "DART_FINAL_80_ANCHORS.csv"
 DEFAULT_OUTPUT_DIR = THIS_DIR / "output"
 DEFAULT_HF_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
@@ -70,7 +78,14 @@ def parse_args() -> argparse.Namespace:
                        help="Pick 5 random anchors (same set for every family) and run those.")
 
     parser.add_argument("--model", default=DEFAULT_MODEL,
-                        help=f"Model id (default: {DEFAULT_MODEL}).")
+                        help=(f"Model id (default: {DEFAULT_MODEL}). "
+                              f"Curated: {', '.join(KNOWN_MODELS)}. "
+                              "Any other string is also accepted and dispatched "
+                              "by id prefix (claude-* → Anthropic, else OpenAI)."))
+    parser.add_argument("--reasoning-effort", choices=REASONING_EFFORT_CHOICES, default=None,
+                        help=("Reasoning effort for gpt-5 / o-series models on the "
+                              "OpenAI responses API. Ignored for gpt-4o and "
+                              "Anthropic models. Default: unset (provider default)."))
     parser.add_argument("--families", default=",".join(FAMILY_TITLES),
                         help="Comma-separated subset of families to run (default: all six).")
     parser.add_argument("--anchors", type=Path, default=DEFAULT_ANCHORS,
@@ -204,7 +219,8 @@ def _attempt_once(client, *, prompt_input: str) -> tuple[dict, str, object, str,
 
 def generate_one(client, *, family: str, family_title: str, inventory: dict,
                  anchor_id: str, anchor_text: str, extras: dict, model: str,
-                 provider: str, run_id: str, max_attempts: int = 2) -> dict:
+                 provider: str, run_id: str, max_attempts: int = 2,
+                 reasoning_effort: str | None = None) -> dict:
     """Generate one rewrite. The HTTP client already retries transient API
     errors (429/529/5xx). This wrapper retries the *whole* call if the result
     is a parse_error / model_fail / api_error, so an unlucky JSON or a
@@ -250,6 +266,7 @@ def generate_one(client, *, family: str, family_title: str, inventory: dict,
         "prompt_name": Path(PROMPT_PATH).stem,
         "model": model,
         "provider": provider,
+        "reasoning_effort": reasoning_effort,
         "generation_status": status,
         "attempts": attempts_made,
         "rewrite_text": parsed.rewrite_text if parsed else "",
@@ -273,12 +290,14 @@ def generate_one(client, *, family: str, family_title: str, inventory: dict,
 
 def run_family(*, family: str, anchors: list[tuple[str, str, dict]], model: str,
                openai_key: str, anthropic_key: str, timeout: int, max_output_tokens: int,
-               anchor_workers: int, run_id: str, max_attempts: int = 2) -> tuple[str, list[dict]]:
+               anchor_workers: int, run_id: str, max_attempts: int = 2,
+               reasoning_effort: str | None = None) -> tuple[str, list[dict]]:
     family_title = FAMILY_TITLES[family]
     inventory = load_inventory(family)
     provider = provider_for_model(model)
 
-    print(f"[{family}] starting · {len(anchors)} anchors · model={model} · provider={provider}", flush=True)
+    effort_label = f" · effort={reasoning_effort}" if reasoning_effort else ""
+    print(f"[{family}] starting · {len(anchors)} anchors · model={model} · provider={provider}{effort_label}", flush=True)
 
     client = make_client(
         model=model,
@@ -286,6 +305,7 @@ def run_family(*, family: str, anchors: list[tuple[str, str, dict]], model: str,
         anthropic_api_key=anthropic_key,
         timeout=timeout,
         max_output_tokens=max_output_tokens,
+        reasoning_effort=reasoning_effort,
     )
 
     records: list[dict] = [None] * len(anchors)  # type: ignore[list-item]
@@ -306,6 +326,7 @@ def run_family(*, family: str, anchors: list[tuple[str, str, dict]], model: str,
                 provider=provider,
                 run_id=run_id,
                 max_attempts=max_attempts,
+                reasoning_effort=reasoning_effort,
             ): idx
             for idx, (aid, atext, extras) in enumerate(anchors)
         }
@@ -347,8 +368,13 @@ def _apply_dialect_scorers(records_by_family: dict[str, list[dict]]) -> None:
             row["inventory_pattern_hits"] = hits
 
             cos = row.get("cosine_similarity")
-            tcr = row.get("similarity_scores", {}).get("token_change_ratio")
-            row["dialect_pass"] = dialect_pass(cos, tcr)
+            feat_count = row.get("applied_feature_count")
+            new_hits = hits.get("count_new")
+            row["dialect_pass"] = dialect_pass(
+                cos,
+                feature_count=feat_count,
+                new_inv_hits=new_hits,
+            )
 
 
 def score_records(records_by_family: dict[str, list[dict]], *, use_hf: bool, hf_model: str) -> None:
@@ -520,6 +546,7 @@ def main() -> None:
                 anchor_workers=args.anchor_workers,
                 run_id=run_id,
                 max_attempts=args.max_attempts,
+                reasoning_effort=args.reasoning_effort,
             ): family
             for family in requested_families
         }

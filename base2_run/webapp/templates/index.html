@@ -33,8 +33,12 @@
         </button>
       </nav>
       <div class="sidebar-foot">
-        <div class="dataset-name" title="{{ dataset_name }}">{{ dataset_name }}</div>
-        <div class="muted small">{{ record_count }} records</div>
+        <label class="dataset-picker-label muted small" for="dataset-picker">Dataset</label>
+        <select id="dataset-picker" class="dataset-picker" title="Switch the JSONL file backing this view"></select>
+        <div id="dataset-meta" class="muted small" title="{{ dataset_name }}">
+          <span id="dataset-record-count">{{ record_count }}</span> records
+        </div>
+        <div id="dataset-status" class="muted xsmall"></div>
       </div>
     </aside>
 
@@ -74,7 +78,7 @@
             <div class="chart-wrap"><canvas id="chart-hist-cos"></canvas></div>
           </div>
           <div class="chart-card wide">
-            <div class="chart-title">Token-change % distribution (with 5–25% pass band)</div>
+            <div class="chart-title">Token-change % distribution</div>
             <div class="chart-wrap"><canvas id="chart-hist-tcr"></canvas></div>
           </div>
           <div class="chart-card">
@@ -98,14 +102,14 @@
       <section id="tab-table" class="tab-panel">
         <h2 class="section-title">Records</h2>
         <form id="filters" class="filters">
-          <label>Family
+          <label data-tooltip="fam_n">Family
             <select id="f-family" multiple size="3">
               {% for fam in families %}
               <option value="{{ fam }}">{{ fam }}</option>
               {% endfor %}
             </select>
           </label>
-          <label>Status
+          <label data-tooltip="ok_rate">Status
             <select id="f-status" multiple size="3">
               <option value="ok">ok</option>
               <option value="model_fail">model_fail</option>
@@ -113,7 +117,7 @@
               <option value="api_error">api_error</option>
             </select>
           </label>
-          <label>Dialect pass
+          <label data-tooltip="dialect_pass">Dialect pass
             <select id="f-pass">
               <option value="any">any</option>
               <option value="true">pass</option>
@@ -121,23 +125,23 @@
               <option value="none">uncomputed</option>
             </select>
           </label>
-          <label>Refused
+          <label data-tooltip="refused">Refused
             <select id="f-refused">
               <option value="any">any</option>
               <option value="false">no</option>
               <option value="true">yes</option>
             </select>
           </label>
-          <label>Min features
+          <label data-tooltip="feature_count">Min features
             <input id="f-min-feat" type="number" min="0" step="1" placeholder="0" />
           </label>
-          <label>Token Δ % range
+          <label data-tooltip="token_change_pct">Token Δ % range
             <span class="range">
               <input id="f-tc-min" type="number" min="0" max="100" step="1" placeholder="0" /> –
               <input id="f-tc-max" type="number" min="0" max="100" step="1" placeholder="100" />
             </span>
           </label>
-          <label>Cosine range
+          <label data-tooltip="cosine">Cosine range
             <span class="range">
               <input id="f-cos-min" type="number" min="-1" max="1" step="0.01" placeholder="-1" /> –
               <input id="f-cos-max" type="number" min="-1" max="1" step="0.01" placeholder="1" />

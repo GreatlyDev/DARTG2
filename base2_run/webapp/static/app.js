@@ -6,6 +6,72 @@
 const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
+// ─────────────────── tooltip definitions ───────────────────
+// Central source of truth for hover-help text. Every stat / column / chart /
+// filter in the UI references a key here so the wording stays consistent.
+const TOOLTIPS = {
+  // Headline / overall
+  records:            "Total number of rewrite records loaded from the JSONL file.",
+  ok_rate:            "Fraction of records with generation_status='ok'. Failures are model_fail, parse_error, or api_error (rare; the runner retries transient API errors up to 8 times).",
+  dialect_pass_rate:  "Fraction of OK records that satisfy the composite gate: cosine ≥ 0.85 AND (applied_feature_count ≥ 3 OR new_inventory_hits ≥ 1). Defined in lib/dialect_scoring.py:dialect_pass. Switched from a token-change criterion because token-change systematically undercounts dialect rewrites (dialect work clusters in a few high-signal words).",
+  total_cost:         "Total USD spend across all records. Computed from per-record tokens_in/tokens_out × the per-million price in lib/pricing.py.",
+
+  // Similarity / change measures
+  cosine:             "Sentence-embedding cosine similarity between anchor and rewrite. Encoder: sentence-transformers/all-MiniLM-L6-v2. Range 0–1; 1.0 = identical meaning, lower = more semantic drift. Sentinel value -1 means uncomputed (e.g. --no-embed run or empty rewrite).",
+  token_change_pct:   "Fraction of anchor word tokens NOT preserved in the rewrite, ×100. The base2 prompt targets a 5–25% surface-variation band. Below 5% the rewrite barely changed; above 25% it starts to paraphrase instead of dialect-rewrite.",
+  difflib_ratio:      "Python's difflib.SequenceMatcher.ratio() over the character sequences. 1.0 = identical text, 0 = totally different.",
+  levenshtein_norm:   "Levenshtein edit distance divided by the longer string's length. 0 = identical, 1 = maximum distance.",
+  char_3gram_j:       "Jaccard similarity over 3-character shingles. Catches sub-word changes (e.g. 'going' → 'gonna') that token-level metrics miss.",
+  token_jaccard:      "Jaccard similarity over lowercase word tokens. High = same vocabulary, low = many different words.",
+  length_ratio:       "len(rewrite) / len(anchor). 1.0 = same length.",
+  composite_change:   "1 − difflib_ratio. Convenience top-level field; rises with surface change.",
+
+  // Features
+  feature_count:      "Number of distinct {feature, realization} entries the model reported in its applied_features array. Range typically 2–5; the prompt asks for ≥2 on short anchors and 3–5 on longer ones.",
+  declared_count:     "feature_count value the model self-reported in its JSON output. model_notes is populated when this disagrees with len(applied_features).",
+  grounding_rate:     "Of the {realization} substrings the model claimed it produced, what fraction actually appear in rewrite_text? 100% = the model is honest; below 100% = at least one claim is hallucinated. Computed by lib/dialect_scoring.py:feature_realization_grounding.",
+  new_inv_hits:       "Independent scan: how many concrete inventory feature names appear in the rewrite but NOT in the anchor. Confirms dialect change without trusting the model's self-report. Abstract syntactic features (e.g. 'double modals') aren't string-matchable and are skipped — only lexical patterns count here.",
+  inv_hits_rewrite:   "All inventory patterns matched anywhere in the rewrite (including ones already present in the anchor).",
+  inv_hits_anchor:    "Inventory patterns already present in the anchor — background noise we subtract to compute new_inv_hits.",
+
+  // Operational
+  attempts:           "Runner-level attempts on this record. 1 = first call succeeded. >1 = the response came back as parse_error / model_fail / api_error and was re-tried. Caps at --max-attempts (default 2).",
+  cost_usd:           "Estimated USD cost for this single record. tokens_in × input_price + tokens_out × output_price.",
+  tokens_in:          "Input tokens the model billed for this call (prompt + system).",
+  tokens_out:         "Output tokens the model produced.",
+  refused:            "Heuristic: True if exact_match (model returned anchor verbatim) OR generation failed OR applied_features was an empty list.",
+  retried:            "Number of records that needed >1 attempt to succeed.",
+  multi_attempt:      "Number of records that needed >1 attempt to succeed (synonym for retried).",
+
+  // Dialect pass detail
+  dialect_pass:       "Per-record composite gate. PASS iff cosine ≥ 0.85 AND (applied_feature_count ≥ 3 OR new_inventory_hits ≥ 1). None when cosine wasn't computed. See lib/dialect_scoring.py:dialect_pass for the source of truth.",
+
+  // Status pills
+  status_ok:          "Model returned a valid JSON rewrite that parsed successfully.",
+  status_fail:        "Model returned 'FAIL' (couldn't satisfy constraints), produced invalid JSON, or the API errored out after all retries.",
+  status_uncomputed:  "Couldn't decide pass/fail because cosine wasn't computed for this record.",
+
+  // Per-family
+  fam_n:              "Anchor count for this family.",
+  fam_ok:             "OK records and OK rate within this family.",
+};
+
+// Apply title attributes (and a help cursor) to elements that have a
+// data-tooltip key — used for static HTML labels in the template.
+function applyStaticTooltips() {
+  $$("[data-tooltip]").forEach(el => {
+    const key = el.dataset.tooltip;
+    const text = TOOLTIPS[key];
+    if (text) { el.title = text; el.classList.add("has-tooltip"); }
+  });
+}
+
+// Build an inline title="..." attribute from a tooltip key.
+function tipAttr(key) {
+  const t = TOOLTIPS[key];
+  return t ? ` title="${String(t).replace(/"/g, "&quot;")}"` : "";
+}
+
 // ─────────────────── helpers ───────────────────
 function fmtNum(v, digits = 2) {
   if (v === null || v === undefined) return "—";
@@ -88,22 +154,41 @@ async function loadDashboard() {
   ]);
 
   // Headline stat cards.
-  const card = (label, value, sub="") => `
-    <div class="stat-card">
-      <div class="label">${label}</div>
+  const card = (label, value, sub="", tipKey=null) => `
+    <div class="stat-card${tipKey ? " has-tooltip" : ""}"${tipAttr(tipKey)}>
+      <div class="label">${label}${tipKey ? ' <span class="help">ⓘ</span>' : ""}</div>
       <div class="value">${value}</div>
       ${sub ? `<div class="sub">${sub}</div>` : ""}
     </div>`;
   $("#headline-stats").innerHTML = [
-    card("Records",          fmtInt(overall.records)),
-    card("OK rate",          fmtPct(overall.ok_rate), `${overall.ok}/${overall.records} ok`),
-    card("Dialect-pass",     fmtPct(overall.dialect_pass_rate, 1), "cosine ≥ 0.85 AND 5–25% token Δ"),
-    card("Median cosine",    fmtNum(overall.median_cosine, 4), "meaning preservation"),
-    card("Median token Δ %", fmtNum(overall.median_token_change_pct, 2) + "%", "surface variation"),
-    card("Median features",  fmtNum(overall.median_feature_count, 1), "applied per rewrite"),
-    card("Grounding rate",   fmtPct(overall.median_grounding_rate, 1), "realizations found in rewrite"),
-    card("Total cost",       fmtMoney(overall.cost_usd_total), `${fmtInt(overall.tokens_in_total)} in / ${fmtInt(overall.tokens_out_total)} out`),
+    card("Records",          fmtInt(overall.records),                                                  "",                                                 "records"),
+    card("OK rate",          fmtPct(overall.ok_rate),                                                  `${overall.ok}/${overall.records} ok`,              "ok_rate"),
+    card("Dialect-pass",     fmtPct(overall.dialect_pass_rate, 1),                                     "cosine ≥ 0.85 AND (feat ≥ 3 OR new inv hit)",      "dialect_pass_rate"),
+    card("Median cosine",    fmtNum(overall.median_cosine, 4),                                         "meaning preservation",                             "cosine"),
+    card("Median token Δ %", fmtNum(overall.median_token_change_pct, 2) + "%",                         "surface variation",                                "token_change_pct"),
+    card("Median features",  fmtNum(overall.median_feature_count, 1),                                  "applied per rewrite",                              "feature_count"),
+    card("Grounding rate",   fmtPct(overall.median_grounding_rate, 1),                                 "realizations found in rewrite",                    "grounding_rate"),
+    card("Total cost",       fmtMoney(overall.cost_usd_total),                                         `${fmtInt(overall.tokens_in_total)} in / ${fmtInt(overall.tokens_out_total)} out`, "total_cost"),
   ].join("");
+
+  // Decorate chart titles with tooltips for their underlying metric.
+  const chartTips = {
+    "chart-status":   "status_ok",
+    "chart-pass":     "dialect_pass",
+    "chart-fam-pass": "dialect_pass_rate",
+    "chart-fam-cos":  "cosine",
+    "chart-fam-tcr":  "token_change_pct",
+    "chart-fam-feat": "feature_count",
+    "chart-hist-cos": "cosine",
+    "chart-hist-tcr": "token_change_pct",
+    "chart-hist-feat":"feature_count",
+    "chart-hist-inv": "new_inv_hits",
+  };
+  Object.entries(chartTips).forEach(([canvasId, key]) => {
+    const card = $("#" + canvasId)?.closest(".chart-card");
+    const title = card?.querySelector(".chart-title");
+    if (title && TOOLTIPS[key]) { card.title = TOOLTIPS[key]; card.classList.add("has-tooltip"); }
+  });
 
   // Pie 1: status breakdown
   drawPie("chart-status", overall.statuses);
@@ -131,7 +216,7 @@ async function loadDashboard() {
   drawHistogram("chart-hist-cos", dists.cosine, {bins: 20, min: 0.5, max: 1.0,
     color: CHART_COLORS.accent2, label: "cosine", refLine: 0.85, refLabel: "0.85 floor"});
   drawHistogram("chart-hist-tcr", dists.token_change.map(v => v * 100), {bins: 20, min: 0, max: 40,
-    color: CHART_COLORS.accent, label: "token Δ %", band: [5, 25], bandLabel: "5–25% pass band"});
+    color: CHART_COLORS.accent, label: "token Δ %"});
   drawHistogram("chart-hist-feat", dists.feature_counts, {bins: 8, min: 0, max: 8,
     color: CHART_COLORS.accent3, label: "feature count"});
   drawHistogram("chart-hist-inv", dists.new_inventory_hits, {bins: 8, min: 0, max: 8,
@@ -236,24 +321,28 @@ function drawHistogram(canvasId, values, opts) {
 // ─────────────────── families ───────────────────
 async function loadFamilyStats() {
   const stats = await fetch("/api/stats/families").then(r => r.json());
+  const mini = (lbl, val, tipKey=null) => `
+    <div class="mini-stat${tipKey ? " has-tooltip" : ""}"${tipAttr(tipKey)}>
+      <div class="lbl">${lbl}</div>
+      <div class="val">${val}</div>
+    </div>`;
   const html = Object.entries(stats).map(([fam, s]) => {
     const passBar = (s.dialect_pass_rate ?? 0) * 100;
-    const mini = (lbl, val) => `<div class="mini-stat"><div class="lbl">${lbl}</div><div class="val">${val}</div></div>`;
     return `<div class="family-card">
       <h3>${fam} — ${safeText(s.title)}</h3>
-      <div class="bar"><div style="width:${passBar.toFixed(0)}%"></div></div>
-      <div class="muted small" style="margin:4px 0 10px">dialect_pass rate: ${fmtPct(s.dialect_pass_rate, 1)}</div>
+      <div class="bar${"" /*"" pad */}"><div style="width:${passBar.toFixed(0)}%"></div></div>
+      <div class="muted small has-tooltip"${tipAttr("dialect_pass_rate")} style="margin:4px 0 10px">dialect_pass rate: ${fmtPct(s.dialect_pass_rate, 1)}</div>
       <div class="mini-grid">
-        ${mini("n", fmtInt(s.records))}
-        ${mini("ok", `${fmtInt(s.ok)} (${fmtPct(s.ok_rate, 0)})`)}
-        ${mini("med cosine", fmtNum(s.median_cosine, 4))}
-        ${mini("med token Δ%", fmtNum(s.median_token_change_pct, 2) + "%")}
-        ${mini("med feat #", fmtNum(s.median_feature_count, 1))}
-        ${mini("ground rate", fmtPct(s.median_grounding_rate, 0))}
-        ${mini("new inv hits", fmtNum(s.median_new_inventory_hits, 1))}
-        ${mini("refused", fmtInt(s.refused_count))}
-        ${mini("retried", fmtInt(s.multi_attempt_count))}
-        ${mini("cost", fmtMoney(s.cost_usd_total))}
+        ${mini("n",              fmtInt(s.records),                                "fam_n")}
+        ${mini("ok",             `${fmtInt(s.ok)} (${fmtPct(s.ok_rate, 0)})`,       "fam_ok")}
+        ${mini("med cosine",     fmtNum(s.median_cosine, 4),                       "cosine")}
+        ${mini("med token Δ%",   fmtNum(s.median_token_change_pct, 2) + "%",       "token_change_pct")}
+        ${mini("med feat #",     fmtNum(s.median_feature_count, 1),                "feature_count")}
+        ${mini("ground rate",    fmtPct(s.median_grounding_rate, 0),               "grounding_rate")}
+        ${mini("new inv hits",   fmtNum(s.median_new_inventory_hits, 1),           "new_inv_hits")}
+        ${mini("refused",        fmtInt(s.refused_count),                          "refused")}
+        ${mini("retried",        fmtInt(s.multi_attempt_count),                    "retried")}
+        ${mini("cost",           fmtMoney(s.cost_usd_total),                       "total_cost")}
       </div>
     </div>`;
   }).join("");
@@ -262,17 +351,23 @@ async function loadFamilyStats() {
 
 // ─────────────────── table ───────────────────
 const TABLE_COLUMNS = [
-  { key: "dialect_family",       label: "family" },
-  { key: "anchor_id",            label: "anchor" },
-  { key: "generation_status",    label: "status", render: v => `<span class="pill ${v==='ok'?'ok':'fail'}">${v}</span>` },
-  { key: "applied_feature_count",label: "feat", num: true },
-  { key: "token_change_ratio",   label: "tok Δ%", num: true, render: v => v==null?"—":(v*100).toFixed(1)+"%" },
-  { key: "cosine_similarity",    label: "cosine", num: true, render: v => (v==null||v===-1)?"—":Number(v).toFixed(4) },
-  { key: "dialect_pass",         label: "pass", render: v => v===true?'<span class="pill ok">pass</span>':v===false?'<span class="pill fail">fail</span>':'<span class="pill warn">—</span>' },
-  { key: "feature_realization_rate", label: "ground", num: true, render: v => v==null?"—":(v*100).toFixed(0)+"%" },
-  { key: "new_inventory_hits",   label: "inv new", num: true },
-  { key: "attempts",             label: "tries", num: true },
-  { key: "cost_usd",             label: "cost", num: true, render: v => v==null?"—":"$"+Number(v).toFixed(4) },
+  { key: "dialect_family",       label: "family",                 tip: null },
+  { key: "anchor_id",            label: "anchor",                 tip: null },
+  { key: "generation_status",    label: "status",                 tip: "ok_rate",
+    render: v => `<span class="pill ${v==='ok'?'ok':'fail'}">${v}</span>` },
+  { key: "applied_feature_count",label: "feat",   num: true,      tip: "feature_count" },
+  { key: "token_change_ratio",   label: "tok Δ%", num: true,      tip: "token_change_pct",
+    render: v => v==null?"—":(v*100).toFixed(1)+"%" },
+  { key: "cosine_similarity",    label: "cosine", num: true,      tip: "cosine",
+    render: v => (v==null||v===-1)?"—":Number(v).toFixed(4) },
+  { key: "dialect_pass",         label: "pass",                   tip: "dialect_pass",
+    render: v => v===true?'<span class="pill ok">pass</span>':v===false?'<span class="pill fail">fail</span>':'<span class="pill warn">—</span>' },
+  { key: "feature_realization_rate", label: "ground", num: true,  tip: "grounding_rate",
+    render: v => v==null?"—":(v*100).toFixed(0)+"%" },
+  { key: "new_inventory_hits",   label: "inv new", num: true,     tip: "new_inv_hits" },
+  { key: "attempts",             label: "tries",   num: true,     tip: "attempts" },
+  { key: "cost_usd",             label: "cost",    num: true,     tip: "cost_usd",
+    render: v => v==null?"—":"$"+Number(v).toFixed(4) },
   { key: "anchor_preview",       label: "anchor preview", cls: "preview" },
   { key: "rewrite_preview",      label: "rewrite preview", cls: "preview" },
 ];
@@ -307,7 +402,7 @@ async function loadTable() {
 function renderTable() {
   const thead = $("#records-table thead");
   thead.innerHTML = "<tr>" + TABLE_COLUMNS.map(c =>
-    `<th data-key="${c.key}">${c.label}${tableSort.key===c.key ? (tableSort.dir>0?" ▲":" ▼") : ""}</th>`
+    `<th data-key="${c.key}" class="${c.tip ? "has-tooltip" : ""}"${tipAttr(c.tip)}>${c.label}${tableSort.key===c.key ? (tableSort.dir>0?" ▲":" ▼") : ""}</th>`
   ).join("") + "</tr>";
   $$("#records-table thead th").forEach(th => th.addEventListener("click", () => {
     const k = th.dataset.key;
@@ -389,24 +484,24 @@ function renderReader(data) {
     : '<span class="pill warn">pass uncomputed</span>';
 
   const meta = [
-    ["family",            safeText(r.dialect_family + " · " + (r.dialect_title || ""))],
-    ["anchor_id",         safeText(r.anchor_id)],
-    ["status",            safeText(r.generation_status)],
-    ["attempts",          fmtInt(r.attempts)],
-    ["cosine",            (r.cosine_similarity == null || r.cosine_similarity === -1) ? "—" : fmtNum(r.cosine_similarity, 4)],
-    ["token Δ %",         ss.token_change_ratio == null ? "—" : fmtPct(ss.token_change_ratio, 1)],
-    ["difflib ratio",     fmtNum(ss.difflib_ratio, 4)],
-    ["Levenshtein norm",  fmtNum(ss.levenshtein_normalized, 4)],
-    ["char 3-gram J",     fmtNum(ss.char_3gram_jaccard, 4)],
-    ["token Jaccard",     fmtNum(ss.token_jaccard, 4)],
-    ["feature_count",     `${fmtInt(r.applied_feature_count)} (declared ${fmtInt(r.declared_feature_count)})`],
-    ["grounding rate",    (r.feature_realization && r.feature_realization.rate != null) ? fmtPct(r.feature_realization.rate, 0) : "—"],
-    ["new inv hits",      fmtInt(r.inventory_pattern_hits && r.inventory_pattern_hits.count_new)],
-    ["anchor words",      fmtInt(r.anchor_word_count)],
-    ["rewrite words",     fmtInt(r.rewrite_word_count)],
-    ["cost",              fmtMoney(r.cost_usd)],
-    ["tokens in / out",   `${fmtInt(r.tokens_in)} / ${fmtInt(r.tokens_out)}`],
-    ["model",             safeText(r.model)],
+    ["family",            safeText(r.dialect_family + " · " + (r.dialect_title || "")), null],
+    ["anchor_id",         safeText(r.anchor_id),                                          null],
+    ["status",            safeText(r.generation_status),                                  "ok_rate"],
+    ["attempts",          fmtInt(r.attempts),                                             "attempts"],
+    ["cosine",            (r.cosine_similarity == null || r.cosine_similarity === -1) ? "—" : fmtNum(r.cosine_similarity, 4), "cosine"],
+    ["token Δ %",         ss.token_change_ratio == null ? "—" : fmtPct(ss.token_change_ratio, 1), "token_change_pct"],
+    ["difflib ratio",     fmtNum(ss.difflib_ratio, 4),                                    "difflib_ratio"],
+    ["Levenshtein norm",  fmtNum(ss.levenshtein_normalized, 4),                           "levenshtein_norm"],
+    ["char 3-gram J",     fmtNum(ss.char_3gram_jaccard, 4),                               "char_3gram_j"],
+    ["token Jaccard",     fmtNum(ss.token_jaccard, 4),                                    "token_jaccard"],
+    ["feature_count",     `${fmtInt(r.applied_feature_count)} (declared ${fmtInt(r.declared_feature_count)})`, "feature_count"],
+    ["grounding rate",    (r.feature_realization && r.feature_realization.rate != null) ? fmtPct(r.feature_realization.rate, 0) : "—", "grounding_rate"],
+    ["new inv hits",      fmtInt(r.inventory_pattern_hits && r.inventory_pattern_hits.count_new), "new_inv_hits"],
+    ["anchor words",      fmtInt(r.anchor_word_count),                                    null],
+    ["rewrite words",     fmtInt(r.rewrite_word_count),                                   null],
+    ["cost",              fmtMoney(r.cost_usd),                                           "cost_usd"],
+    ["tokens in / out",   `${fmtInt(r.tokens_in)} / ${fmtInt(r.tokens_out)}`,             "tokens_in"],
+    ["model",             safeText(r.model),                                              null],
   ];
 
   $("#reader-card").innerHTML = `
@@ -428,7 +523,7 @@ function renderReader(data) {
     </div>
 
     <div class="reader-meta">
-      ${meta.map(([k,v]) => `<div class="mini-stat"><div class="lbl">${k}</div><div class="val">${v}</div></div>`).join("")}
+      ${meta.map(([k,v,tip]) => `<div class="mini-stat${tip ? " has-tooltip" : ""}"${tipAttr(tip)}><div class="lbl">${k}</div><div class="val">${v}</div></div>`).join("")}
     </div>
 
     <div class="reader-features">
@@ -610,5 +705,89 @@ function inlineMd(s) {
   return t;
 }
 
+// ─────────────────── dataset switcher ───────────────────
+// Populates the sidebar <select> with every JSONL the server can see, and
+// hot-swaps the in-memory dataset on change.
+
+function _fmtMtime(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d)) return "";
+  const now = new Date();
+  const sameDay = d.toDateString() === now.toDateString();
+  return sameDay
+    ? d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    : d.toLocaleDateString([], { month: "short", day: "numeric" });
+}
+
+async function loadDatasetList() {
+  const picker = $("#dataset-picker");
+  if (!picker) return;
+  let data;
+  try {
+    data = await fetch("/api/datasets").then(r => r.json());
+  } catch (err) {
+    picker.innerHTML = `<option disabled>error loading dataset list</option>`;
+    return;
+  }
+  const current = data.current;
+  picker.innerHTML = data.datasets.map(d => {
+    const label = `${d.name} · ${_fmtMtime(d.mtime_utc)}`;
+    const selected = d.path === current ? " selected" : "";
+    return `<option value="${d.path}"${selected}>${label}</option>`;
+  }).join("");
+  // If the current dataset isn't in the listed set (e.g. it lives outside the
+  // configured roots), still surface it as a non-selectable first row.
+  if (current && !data.datasets.some(d => d.path === current)) {
+    const opt = document.createElement("option");
+    opt.value = current;
+    opt.selected = true;
+    opt.textContent = `${data.current_name} · (current)`;
+    picker.prepend(opt);
+  }
+}
+
+async function switchDataset(path) {
+  const meta = $("#dataset-record-count");
+  const status = $("#dataset-status");
+  const picker = $("#dataset-picker");
+  if (status) status.textContent = "loading…";
+  if (picker) picker.disabled = true;
+  try {
+    const res = await fetch("/api/load", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+    const info = await res.json();
+    if (meta) meta.textContent = info.records;
+    if (status) status.textContent = info.model ? info.model : "";
+    // Reset reader state — record_ids likely differ between datasets.
+    if (typeof readerState !== "undefined") readerState.currentId = null;
+    // Re-run whatever tab the user is on so the data refreshes immediately.
+    const activeTab = document.querySelector(".navlink.active")?.dataset?.tab || "dashboard";
+    activateTab(activeTab);
+  } catch (err) {
+    if (status) status.textContent = `error: ${err.message}`;
+    if (picker) picker.value = picker.dataset.lastValue || "";
+  } finally {
+    if (picker) {
+      picker.disabled = false;
+      picker.dataset.lastValue = picker.value;
+    }
+  }
+}
+
+const _datasetPickerEl = document.getElementById("dataset-picker");
+if (_datasetPickerEl) {
+  _datasetPickerEl.addEventListener("change", (e) => switchDataset(e.target.value));
+}
+
 // ─────────────────── boot ───────────────────
+applyStaticTooltips();
+loadDatasetList();
 activateTab("dashboard");

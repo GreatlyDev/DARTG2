@@ -135,6 +135,13 @@ def provider_for_model(model: str) -> str:
     return "openai"
 
 
+def supports_reasoning_param(model: str) -> bool:
+    """The OpenAI responses API accepts a `reasoning: {effort: ...}` field for
+    the gpt-5 family and the o-series (o1/o3/o4). gpt-4o silently rejects it."""
+    name = model.lower()
+    return name.startswith(("gpt-5", "o1", "o3", "o4"))
+
+
 class AnthropicMessagesClient:
     provider = "anthropic"
 
@@ -186,16 +193,23 @@ class AnthropicMessagesClient:
 class OpenAIResponsesClient:
     provider = "openai"
 
-    def __init__(self, api_key: str, model: str, timeout: int = 120, max_output_tokens: int | None = None) -> None:
+    def __init__(self, api_key: str, model: str, timeout: int = 120,
+                 max_output_tokens: int | None = None,
+                 reasoning_effort: str | None = None) -> None:
         self.api_key = api_key
         self.model = model
         self.timeout = timeout
         self.max_output_tokens = max_output_tokens
+        # reasoning_effort is only sent for models that accept it (gpt-5, o-series).
+        # Allowed values per OpenAI responses API: "minimal", "low", "medium", "high".
+        self.reasoning_effort = reasoning_effort
 
     def create(self, prompt: str) -> dict[str, Any]:
         payload: dict[str, Any] = {"model": self.model, "input": prompt}
         if self.max_output_tokens:
             payload["max_output_tokens"] = self.max_output_tokens
+        if self.reasoning_effort and supports_reasoning_param(self.model):
+            payload["reasoning"] = {"effort": self.reasoning_effort}
         return _post_json_with_retries(
             OPENAI_RESPONSES_URL,
             headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"},
@@ -206,12 +220,17 @@ class OpenAIResponsesClient:
 
 
 def make_client(model: str, openai_api_key: str | None, anthropic_api_key: str | None,
-                timeout: int = 120, max_output_tokens: int | None = None):
+                timeout: int = 120, max_output_tokens: int | None = None,
+                reasoning_effort: str | None = None):
     provider = provider_for_model(model)
     if provider == "anthropic":
         if not anthropic_api_key:
             raise SystemExit(
                 f"Model {model!r} requires an Anthropic key. Add ANTHROPIC_API_KEY to .env or .anthropicapi."
+            )
+        if reasoning_effort:
+            sys.stderr.write(
+                f"[warn] --reasoning-effort ignored for Anthropic model {model!r}\n"
             )
         return AnthropicMessagesClient(api_key=anthropic_api_key, model=model,
                                         timeout=timeout, max_output_tokens=max_output_tokens)
@@ -219,5 +238,10 @@ def make_client(model: str, openai_api_key: str | None, anthropic_api_key: str |
         raise SystemExit(
             f"Model {model!r} requires an OpenAI key. Add it to .openaiapi or .env (OPENAI_API_KEY)."
         )
+    if reasoning_effort and not supports_reasoning_param(model):
+        sys.stderr.write(
+            f"[warn] --reasoning-effort ignored for {model!r} (only gpt-5 / o-series accept it)\n"
+        )
     return OpenAIResponsesClient(api_key=openai_api_key, model=model,
-                                  timeout=timeout, max_output_tokens=max_output_tokens)
+                                  timeout=timeout, max_output_tokens=max_output_tokens,
+                                  reasoning_effort=reasoning_effort)
