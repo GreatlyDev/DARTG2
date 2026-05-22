@@ -193,6 +193,25 @@ Render draft Stage 1 prompt jobs:
 python scripts/render_prompt_jobs.py --anchors "C:\Users\great\Downloads\final_anchors.csv" --assignments data/assignments/stage1_greedy_assignments.jsonl --output data/generated/stage1_greedy_prompt_jobs.jsonl
 ```
 
+## Targeted Structural Regeneration
+
+The repo includes the tracked input artifacts needed for another team member to run the Dr. Dacon/Ricky targeted structural regeneration pass with their own OpenAI key.
+
+Use this runbook:
+
+```text
+docs/structural_targeted_regen_runbook.md
+```
+
+The runbook covers:
+
+- adding a local `.env` with `OPENAI_API_KEY`
+- running `scripts/retry_rejected_candidates.py` on the flagged candidates only
+- checkpoint/resume behavior if quota or rate limits interrupt the run
+- re-running prefiltering, scoring, and Ricky's audit metrics
+
+Do not commit `.env` or API keys.
+
 ## Local Generated Outputs
 
 Local generation outputs are ignored by Git:
