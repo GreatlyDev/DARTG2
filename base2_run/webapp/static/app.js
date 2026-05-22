@@ -508,6 +508,11 @@ const TABLE_COLUMNS = [
   { key: "generation_status",    label: "status",                 tip: "ok_rate",
     render: v => `<span class="pill ${v==='ok'?'ok':'fail'}">${v}</span>` },
   { key: "applied_feature_count",label: "feat",   num: true,      tip: "feature_count" },
+  { key: "anchor_word_count",    label: "anc w",  num: true,      tip: "anchor_word_count" },
+  { key: "rewrite_word_count",   label: "rew w",  num: true,      tip: "rewrite_word_count" },
+  { key: "tokens_changed_absolute", label: "Δw", num: true,       tip: "tokens_changed_absolute" },
+  { key: "min_change_budget_words", label: "5%w", num: true,      tip: "min_change_budget_words" },
+  { key: "max_change_budget_words", label: "25%w", num: true,     tip: "max_change_budget_words" },
   { key: "token_change_ratio",   label: "tok Δ%", num: true,      tip: "token_change_pct",
     render: v => v==null?"—":(v*100).toFixed(1)+"%" },
   { key: "cosine_similarity",    label: "cosine", num: true,      tip: "cosine",
@@ -889,7 +894,7 @@ async function loadDatasetList() {
   }
   const current = data.current;
   picker.innerHTML = data.datasets.map(d => {
-    const label = `${d.name} · ${_fmtMtime(d.mtime_utc)}`;
+    const label = d.name.replace(/\.jsonl$/i, "");
     const selected = d.path === current ? " selected" : "";
     return `<option value="${d.path}"${selected}>${label}</option>`;
   }).join("");
