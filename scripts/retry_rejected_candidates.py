@@ -11,8 +11,10 @@ from dart_pipeline.io_utils import read_records, write_jsonl
 
 
 DEFAULT_REJECTION_REASONS = {
+    "aae_authenticity_review",
     "anchor_near_duplicate",
     "common_feature_only",
+    "cross_family_tag_right",
     "student_text_correction",
     "generation_failed",
     "candidate_too_short",
@@ -23,6 +25,9 @@ DEFAULT_REJECTION_REASONS = {
     "single_detected_feature",
     "surface_change_above_upper_bound",
     "surface_change_below_minimum",
+    "targeted_ricky_cleanup",
+    "weak_minimal_edit_or_append",
+    "within_anchor_duplicate",
 }
 
 

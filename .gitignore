@@ -4,7 +4,12 @@ __pycache__/
 
 # Generated DART pipeline outputs
 data/assignments/
-data/generated/
+data/generated/*
+!data/generated/
+!data/generated/stage1_jobs_preview.md
+!data/generated/final80_structural_regen_prompt_jobs.jsonl
+!data/generated/final80_structural_regen_input_raw.jsonl
+!data/generated/final80_structural_regen_input_audit.jsonl
 data/test_tmp/
 docs/stage1_demo_candidates*.md
 docs/final80_demo_candidates*.md
