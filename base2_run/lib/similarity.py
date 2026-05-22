@@ -104,6 +104,21 @@ def cosine_from_vectors(a: Iterable[float], b: Iterable[float]) -> float:
     return round(dot / (na * nb), 4)
 
 
+def length_band(word_count: int | None) -> str:
+    """Bucket an anchor word count into short / medium / long.
+
+    Cutoffs match the base2 prompt's notion of 'short anchors (under ~60 words)';
+    medium is the natural middle of the 50–150-word anchor set, long is the tail.
+    Returns 'unknown' for None / non-positive inputs."""
+    if not word_count or word_count <= 0:
+        return "unknown"
+    if word_count <= 60:
+        return "short"
+    if word_count <= 120:
+        return "medium"
+    return "long"
+
+
 def cheap_scores(anchor: str, rewrite: str) -> dict:
     return {
         "exact_match": exact_match(anchor, rewrite),

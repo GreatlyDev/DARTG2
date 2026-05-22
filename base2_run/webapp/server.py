@@ -303,6 +303,12 @@ def _lean_record(row: dict) -> dict:
         "attempts": row.get("attempts"),
         "anchor_word_count": row.get("anchor_word_count"),
         "rewrite_word_count": row.get("rewrite_word_count"),
+        "length_band": row.get("length_band"),
+        "score_band": (row.get("anchor_extras") or {}).get("score_band"),
+        "tokens_changed_absolute": row.get("tokens_changed_absolute"),
+        "min_change_budget_words": row.get("min_change_budget_words"),
+        "max_change_budget_words": row.get("max_change_budget_words"),
+        "feature_density_per_100w": row.get("feature_density_per_100w"),
         "applied_feature_count": row.get("applied_feature_count"),
         "declared_feature_count": row.get("declared_feature_count"),
         "token_change_ratio": row.get("similarity_scores", {}).get("token_change_ratio"),
@@ -482,6 +488,101 @@ def api_stats_distributions() -> dict:
         "family_token_change_medians": {fam: round(_median(vs), 4) for fam, vs in family_tcr.items()},
         "family_feature_count_medians": {fam: round(_median(vs), 2) for fam, vs in family_feat.items()},
     }
+
+
+# ─────────────── anchor-length / score-band analysis ───────────────
+# Background: anchors are 50–150 words. A 5–25% token-change band is a tiny
+# absolute budget on short anchors and a generous one on long anchors. These
+# endpoints expose pass-rate / token-change behavior grouped by length band
+# (short ≤60, medium 61–120, long >120) and by score band (LOW/MID/HIGH).
+# See lib/similarity.py:length_band.
+
+
+_LENGTH_BAND_ORDER = ("short", "medium", "long", "unknown")
+
+
+def _group_aggregate(rows: list[dict], key_fn) -> dict:
+    """Group OK rows by key_fn(row) and aggregate the metrics we need
+    for the length / score-band tables and bars."""
+    groups: dict[str, list[dict]] = {}
+    for r in rows:
+        if r.get("generation_status") != "ok":
+            continue
+        groups.setdefault(key_fn(r) or "unknown", []).append(r)
+
+    out: dict[str, dict] = {}
+    for key, rs in groups.items():
+        passes = [r.get("dialect_pass") for r in rs if r.get("dialect_pass") is not None]
+        pass_rate = (sum(1 for p in passes if p) / len(passes)) if passes else None
+        tcrs = [r.get("similarity_scores", {}).get("token_change_ratio") for r in rs
+                if r.get("similarity_scores", {}).get("token_change_ratio") is not None]
+        anchor_words = [r.get("anchor_word_count") for r in rs if r.get("anchor_word_count")]
+        tokens_changed = [r.get("tokens_changed_absolute") for r in rs
+                           if r.get("tokens_changed_absolute") is not None]
+        feats = [r.get("applied_feature_count") or 0 for r in rs]
+        cosines = [_cosine_for(r) for r in rs]
+        density = [r.get("feature_density_per_100w") for r in rs
+                   if r.get("feature_density_per_100w") is not None]
+        out[key] = {
+            "n": len(rs),
+            "dialect_pass_rate":      round(pass_rate, 4) if pass_rate is not None else None,
+            "median_anchor_words":    _median(anchor_words),
+            "median_tokens_changed":  _median(tokens_changed),
+            "median_token_change_pct": (round(100 * _median(tcrs), 2)
+                                         if _median(tcrs) is not None else None),
+            "median_feature_count":   _median(feats),
+            "median_cosine":          (round(_median(cosines), 4)
+                                       if _median(cosines) is not None else None),
+            "median_feature_density_per_100w": (round(_median(density), 2)
+                                                 if _median(density) is not None else None),
+        }
+    return out
+
+
+def _length_band_sort_key(key: str) -> tuple[int, str]:
+    try:
+        return (_LENGTH_BAND_ORDER.index(key), key)
+    except ValueError:
+        return (len(_LENGTH_BAND_ORDER), key)
+
+
+@app.get("/api/stats/length_bands")
+def api_stats_length_bands() -> dict:
+    """Pass-rate / token-change / feature-count medians grouped by:
+    - length_band (short / medium / long)
+    - score_band (LOW / MID / HIGH; from anchor_extras.score_band)"""
+    by_length = _group_aggregate(RECORDS, lambda r: r.get("length_band"))
+    # Stable sort by short/medium/long ordering for the UI.
+    by_length_ordered = dict(sorted(by_length.items(), key=lambda kv: _length_band_sort_key(kv[0])))
+
+    by_score = _group_aggregate(RECORDS, lambda r: (r.get("anchor_extras") or {}).get("score_band"))
+    by_score_ordered = dict(sorted(by_score.items()))
+    return {"by_length": by_length_ordered, "by_score": by_score_ordered}
+
+
+@app.get("/api/stats/length_scatter")
+def api_stats_length_scatter() -> dict:
+    """Slim per-record array for the scatter chart on the Anchor-length tab.
+    Only OK records are included."""
+    points: list[dict] = []
+    for r in RECORDS:
+        if r.get("generation_status") != "ok":
+            continue
+        wc = r.get("anchor_word_count")
+        tcr = r.get("similarity_scores", {}).get("token_change_ratio")
+        if wc is None or tcr is None:
+            continue
+        points.append({
+            "record_id": r.get("record_id"),
+            "anchor_word_count": wc,
+            "token_change_pct": round(float(tcr) * 100, 3),
+            "dialect_pass": r.get("dialect_pass"),
+            "length_band": r.get("length_band"),
+            "score_band": (r.get("anchor_extras") or {}).get("score_band"),
+            "dialect_family": r.get("dialect_family"),
+            "applied_feature_count": r.get("applied_feature_count"),
+        })
+    return {"points": points, "band": {"low": 5.0, "high": 25.0}}
 
 
 @app.get("/api/stats/families")

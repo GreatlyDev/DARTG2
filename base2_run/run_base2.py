@@ -37,7 +37,7 @@ from lib.generation import (
 )
 from lib.io_utils import read_records, write_jsonl
 from lib.pricing import cost_usd
-from lib.similarity import cheap_scores, cosine_from_vectors
+from lib.similarity import cheap_scores, cosine_from_vectors, length_band
 from lib.strategies import (
     FAMILY_TITLES,
     PROMPT_PATH,
@@ -388,9 +388,23 @@ def score_records(records_by_family: dict[str, list[dict]], *, use_hf: bool, hf_
             existing = row.get("similarity_scores") or {}
             existing.update(scores)
             row["similarity_scores"] = existing
-            row["anchor_word_count"] = len(anchor.split())
+            anchor_wc = len(anchor.split())
+            row["anchor_word_count"] = anchor_wc
             row["rewrite_word_count"] = len(rewrite.split())
             row["composite_change_score"] = round(1 - scores["difflib_ratio"], 4)
+
+            # Word-count-derived fields for the Anchor-length analysis.
+            # Help us evaluate the "5%-25% band is a tiny absolute budget on
+            # short anchors" hypothesis: see plan file for the rationale.
+            tcr = scores["token_change_ratio"]
+            row["tokens_changed_absolute"] = int(round(anchor_wc * tcr)) if anchor_wc else 0
+            row["min_change_budget_words"] = int(round(anchor_wc * 0.05)) if anchor_wc else 0
+            row["max_change_budget_words"] = int(round(anchor_wc * 0.25)) if anchor_wc else 0
+            row["length_band"] = length_band(anchor_wc)
+            feat_count = row.get("applied_feature_count") or 0
+            row["feature_density_per_100w"] = (
+                round(feat_count / anchor_wc * 100, 2) if anchor_wc else 0.0
+            )
 
     def _finalize_no_cosine() -> None:
         # -1 is the sentinel for "cosine not computed".

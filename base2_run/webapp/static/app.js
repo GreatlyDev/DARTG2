@@ -54,6 +54,16 @@ const TOOLTIPS = {
   // Per-family
   fam_n:              "Anchor count for this family.",
   fam_ok:             "OK records and OK rate within this family.",
+
+  // Word-count / length analysis
+  anchor_word_count:  "Whitespace-tokenized word count of the anchor essay. Anchors in this dataset range 50–142 words.",
+  rewrite_word_count: "Whitespace-tokenized word count of the rewrite. A meaningful drop or spike vs anchor_word_count is a sign of paraphrase rather than dialect-rewriting.",
+  length_band:        "Anchor length bucket — short (≤60 words), medium (61–120), long (>120). Used to test whether token-change behavior is driven by anchor length.",
+  score_band:         "Original essay score band carried through from the anchor CSV (LOW / MID / HIGH). Used to test whether the model rewrites LOW-scored anchors more aggressively.",
+  tokens_changed_absolute: "Absolute count of anchor word-tokens that did NOT survive into the rewrite. Computed as round(anchor_word_count × token_change_ratio). Pairs with min/max_change_budget_words to show the absolute budget visually.",
+  min_change_budget_words: "Words the 5% lower bound buys you on this anchor — round(anchor_word_count × 0.05). On a 50-word anchor that's just 2.5 words; on a 150-word anchor it's 7.5.",
+  max_change_budget_words: "Words the 25% upper bound buys you on this anchor — round(anchor_word_count × 0.25). The original token-change gate would cap a rewrite at this many changed words.",
+  feature_density_per_100w: "applied_feature_count per 100 anchor words. Density makes feature counts comparable across short and long anchors.",
 };
 
 // Apply title attributes (and a help cursor) to elements that have a
@@ -109,6 +119,7 @@ function activateTab(name) {
   $$(".tab-panel").forEach(p => p.classList.toggle("active", p.id === "tab-" + name));
   if (name === "dashboard") loadDashboard();
   if (name === "families")  loadFamilyStats();
+  if (name === "length")    loadLengthAnalysis();
   if (name === "table")     loadTable();
   if (name === "reader" && !readerState.currentId) loadRandomRecord();
   if (name === "prompts")   loadPrompts();
@@ -349,6 +360,147 @@ async function loadFamilyStats() {
   $("#family-stats").innerHTML = html;
 }
 
+// ─────────────────── anchor length / score band ───────────────────
+async function loadLengthAnalysis() {
+  const [scatter, bands] = await Promise.all([
+    fetch("/api/stats/length_scatter").then(r => r.json()),
+    fetch("/api/stats/length_bands").then(r => r.json()),
+  ]);
+
+  // Headline takeaways: pass rate by length / score band, total n.
+  const byLen = bands.by_length || {};
+  const byScore = bands.by_score || {};
+  const card = (label, value, sub="", tipKey=null) => `
+    <div class="stat-card${tipKey ? " has-tooltip" : ""}"${tipAttr(tipKey)}>
+      <div class="label">${label}${tipKey ? ' <span class="help">ⓘ</span>' : ""}</div>
+      <div class="value">${value}</div>
+      ${sub ? `<div class="sub">${sub}</div>` : ""}
+    </div>`;
+  $("#length-headline").innerHTML = [
+    card("OK records",                     fmtInt(scatter.points.length),                                      "with valid token-change", "anchor_word_count"),
+    card("Short anchors (≤60w)",           `${fmtInt((byLen.short || {}).n || 0)} · ${fmtPct((byLen.short || {}).dialect_pass_rate, 0)} pass`,  "", "length_band"),
+    card("Medium anchors (61–120w)",       `${fmtInt((byLen.medium || {}).n || 0)} · ${fmtPct((byLen.medium || {}).dialect_pass_rate, 0)} pass`, "", "length_band"),
+    card("Long anchors (>120w)",           `${fmtInt((byLen.long || {}).n || 0)} · ${fmtPct((byLen.long || {}).dialect_pass_rate, 0)} pass`,    "", "length_band"),
+  ].join("");
+
+  // Scatter — anchor word count vs token change %, dotted ref lines at 5% and 25%.
+  drawScatter("chart-length-scatter", scatter.points, scatter.band);
+
+  // Bar charts per band.
+  const lenKeys = Object.keys(byLen);
+  const lenColors = lenKeys.map(k => ({short: CHART_COLORS.accent3, medium: CHART_COLORS.accent, long: CHART_COLORS.warn, unknown: CHART_COLORS.muted})[k] || CHART_COLORS.muted);
+  drawBar("chart-length-pass", lenKeys, lenKeys.map(k => (byLen[k].dialect_pass_rate ?? 0) * 100), lenColors, "% pass", "%", {yMin: 0, yMax: 100});
+  drawBar("chart-length-tcr",  lenKeys, lenKeys.map(k => byLen[k].median_token_change_pct ?? 0),  lenColors, "median token Δ %", "%");
+
+  const scoreKeys = Object.keys(byScore);
+  const scoreColors = scoreKeys.map(k => ({LOW: CHART_COLORS.fail, MID: CHART_COLORS.warn, HIGH: CHART_COLORS.ok, unknown: CHART_COLORS.muted})[String(k).toUpperCase()] || CHART_COLORS.muted);
+  drawBar("chart-score-pass", scoreKeys, scoreKeys.map(k => (byScore[k].dialect_pass_rate ?? 0) * 100), scoreColors, "% pass", "%", {yMin: 0, yMax: 100});
+  drawBar("chart-score-tcr",  scoreKeys, scoreKeys.map(k => byScore[k].median_token_change_pct ?? 0),  scoreColors, "median token Δ %", "%");
+
+  // Tables.
+  const cols = [
+    {key: "band",                          label: "band"},
+    {key: "n",                             label: "n",                    num: true},
+    {key: "dialect_pass_rate",             label: "pass",                 num: true, render: v => v==null?"—":(v*100).toFixed(1)+"%"},
+    {key: "median_anchor_words",           label: "med anchor words",     num: true},
+    {key: "median_tokens_changed",         label: "med tokens changed",   num: true},
+    {key: "median_token_change_pct",       label: "med token Δ%",         num: true, render: v => v==null?"—":v.toFixed(2)+"%"},
+    {key: "median_feature_count",          label: "med features",         num: true},
+    {key: "median_feature_density_per_100w", label: "feat/100w",          num: true},
+    {key: "median_cosine",                 label: "med cosine",           num: true, render: v => v==null?"—":v.toFixed(4)},
+  ];
+  function bandTable(tableSel, groups) {
+    const thead = $(tableSel + " thead");
+    const tbody = $(tableSel + " tbody");
+    thead.innerHTML = "<tr>" + cols.map(c => `<th class="${c.num?'num':''}">${c.label}</th>`).join("") + "</tr>";
+    tbody.innerHTML = Object.entries(groups).map(([band, s]) => {
+      return "<tr>" + cols.map(c => {
+        if (c.key === "band") return `<td><strong>${safeText(band)}</strong></td>`;
+        const v = s[c.key];
+        const cell = c.render ? c.render(v) : (v == null ? "—" : safeText(String(v)));
+        return `<td class="${c.num?'num':''}">${cell}</td>`;
+      }).join("") + "</tr>";
+    }).join("");
+  }
+  bandTable("#length-band-table", byLen);
+  bandTable("#score-band-table",  byScore);
+}
+
+function drawScatter(canvasId, points, band) {
+  destroyChart(canvasId);
+  const grouped = { pass: [], fail: [], uncomputed: [] };
+  for (const p of points) {
+    const k = p.dialect_pass === true ? "pass" : p.dialect_pass === false ? "fail" : "uncomputed";
+    grouped[k].push({ x: p.anchor_word_count, y: p.token_change_pct, recordId: p.record_id,
+                      family: p.dialect_family, scoreBand: p.score_band, feat: p.applied_feature_count });
+  }
+  const datasets = [
+    { label: "pass", data: grouped.pass, backgroundColor: CHART_COLORS.ok,   borderColor: "rgba(0,0,0,0)", pointRadius: 3 },
+    { label: "fail", data: grouped.fail, backgroundColor: CHART_COLORS.fail, borderColor: "rgba(0,0,0,0)", pointRadius: 3 },
+  ];
+  if (grouped.uncomputed.length) {
+    datasets.push({ label: "uncomputed", data: grouped.uncomputed, backgroundColor: CHART_COLORS.muted, borderColor: "rgba(0,0,0,0)", pointRadius: 3 });
+  }
+  CHARTS[canvasId] = new Chart($("#" + canvasId), {
+    type: "scatter",
+    data: { datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      onClick: (evt, items) => {
+        const item = items?.[0];
+        if (!item) return;
+        const p = datasets[item.datasetIndex].data[item.index];
+        if (p?.recordId) openInReader(p.recordId);
+      },
+      plugins: {
+        legend: { position: "bottom", labels: { color: CHART_COLORS.axis, boxWidth: 12 } },
+        tooltip: { callbacks: {
+          label: ctx => {
+            const d = ctx.raw;
+            return `${d.recordId}  ·  ${d.family}  ·  score=${d.scoreBand ?? '?'}  ·  feat=${d.feat}  ·  (${d.x}w, ${d.y.toFixed(1)}%)`;
+          }
+        }}
+      },
+      scales: {
+        x: { type: "linear", title: { display: true, text: "anchor word count", color: CHART_COLORS.axis },
+             grid: { color: CHART_COLORS.grid }, ticks: { color: CHART_COLORS.axis } },
+        y: { title: { display: true, text: "token change %", color: CHART_COLORS.axis },
+             grid: { color: CHART_COLORS.grid }, ticks: { color: CHART_COLORS.axis },
+             beginAtZero: true, suggestedMax: 35 },
+      },
+    },
+    // Simple inline plugin that draws 5% and 25% reference lines on the scatter
+    // — Chart.js' annotation plugin isn't loaded, so this is the lightest option.
+    plugins: [{
+      id: "refLines",
+      afterDatasetsDraw(chart) {
+        const { ctx, chartArea, scales: { y } } = chart;
+        if (!chartArea) return;
+        const refs = [
+          { v: band?.low ?? 5,  color: CHART_COLORS.warn, label: `${band?.low ?? 5}% floor` },
+          { v: band?.high ?? 25, color: CHART_COLORS.warn, label: `${band?.high ?? 25}% ceiling` },
+        ];
+        ctx.save();
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.font = "11px sans-serif";
+        for (const r of refs) {
+          const yPix = y.getPixelForValue(r.v);
+          if (yPix < chartArea.top || yPix > chartArea.bottom) continue;
+          ctx.strokeStyle = r.color;
+          ctx.beginPath();
+          ctx.moveTo(chartArea.left, yPix);
+          ctx.lineTo(chartArea.right, yPix);
+          ctx.stroke();
+          ctx.fillStyle = r.color;
+          ctx.fillText(r.label, chartArea.left + 6, yPix - 4);
+        }
+        ctx.restore();
+      }
+    }],
+  });
+}
+
 // ─────────────────── table ───────────────────
 const TABLE_COLUMNS = [
   { key: "dialect_family",       label: "family",                 tip: null },
@@ -497,8 +649,13 @@ function renderReader(data) {
     ["feature_count",     `${fmtInt(r.applied_feature_count)} (declared ${fmtInt(r.declared_feature_count)})`, "feature_count"],
     ["grounding rate",    (r.feature_realization && r.feature_realization.rate != null) ? fmtPct(r.feature_realization.rate, 0) : "—", "grounding_rate"],
     ["new inv hits",      fmtInt(r.inventory_pattern_hits && r.inventory_pattern_hits.count_new), "new_inv_hits"],
-    ["anchor words",      fmtInt(r.anchor_word_count),                                    null],
-    ["rewrite words",     fmtInt(r.rewrite_word_count),                                   null],
+    ["anchor words",      fmtInt(r.anchor_word_count),                                    "anchor_word_count"],
+    ["rewrite words",     fmtInt(r.rewrite_word_count),                                   "rewrite_word_count"],
+    ["length band",       safeText(r.length_band || "—"),                                 "length_band"],
+    ["score band",        safeText((r.anchor_extras || {}).score_band || "—"),            "score_band"],
+    ["tokens changed",    fmtInt(r.tokens_changed_absolute),                              "tokens_changed_absolute"],
+    ["change budget",     `${fmtInt(r.min_change_budget_words)}–${fmtInt(r.max_change_budget_words)} words`, "max_change_budget_words"],
+    ["feat / 100w",       fmtNum(r.feature_density_per_100w, 2),                          "feature_density_per_100w"],
     ["cost",              fmtMoney(r.cost_usd),                                           "cost_usd"],
     ["tokens in / out",   `${fmtInt(r.tokens_in)} / ${fmtInt(r.tokens_out)}`,             "tokens_in"],
     ["model",             safeText(r.model),                                              null],

@@ -22,6 +22,9 @@
         <button data-tab="families" class="navlink" role="tab">
           <span class="navicon">⌗</span><span class="navlabel">Families</span>
         </button>
+        <button data-tab="length" class="navlink" role="tab">
+          <span class="navicon">▭</span><span class="navlabel">Anchor length</span>
+        </button>
         <button data-tab="table" class="navlink" role="tab">
           <span class="navicon">☰</span><span class="navlabel">Table</span>
         </button>
@@ -96,6 +99,43 @@
       <section id="tab-families" class="tab-panel">
         <h2 class="section-title">Per-family</h2>
         <div id="family-stats" class="loading">loading…</div>
+      </section>
+
+      <!-- ─────────────── ANCHOR LENGTH ─────────────── -->
+      <section id="tab-length" class="tab-panel">
+        <h2 class="section-title">Anchor length &amp; word-count analysis</h2>
+        <p class="muted small" style="max-width:880px">
+          Anchors range 50–142 words. A 5–25% token-change band is a tiny absolute budget on short anchors
+          (2.5–12.5 words) and a generous one on long anchors (7.5–37.5 words). These charts let us read off
+          whether anchor length or anchor score-band is driving the observed token-change distribution.
+        </p>
+        <div id="length-headline" class="stat-grid"></div>
+        <div class="charts-grid">
+          <div class="chart-card wide">
+            <div class="chart-title">Token change % vs anchor word count (with 5% / 25% reference lines)</div>
+            <div class="chart-wrap"><canvas id="chart-length-scatter"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Dialect-pass rate by length band</div>
+            <div class="chart-wrap"><canvas id="chart-length-pass"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Dialect-pass rate by score band</div>
+            <div class="chart-wrap"><canvas id="chart-score-pass"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Median token Δ% by length band</div>
+            <div class="chart-wrap"><canvas id="chart-length-tcr"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Median token Δ% by score band</div>
+            <div class="chart-wrap"><canvas id="chart-score-tcr"></canvas></div>
+          </div>
+        </div>
+        <h3 class="section-title" style="font-size:14px; margin-top:18px">By length band</h3>
+        <div id="length-band-table-wrap"><table id="length-band-table" class="datatable"><thead></thead><tbody></tbody></table></div>
+        <h3 class="section-title" style="font-size:14px; margin-top:18px">By score band</h3>
+        <div id="score-band-table-wrap"><table id="score-band-table" class="datatable"><thead></thead><tbody></tbody></table></div>
       </section>
 
       <!-- ─────────────── TABLE ─────────────── -->
