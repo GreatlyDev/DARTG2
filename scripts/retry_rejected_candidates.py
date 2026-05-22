@@ -224,6 +224,15 @@ def replace_records(existing_rows: list[dict], replacements: dict[str, dict]) ->
     return output
 
 
+def completed_retry_candidate_ids(rows: list[dict]) -> set[str]:
+    completed: set[str] = set()
+    for row in rows:
+        retry_of = row.get("retry_of_candidate_id")
+        if retry_of:
+            completed.add(str(retry_of))
+    return completed
+
+
 def generate_with_retries(
     retry_job: dict,
     client: OpenAIResponsesClient,
@@ -268,6 +277,11 @@ def main() -> None:
     parser.add_argument("--temperature", type=float, default=None)
     parser.add_argument("--max-attempts", type=int, default=4)
     parser.add_argument("--retry-wait", type=float, default=8.0)
+    parser.add_argument(
+        "--no-resume-output",
+        action="store_true",
+        help="Ignore an existing output file. By default, existing retry output is used as a checkpoint/resume file.",
+    )
     args = parser.parse_args()
 
     load_env_file(args.env_file)
@@ -279,9 +293,18 @@ def main() -> None:
     requested_candidate_ids = parse_candidate_ids(args.candidate_ids)
     scored_rows = read_records(args.scored_candidates)
     raw_rows = read_records(args.raw_candidates)
+    output_rows = raw_rows
+    completed_targets: set[str] = set()
+    if args.output.exists() and not args.no_resume_output:
+        output_rows = read_records(args.output)
+        completed_targets = completed_retry_candidate_ids(output_rows)
+        if completed_targets:
+            print(f"[resume] Found {len(completed_targets)} completed retry candidate(s) in {args.output}")
     jobs = {str(job.get("job_id")): job for job in read_records(args.jobs)}
     rejected_by_id = {str(row.get("candidate_id")): row for row in scored_rows}
     targets = sorted(target_candidate_ids(scored_rows, reasons))
+    if completed_targets:
+        targets = [candidate_id for candidate_id in targets if candidate_id not in completed_targets]
     if requested_candidate_ids:
         targets = [candidate_id for candidate_id in targets if candidate_id in requested_candidate_ids]
     if args.limit is not None:
@@ -316,9 +339,11 @@ def main() -> None:
         replacement["retry_rejection_reasons"] = rejected.get("rejection_reasons") or []
         replacement["retry_student_text_corrections"] = rejected.get("student_text_corrections") or []
         replacements[candidate_id] = replacement
+        output_rows = replace_records(output_rows, {candidate_id: replacement})
+        write_jsonl(args.output, output_rows)
+        print(f"[checkpoint] Wrote {len(output_rows)} candidate records to {args.output}")
         sleep_between_calls(args.sleep)
 
-    output_rows = replace_records(raw_rows, replacements)
     write_jsonl(args.output, output_rows)
     print(f"Retried {len(replacements)} candidate(s).")
     print(f"Wrote {len(output_rows)} candidate records to {args.output}")

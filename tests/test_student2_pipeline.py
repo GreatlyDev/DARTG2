@@ -18,7 +18,12 @@ from dart_pipeline.trace_generation import (
     traced_candidate_response,
 )
 from scripts.audit_ricky_candidate_quality import audit_rows
-from scripts.retry_rejected_candidates import build_retry_prompt, parse_candidate_ids, target_candidate_ids
+from scripts.retry_rejected_candidates import (
+    build_retry_prompt,
+    completed_retry_candidate_ids,
+    parse_candidate_ids,
+    target_candidate_ids,
+)
 from scripts.repair_student_cleanup import repair_cleanup_text
 
 
@@ -914,6 +919,17 @@ class ScoringAndCurationTests(unittest.TestCase):
         self.assertIn('Sibling diversity must be structural, not just lexical', prompt)
         self.assertIn('zero/null copula', prompt)
         self.assertIn('different grammatical/discourse realization path', prompt)
+
+    def test_retry_resume_detects_completed_checkpoint_rows(self):
+        completed = completed_retry_candidate_ids(
+            [
+                {'candidate_id': 'A1_AAE_1', 'retry_of_candidate_id': 'A1_AAE_1'},
+                {'candidate_id': 'A1_AAE_2'},
+                {'candidate_id': 'A1_AAE_3', 'retry_of_candidate_id': 'A1_AAE_3'},
+            ]
+        )
+
+        self.assertEqual(completed, {'A1_AAE_1', 'A1_AAE_3'})
 
     def test_audit_flags_surface_change_below_dacon_minimum(self):
         anchor_words = [f'word{chr(97 + i % 26)}{chr(97 + i // 26)}' for i in range(50)]
