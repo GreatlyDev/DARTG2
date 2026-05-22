@@ -893,6 +893,28 @@ class ScoringAndCurationTests(unittest.TestCase):
         self.assertIn('distributed changes', prompt)
         self.assertIn('same three-token pattern', prompt)
 
+    def test_retry_prompt_assigns_structural_sibling_strategy(self):
+        prompt = build_retry_prompt(
+            {
+                'generation_prompt': 'Base prompt text.',
+                'candidate_index': 2,
+                'dialect_family': 'African American English (AAE)',
+            },
+            {
+                'candidate_id': 'A1_AAE_2',
+                'candidate_index': 2,
+                'dialect_family': 'African American English (AAE)',
+                'candidate_response': 'The answer clear because the evidence strong.',
+                'detected_features': ['zero/null copula'],
+                'rejection_reasons': ['anchor_near_duplicate'],
+                'student_text_corrections': [],
+            },
+        )
+
+        self.assertIn('Sibling diversity must be structural, not just lexical', prompt)
+        self.assertIn('zero/null copula', prompt)
+        self.assertIn('different grammatical/discourse realization path', prompt)
+
     def test_audit_flags_surface_change_below_dacon_minimum(self):
         anchor_words = [f'word{chr(97 + i % 26)}{chr(97 + i // 26)}' for i in range(50)]
         candidate_words = list(anchor_words)
@@ -945,6 +967,40 @@ class ScoringAndCurationTests(unittest.TestCase):
         self.assertFalse(audited[0]['passed_quality_filter'])
         self.assertIn('anchor_near_duplicate', audited[0]['rejection_reasons'])
         self.assertGreaterEqual(audited[0]['anchor_similarity_ratio'], 0.94)
+
+    def test_audit_records_pairwise_sibling_similarity_for_before_after_comparison(self):
+        rows = [
+            {
+                'anchor_id': 'A1',
+                'candidate_id': 'A1_AAE_1',
+                'candidate_index': 1,
+                'dialect_family': 'African American English (AAE)',
+                'anchor_response': 'The answer is clear because the evidence is strong.',
+                'candidate_response': 'The answer clear because the evidence is strong.',
+                'detected_features': ['zero/null copula'],
+                'feature_realization_count': 1,
+                'passed_quality_filter': True,
+                'rejection_reasons': [],
+            },
+            {
+                'anchor_id': 'A1',
+                'candidate_id': 'A1_AAE_2',
+                'candidate_index': 2,
+                'dialect_family': 'African American English (AAE)',
+                'anchor_response': 'The answer is clear because the evidence is strong.',
+                'candidate_response': 'The answer clear because the evidence is strong.',
+                'detected_features': ['zero/null copula'],
+                'feature_realization_count': 1,
+                'passed_quality_filter': True,
+                'rejection_reasons': [],
+            },
+        ]
+
+        audited = audit_rows(rows, duplicate_threshold=0.95)
+
+        self.assertEqual(audited[0]['pairwise_sibling_similarity'][0]['candidate_id'], 'A1_AAE_2')
+        self.assertGreaterEqual(audited[0]['max_pairwise_sibling_similarity'], 0.95)
+        self.assertEqual(audited[0]['sibling_similarity_over_threshold_count'], 1)
 
     def test_audit_flags_surface_change_above_dacon_upper_bound(self):
         anchor_words = [f'word{chr(97 + i % 26)}{chr(97 + i // 26)}' for i in range(30)]

@@ -43,6 +43,58 @@ def parse_candidate_ids(raw_value: str | None) -> set[str]:
     return {candidate_id.strip() for candidate_id in raw_value.split(",") if candidate_id.strip()}
 
 
+STRUCTURAL_SIBLING_PLANS = {
+    "african american": {
+        1: "Prioritize an aspect/tense feature such as habitual be, stressed STAY, stressed BIN, or perfective done only when the anchor meaning licenses that structure.",
+        2: "Prioritize a copula/auxiliary structure such as zero/null copula or zero copula in contractible contexts only where the grammar licenses omission.",
+        3: "Prioritize a negative or agreement structure such as negative concord or an approved negative auxiliary only when the anchor already contains negative meaning.",
+    },
+    "southern": {
+        1: "Prioritize a second-person plural or possessive pronoun structure such as y'all, all y'all, or y'all's only when the anchor has a plural addressee context.",
+        2: "Prioritize a stance or modal/lexical structure such as reckon, fixin' to, might could, or liketa only when it preserves the student's original stance and tense.",
+        3: "Prioritize a discourse or aspect structure such as positive anymore or alternative one only when the anchor already licenses that meaning.",
+    },
+    "appalachian": {
+        1: "Prioritize a pronoun/address structure such as y'all only when a plural addressee is already present.",
+        2: "Prioritize a syntactic structure such as needs washed or a-prefixing only when the anchor grammar and meaning license it.",
+        3: "Prioritize a discourse/aspect or negative structure such as positive anymore or nary only when it preserves the original meaning.",
+    },
+    "midwestern": {
+        1: "Prioritize a need/want/get passive structure such as needs cleaned or wants revised only when the anchor already expresses that requirement.",
+        2: "Prioritize a discourse/aspect structure such as positive anymore only when a nowadays/these-days meaning is already compatible.",
+        3: "Prioritize a tag or agreement structure such as right? or so don't I only when it does not change certainty, tone, or negation.",
+    },
+    "north central": {
+        1: "Prioritize a need/want/get passive structure such as needs cleaned or wants revised only when the anchor already expresses that requirement.",
+        2: "Prioritize a discourse/aspect structure such as positive anymore only when a nowadays/these-days meaning is already compatible.",
+        3: "Prioritize a tag or agreement structure such as right? or so don't I only when it does not change certainty, tone, or negation.",
+    },
+    "northeastern": {
+        1: "Prioritize a lexical/intensifier feature such as wicked only when it fits the student's register without sounding forced.",
+        2: "Prioritize a discourse/syntactic feature such as pragmatic deletion only when the omitted material is recoverable from context.",
+        3: "Prioritize a negative-agreement or regional lexical feature only when the anchor already licenses that meaning and register.",
+    },
+    "new england": {
+        1: "Prioritize a lexical/intensifier feature such as wicked only when it fits the student's register without sounding forced.",
+        2: "Prioritize a discourse/syntactic feature such as pragmatic deletion only when the omitted material is recoverable from context.",
+        3: "Prioritize a negative-agreement or regional lexical feature only when the anchor already licenses that meaning and register.",
+    },
+    "western": {
+        1: "Prioritize a discourse marker or stance feature that is specifically listed in the Western inventory, not just a generic intensifier.",
+        2: "Prioritize a distinct lexical or syntactic feature from a different inventory entry than candidate 1.",
+        3: "Prioritize a remaining approved feature family and different placement from candidates 1 and 2.",
+    },
+}
+
+
+def structural_sibling_strategy(dialect_family: str, candidate_index: int) -> str:
+    normalized = str(dialect_family or "").lower()
+    for key, plan in STRUCTURAL_SIBLING_PLANS.items():
+        if key in normalized:
+            return plan.get(candidate_index) or "Use a structurally distinct approved feature family from the sibling candidates."
+    return "Use a structurally distinct approved feature family from the sibling candidates, not only different wording."
+
+
 def build_retry_prompt(job: dict, rejected_row: dict) -> str:
     reasons = ", ".join(str(reason) for reason in rejected_row.get("rejection_reasons") or [])
     corrections = rejected_row.get("student_text_corrections") or []
@@ -115,17 +167,16 @@ FEATURE DIVERSITY RETRY
 """
     if row_reasons & {"anchor_near_duplicate", "within_anchor_duplicate", "weak_minimal_edit_or_append", "targeted_ricky_cleanup"}:
         candidate_index = int(rejected_row.get("candidate_index") or job.get("candidate_index") or 1)
-        strategy = {
-            1: "Use the strongest natural combination of approved lexical plus syntactic features licensed by the anchor.",
-            2: "Use a different approved feature combination and different sentence placement than candidate 1.",
-            3: "Use the most natural remaining approved feature combination and avoid matching candidates 1 or 2.",
-        }.get(candidate_index, "Use a distinct approved feature combination from the sibling candidates.")
+        dialect_family = str(rejected_row.get("dialect_family") or job.get("dialect_family") or "")
+        strategy = structural_sibling_strategy(dialect_family, candidate_index)
         quality_guidance += f"""
 STRICT RICKY QUALITY REQUIREMENTS
 - This retry must be meaning-preserving, but it cannot be a near-copy, single-token edit, or phrase appended to the end.
 - Do not use only one isolated intensifier or discourse marker as the entire dialect change.
 - Use at least two approved target-dialect feature placements if the anchor licenses them naturally.
 - If only one approved feature is genuinely possible, integrate it inside an existing sentence and keep this candidate clearly distinct from sibling candidates.
+- Sibling diversity must be structural, not just lexical. Candidate siblings for the same anchor should realize different approved feature families when the inventory and anchor license that safely.
+- Do not make three siblings by lightly editing the same base variant. Start from the anchor each time and choose a different grammatical/discourse realization path.
 - Preserve original student spelling, grammar, punctuation, capitalization, roughness, and placeholders.
 - Candidate-specific diversity strategy: {strategy}
 """

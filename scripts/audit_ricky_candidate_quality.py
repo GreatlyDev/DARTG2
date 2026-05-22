@@ -236,6 +236,22 @@ def audit_rows(
                 if other is not row
             ]
             row["sibling_candidate_responses"] = siblings
+            pairwise_scores = [
+                {
+                    "candidate_id": str(other.get("candidate_id") or ""),
+                    "similarity": round(sequence_ratio(text, candidate_text(other)), 4),
+                }
+                for other in anchor_rows
+                if other is not row
+            ]
+            row["pairwise_sibling_similarity"] = pairwise_scores
+            row["max_pairwise_sibling_similarity"] = max(
+                (score["similarity"] for score in pairwise_scores),
+                default=0.0,
+            )
+            row["sibling_similarity_over_threshold_count"] = sum(
+                1 for score in pairwise_scores if score["similarity"] >= duplicate_threshold
+            )
             for previous in anchor_rows[:index]:
                 ratio = sequence_ratio(candidate_text(previous), text)
                 if ratio >= duplicate_threshold:
