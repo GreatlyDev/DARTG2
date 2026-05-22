@@ -509,6 +509,27 @@ class PrefilterTests(unittest.TestCase):
         self.assertTrue(result.passed_prefilter)
         self.assertEqual(result.detected_features, ['mad'])
 
+    def test_prefilter_detects_midwestern_alls_construction_surface_form(self):
+        result = prefilter_candidate(
+            anchor_response='The author mentions the flower was planted in the ground.',
+            candidate_text='Alls I can say is the author mentions the flower was planted in the ground.',
+            feature_config={
+                'features': [
+                    {
+                        'id': 'midwestern_alls',
+                        'feature': 'alls construction',
+                        'allowed_for_generation': True,
+                    },
+                ]
+            },
+            length_tolerance=1.0,
+            min_detected_features=1,
+        )
+
+        self.assertTrue(result.passed_prefilter)
+        self.assertEqual(result.detected_features, ['alls'])
+        self.assertEqual(result.feature_realization_count, 1)
+
     def test_prefilter_detects_aae_habitual_be_pattern(self):
         result = prefilter_candidate(
             anchor_response='The students are working after school.',

@@ -107,6 +107,8 @@ def allowed_feature_markers(feature_config: dict) -> list[str]:
             markers.append("needs ")
         if "wants_fixed" in feature_id:
             markers.append("wants ")
+        if "midwestern_alls" in feature_id or feature_label == "alls construction":
+            markers.append("alls")
         if "a_prefixing" in feature_id:
             markers.append("a-")
         if "demonstrative_them" in feature_id:
